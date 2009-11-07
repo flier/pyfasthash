@@ -96,11 +96,20 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
     }
     else if (PyUnicode_CheckExact(arg.ptr()))
     {
+      const char *buf = PyUnicode_AS_DATA(arg.ptr());
+      Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
 
+      value = hasher((void *) buf, len, value);
     }
     else if (PyBuffer_Check(arg.ptr()))
     {
+      const void *buf = NULL;
+      Py_ssize_t len = 0;
 
+      if (0 == PyObject_AsReadBuffer(arg.ptr(), &buf, &len))
+      {
+        value = hasher((void *) buf, len, value);
+      }
     }
     else
     {
