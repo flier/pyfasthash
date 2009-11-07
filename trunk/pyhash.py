@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys
+import sys, os
 
 import _pyhash
 
@@ -22,28 +22,44 @@ class TestFNV(unittest.TestCase):
         
         self.assertEqual(3698262380L, hasher(self.data))
         self.assertEqual(660137056, hasher(self.data, self.data))
-        self.assertEqual(3910690890L, hasher(self.udata))
+        
+        if os.name == "nt":
+            self.assertEqual(3910690890L, hasher(self.udata))
+        else:
+            self.assertEqual(619499010, hasher(self.udata))
         
     def testFNV1a_32(self):
         hasher = fnv1a_32()
         
         self.assertEqual(1858026756, hasher(self.data))
         self.assertEqual(1357873952, hasher(self.data, self.data))
-        self.assertEqual(996945022, hasher(self.udata))
+        
+        if os.name == "nt":
+            self.assertEqual(996945022, hasher(self.udata))
+        else:
+            self.assertEqual(583552294, hasher(self.udata))
         
     def testFNV1_64(self):
         hasher = fnv1_64()
         
         self.assertEqual(17151984479173897804L, hasher(self.data))
         self.assertEqual(6349570372626520864L, hasher(self.data, self.data))
-        self.assertEqual(14017453969697934794L, hasher(self.udata))
+        
+        if os.name == "nt":
+            self.assertEqual(14017453969697934794L, hasher(self.udata))
+        else:
+            self.assertEqual(12225005685850216898L, hasher(self.udata))
         
     def testFNV1a_64(self):
         hasher = fnv1a_64()
         
         self.assertEqual(11830222609977404196L, hasher(self.data))
         self.assertEqual(8858165303110309728L, hasher(self.data, self.data))
-        self.assertEqual(14494269412771327550L, hasher(self.udata))
+        
+        if os.name == "nt":
+            self.assertEqual(14494269412771327550L, hasher(self.udata))
+        else:
+            self.assertEqual(9509857141423752358L, hasher(self.udata))
 
 if __name__ == '__main__':
     if "-v" in sys.argv:
