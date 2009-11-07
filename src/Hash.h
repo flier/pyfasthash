@@ -80,7 +80,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 
   typename T::hash_value_t value = 0;
 
-  for (Py_ssize_t i=0; i<::PyList_Size(argv.ptr()); i++)
+  for (Py_ssize_t i=0; i<PyList_Size(argv.ptr()); i++)
   {
     py::object arg = argv[i];
 

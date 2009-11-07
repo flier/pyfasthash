@@ -12,8 +12,6 @@ source_files = [os.path.join('src', file) for file in ['Hash.cpp', 'FNV1.cpp']]
 for lib, files in libraries.items():
     source_files += [os.path.join('src', lib, file) for file in files]
     
-print source_files
-
 macros = [
     ("BOOST_PYTHON_STATIC_LIB", None),
 ]
