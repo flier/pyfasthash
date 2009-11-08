@@ -8,6 +8,17 @@
 
 #define MIX(h,k,m) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }
 
+#if __WORDSIZE == 64
+
+typedef long ptr_t;
+
+#else
+
+typedef int ptr_t;
+
+#endif
+
+
 unsigned int MurmurHashAligned2 ( const void * key, int len, unsigned int seed )
 {
 	const unsigned int m = 0x5bd1e995;
@@ -17,7 +28,7 @@ unsigned int MurmurHashAligned2 ( const void * key, int len, unsigned int seed )
 
 	unsigned int h = seed ^ len;
 
-	int align = (int)data & 3;
+	int align = (ptr_t)data & 3;
 
 	if(align && (len >= 4))
 	{
