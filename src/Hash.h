@@ -33,13 +33,13 @@ namespace internal
   template <>
   inline PyObject *convert(const long& value)
   {
-    return ::PyInt_FromLong(value);
+    return ::PyLong_FromLong(value);
   }
 
   template <>
   inline PyObject *convert(const unsigned long& value)
   {
-    return ::PyInt_FromSsize_t(value);
+    return ::PyLong_FromUnsignedLong(value);
   }
 
   template <>

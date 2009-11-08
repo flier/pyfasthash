@@ -152,7 +152,7 @@ class TestSuperFastHash(TestHasher):
         if os.name == "nt":
             self.assertEqual(1430748046, hasher(self.udata))
         else:
-            self.assertEqual(2148019931L, hasher(self.udata))
+            self.assertEqual(1474081225, hasher(self.udata))
             
 if __name__ == '__main__':
     if "-v" in sys.argv:
