@@ -4,10 +4,12 @@ import os, os.path
 from distutils.core import setup, Extension
 
 libraries = {
-    'fnv' : ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c']
+    'fnv' : ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
+    'MurmurHash' : ['MurmurHash2.cpp', 'MurmurHash2A.cpp', 'MurmurHashAligned2.cpp',
+                    'MurmurHashNeutral2.cpp', 'MurmurHash2_64.cpp'],
 }
 
-source_files = [os.path.join('src', file) for file in ['Hash.cpp', 'FNV1.cpp']]
+source_files = [os.path.join('src', file) for file in ['Hash.cpp']]
 
 for lib, files in libraries.items():
     source_files += [os.path.join('src', lib, file) for file in files]

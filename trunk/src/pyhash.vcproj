@@ -89,7 +89,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)\pyhash.py $(OutDir)&#x0D;&#x0A;$(OutDir)\pyhash.py -v"
+				CommandLine="copy $(SolutionDir)\pyhash.py $(OutDir)&#x0D;&#x0A;$(OutDir)\pyhash.py -v&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -167,7 +167,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)\pyhash.py $(OutDir)&#x0D;&#x0A;$(OutDir)\pyhash.py -v"
+				CommandLine="copy $(SolutionDir)\pyhash.py $(OutDir)&#x0D;&#x0A;$(OutDir)\pyhash.py -v&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -179,10 +179,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath=".\FNV1.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\Hash.cpp"
 				>
@@ -207,6 +203,30 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="MurmurHash"
+				>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash2_64.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash2A.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHashAligned2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHashNeutral2.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -219,6 +239,10 @@
 			</File>
 			<File
 				RelativePath=".\Hash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MurmurHash.h"
 				>
 			</File>
 			<Filter
