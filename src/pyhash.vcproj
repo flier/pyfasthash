@@ -235,6 +235,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="SuperFastHash"
+				>
+				<File
+					RelativePath=".\SuperFastHash\SuperFastHash.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -255,6 +263,10 @@
 			</File>
 			<File
 				RelativePath=".\MurmurHash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SuperFastHash.h"
 				>
 			</File>
 			<Filter

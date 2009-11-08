@@ -19,6 +19,8 @@ lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.looku
 lookup3_little = _pyhash.lookup3_little
 lookup3_big = _pyhash.lookup3_big
 
+super_fast_hash = _pyhash.super_fast_hash
+
 import unittest
 import logging
 
@@ -137,6 +139,18 @@ class TestLookup3(TestHasher):
         
         if os.name == "nt":
             self.assertEqual(1380664715, hasher(self.udata))
+        else:
+            self.assertEqual(2148019931L, hasher(self.udata))
+            
+class TestSuperFastHash(TestHasher):
+    def testSuperFastHash(self):
+        hasher = super_fast_hash()
+
+        self.assertEqual(942683319, hasher(self.data))
+        self.assertEqual(777359542, hasher(self.data, self.data))
+        
+        if os.name == "nt":
+            self.assertEqual(1430748046, hasher(self.udata))
         else:
             self.assertEqual(2148019931L, hasher(self.udata))
             

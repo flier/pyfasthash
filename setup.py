@@ -8,6 +8,7 @@ libraries = {
     'MurmurHash' : ['MurmurHash2.cpp', 'MurmurHash2A.cpp', 'MurmurHashAligned2.cpp',
                     'MurmurHashNeutral2.cpp', 'MurmurHash2_64.cpp'],
     'lookup3' : ['lookup3.c'],
+    'SuperFastHash' : ['SuperFastHash.c'],
 }
 
 source_files = [os.path.join('src', file) for file in ['Hash.cpp']]

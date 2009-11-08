@@ -3,6 +3,7 @@
 #include "FNV1.h"
 #include "MurmurHash.h"
 #include "Lookup3.h"
+#include "SuperFastHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -19,4 +20,6 @@ BOOST_PYTHON_MODULE(_pyhash)
 
   lookup3_little_t::Export("lookup3_little");
   lookup3_big_t::Export("lookup3_big");
+
+  super_fast_hash_t::Export("super_fast_hash");
 }
