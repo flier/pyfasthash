@@ -78,7 +78,7 @@ class TestMurMurHash2(TestHasher):
         if os.name == "nt":
             self.assertEqual(2308212514L, hasher(self.udata))
         else:
-            self.assertEqual(9509857141423752358L, hasher(self.udata))
+            self.assertEqual(2325743913L, hasher(self.udata))
 
     def testMurMurHash2a_32(self):
         hasher = murmur2a_32()
@@ -89,7 +89,7 @@ class TestMurMurHash2(TestHasher):
         if os.name == "nt":
             self.assertEqual(3710634486L, hasher(self.udata))
         else:
-            self.assertEqual(9509857141423752358L, hasher(self.udata))
+            self.assertEqual(787576890, hasher(self.udata))
 
     def testMurMurHash2Aligned32(self):
         hasher = murmur2_aligned_32()
@@ -100,7 +100,7 @@ class TestMurMurHash2(TestHasher):
         if os.name == "nt":
             self.assertEqual(2308212514L, hasher(self.udata))
         else:
-            self.assertEqual(9509857141423752358L, hasher(self.udata))
+            self.assertEqual(2325743913L, hasher(self.udata))
 
     def testMurMurHash2Neutral32(self):
         hasher = murmur2_neutral_32()
@@ -111,7 +111,7 @@ class TestMurMurHash2(TestHasher):
         if os.name == "nt":
             self.assertEqual(2308212514L, hasher(self.udata))
         else:
-            self.assertEqual(9509857141423752358L, hasher(self.udata))
+            self.assertEqual(2325743913L, hasher(self.udata))
 
     def testMurMurHash2_64(self):
         hasher = murmur2_64()
@@ -122,7 +122,7 @@ class TestMurMurHash2(TestHasher):
         if os.name == "nt":
             self.assertEqual(9820020607534352415L, hasher(self.udata))
         else:
-            self.assertEqual(9509857141423752358L, hasher(self.udata))
+            self.assertEqual(5522330703187561353L, hasher(self.udata))
 
 if __name__ == '__main__':
     if "-v" in sys.argv:
