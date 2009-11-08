@@ -22,6 +22,18 @@ namespace internal
   }
 
   template <>
+  inline PyObject *convert(const long& value)
+  {
+    return ::PyInt_FromLong(value);
+  }
+
+  template <>
+  inline PyObject *convert(const unsigned long& value)
+  {
+    return ::PyInt_FromSsize_t(value);
+  }
+
+  template <>
   inline PyObject *convert(const long long& value)
   {
     return ::PyLong_FromLongLong(value);
