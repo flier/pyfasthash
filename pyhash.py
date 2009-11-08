@@ -138,7 +138,7 @@ class TestLookup3(TestHasher):
         if os.name == "nt":
             self.assertEqual(1380664715, hasher(self.udata))
         else:
-            self.assertEqual(5522330703187561353L, hasher(self.udata))
+            self.assertEqual(2148019931L, hasher(self.udata))
             
 if __name__ == '__main__':
     if "-v" in sys.argv:
