@@ -6,18 +6,9 @@
 
 // Performance will be lower than MurmurHash2
 
+#include <cstddef>
+
 #define MIX(h,k,m) { k *= m; k ^= k >> r; k *= m; h *= m; h ^= k; }
-
-#if __WORDSIZE == 64
-
-typedef long ptr_t;
-
-#else
-
-typedef int ptr_t;
-
-#endif
-
 
 unsigned int MurmurHashAligned2 ( const void * key, int len, unsigned int seed )
 {
@@ -28,7 +19,7 @@ unsigned int MurmurHashAligned2 ( const void * key, int len, unsigned int seed )
 
 	unsigned int h = seed ^ len;
 
-	int align = (ptr_t)data & 3;
+	int align = (ptrdiff_t)data & 3;
 
 	if(align && (len >= 4))
 	{
