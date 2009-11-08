@@ -227,6 +227,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="lookup3"
+				>
+				<File
+					RelativePath=".\lookup3\lookup3.c"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -239,6 +247,10 @@
 			</File>
 			<File
 				RelativePath=".\Hash.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Lookup3.h"
 				>
 			</File>
 			<File

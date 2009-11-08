@@ -15,6 +15,10 @@ murmur2_aligned_32 = _pyhash.murmur2_aligned_32
 murmur2_neutral_32 = _pyhash.murmur2_neutral_32
 murmur2_64 = _pyhash.murmur2_64
 
+lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.lookup3_big
+lookup3_little = _pyhash.lookup3_little
+lookup3_big = _pyhash.lookup3_big
+
 import unittest
 import logging
 
@@ -124,6 +128,18 @@ class TestMurMurHash2(TestHasher):
         else:
             self.assertEqual(5522330703187561353L, hasher(self.udata))
 
+class TestLookup3(TestHasher):
+    def testLookup3(self):
+        hasher = lookup3()
+
+        self.assertEqual(3188463954L, hasher(self.data))
+        self.assertEqual(478901866, hasher(self.data, self.data))
+        
+        if os.name == "nt":
+            self.assertEqual(1380664715, hasher(self.udata))
+        else:
+            self.assertEqual(5522330703187561353L, hasher(self.udata))
+            
 if __name__ == '__main__':
     if "-v" in sys.argv:
         level = logging.DEBUG
