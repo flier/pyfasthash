@@ -6,7 +6,11 @@
  * http://murmurhash.googlepages.com/
  */
 
+#if __WORDSIZE != 64
+
 typedef unsigned long long uint64_t;
+
+#endif
 
 // Note - This code makes a few assumptions about how your machine behaves -
 

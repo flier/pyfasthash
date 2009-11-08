@@ -4,7 +4,11 @@
 // The same caveats as 32-bit MurmurHash2 apply here - beware of alignment 
 // and endian-ness issues if used across multiple platforms.
 
+#if __WORDSIZE != 64
+
 typedef unsigned long long uint64_t;
+
+#endif
 
 // 64-bit hash for 64-bit platforms
 
