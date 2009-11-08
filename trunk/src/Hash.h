@@ -1,5 +1,14 @@
 #pragma once
 
+
+#ifdef WIN32
+  typedef unsigned char uint8_t;
+  typedef unsigned short uint16_t;
+  typedef unsigned int uint32_t;
+#else
+  #include <stdint.h>     /* defines uint32_t etc */
+#endif
+
 #include <boost/python.hpp>
 #include <boost/python/raw_function.hpp>
 namespace py = boost::python;

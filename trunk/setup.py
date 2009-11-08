@@ -7,6 +7,7 @@ libraries = {
     'fnv' : ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
     'MurmurHash' : ['MurmurHash2.cpp', 'MurmurHash2A.cpp', 'MurmurHashAligned2.cpp',
                     'MurmurHashNeutral2.cpp', 'MurmurHash2_64.cpp'],
+    'lookup3' : ['lookup3.c'],
 }
 
 source_files = [os.path.join('src', file) for file in ['Hash.cpp']]
@@ -54,7 +55,7 @@ pyhash = Extension(name="_pyhash",
 
 
 setup(name='pyhash',
-    version='0.1',
+    version='0.2',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library.",
     platforms="x86",

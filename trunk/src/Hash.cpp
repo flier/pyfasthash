@@ -2,6 +2,7 @@
 
 #include "FNV1.h"
 #include "MurmurHash.h"
+#include "Lookup3.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -15,4 +16,7 @@ BOOST_PYTHON_MODULE(_pyhash)
   murmur2_aligned_32_t::Export("murmur2_aligned_32");
   murmur2_neutral_32_t::Export("murmur2_neutral_32");
   murmur2_64_t::Export("murmur2_64");
+
+  lookup3_little_t::Export("lookup3_little");
+  lookup3_big_t::Export("lookup3_big");
 }
