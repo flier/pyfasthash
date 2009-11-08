@@ -6,7 +6,7 @@
  * http://murmurhash.googlepages.com/
  */
 
-typedef unsigned __int64 uint64_t;
+typedef unsigned long long uint64_t;
 
 // Note - This code makes a few assumptions about how your machine behaves -
 
