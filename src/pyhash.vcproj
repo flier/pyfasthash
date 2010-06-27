@@ -288,6 +288,14 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<Filter
+			Name="Python Files"
+			>
+			<File
+				RelativePath="..\pyhash.py"
+				>
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 	</Globals>
