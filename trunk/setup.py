@@ -1,7 +1,10 @@
 #!/usr/bin/env python
+import ez_setup
+ez_setup.use_setuptools()
+
 import os, os.path
 
-from distutils.core import setup, Extension
+from setuptools import setup, Extension
 
 libraries = {
     'fnv' : ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
@@ -43,7 +46,6 @@ if os.name == "nt":
 elif os.name == "posix":
     libraries += ["boost_python", "rt"]
 
-
 pyhash = Extension(name="_pyhash",
                    sources = source_files,
                    define_macros = macros,
@@ -56,7 +58,7 @@ pyhash = Extension(name="_pyhash",
 
 
 setup(name='pyhash',
-    version='0.2',
+    version='0.3',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library, including FNV1, MurmurHash2, lookup3, SuperFastHash, etc",
     platforms="x86",
@@ -68,7 +70,7 @@ setup(name='pyhash',
     py_modules=['pyhash'],
     ext_modules=[pyhash],
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'License :: OSI Approved :: Apache Software License',
