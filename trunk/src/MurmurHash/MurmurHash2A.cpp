@@ -119,7 +119,7 @@ private:
 	{
 		while( len && ((len<4) || m_count) )
 		{
-			m_tail = (m_tail >> 8) | ((*data++) << 24);
+			m_tail |= (*data++) << (m_count * 8);
 
 			m_count++;
 			len--;
