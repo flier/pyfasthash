@@ -45,7 +45,11 @@ typedef unsigned int uint32_t;
 #else
 # include <stdint.h>     /* defines uint32_t etc */
 # include <sys/param.h>  /* attempt to define endianness */
-# include <endian.h>    /* attempt to define endianness */
+# if defined(__APPLE__)
+#  include <architecture/byte_order.h>
+# else
+#  include <endian.h>    /* attempt to define endianness */
+# endif
 #endif
 
 /*

@@ -2,7 +2,7 @@
 import ez_setup
 ez_setup.use_setuptools()
 
-import os, os.path
+import sys, os, os.path
 
 from setuptools import setup, Extension
 
@@ -42,6 +42,8 @@ if os.name == "nt":
 
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF", "/MACHINE:X86"]
+elif os.name == "posix" and sys.platform == "darwin":
+    libraries += ["boost_python-mt"]
 elif os.name == "posix":
     libraries += ["boost_python", "rt"]
 
