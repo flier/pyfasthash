@@ -223,27 +223,11 @@
 					>
 				</File>
 				<File
-					RelativePath=".\MurmurHash\MurmurHash2_64.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\MurmurHash\MurmurHash2A.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\MurmurHash\MurmurHash3.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\MurmurHash\MurmurHash3.h"
-					>
-				</File>
-				<File
-					RelativePath=".\MurmurHash\MurmurHashAligned2.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\MurmurHash\MurmurHashNeutral2.cpp"
 					>
 				</File>
 			</Filter>

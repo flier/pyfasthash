@@ -8,8 +8,7 @@ from setuptools import setup, Extension
 
 libraries = {
     'fnv' : ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
-    'MurmurHash' : ['MurmurHash2.cpp', 'MurmurHash2A.cpp', 'MurmurHashAligned2.cpp',
-                    'MurmurHashNeutral2.cpp', 'MurmurHash2_64.cpp'],
+    'MurmurHash' : ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp'],
     'lookup3' : ['lookup3.c'],
     'SuperFastHash' : ['SuperFastHash.c'],
 }
@@ -58,9 +57,9 @@ pyhash = Extension(name="_pyhash",
 
 
 setup(name='pyhash',
-    version='0.3',
+    version='0.4',
     description='Python Non-cryptographic Hash Library',
-    long_description="pyhash is a python non-cryptographic hash library, including FNV1, MurmurHash2, lookup3, SuperFastHash, etc",
+    long_description="pyhash is a python non-cryptographic hash library, including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, etc",
     platforms="x86",
     author='Flier Lu',
     author_email='flier.lu@gmail.com',
