@@ -207,7 +207,19 @@
 				Name="MurmurHash"
 				>
 				<File
+					RelativePath=".\MurmurHash\MurmurHash1.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash1.h"
+					>
+				</File>
+				<File
 					RelativePath=".\MurmurHash\MurmurHash2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash2.h"
 					>
 				</File>
 				<File
@@ -216,6 +228,14 @@
 				</File>
 				<File
 					RelativePath=".\MurmurHash\MurmurHash2A.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash3.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\MurmurHash\MurmurHash3.h"
 					>
 				</File>
 				<File

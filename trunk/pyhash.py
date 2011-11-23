@@ -9,11 +9,14 @@ fnv1a_32 = _pyhash.fnv1a_32
 fnv1_64 = _pyhash.fnv1_64
 fnv1a_64 = _pyhash.fnv1a_64
 
+murmur1_32 = _pyhash.murmur1_32
+murmur1_aligned_32 = _pyhash.murmur1_aligned_32
 murmur2_32 = _pyhash.murmur2_32
 murmur2a_32 = _pyhash.murmur2a_32
 murmur2_aligned_32 = _pyhash.murmur2_aligned_32
 murmur2_neutral_32 = _pyhash.murmur2_neutral_32
 murmur2_64 = _pyhash.murmur2_64
+murmur3_32 = _pyhash.murmur3_32
 
 lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.lookup3_big
 lookup3_little = _pyhash.lookup3_little
@@ -63,6 +66,22 @@ class TestFNV1(TestHasher):
         self.assertEqual(14494269412771327550L, hasher(self.udata))
             
 class TestMurMurHash2(TestHasher):
+    def testMurMurHash1_32(self):
+        hasher = murmur1_32()
+
+        self.assertEqual(1706635965, hasher(self.data))
+        self.assertEqual(1637637239, hasher(self.data, self.data))
+
+        self.assertEqual(2296970802L, hasher(self.udata))
+
+    def testMurMurHash1Aligned_32(self):
+        hasher = murmur1_aligned_32()
+
+        self.assertEqual(1706635965, hasher(self.data))
+        self.assertEqual(1637637239, hasher(self.data, self.data))
+
+        self.assertEqual(2296970802L, hasher(self.udata))
+
     def testMurMurHash2_32(self):
         hasher = murmur2_32()
 
@@ -98,10 +117,18 @@ class TestMurMurHash2(TestHasher):
     def testMurMurHash2_64(self):
         hasher = murmur2_64()
 
-        self.assertEqual(3407684658384555107L, hasher(self.data))
-        self.assertEqual(940757698219426231L, hasher(self.data, self.data))
+        self.assertEqual(1560774255606158893L, hasher(self.data))
+        self.assertEqual(11567531768634065834L, hasher(self.data, self.data))
         
-        self.assertEqual(9820020607534352415L, hasher(self.udata))
+        self.assertEqual(7104676830630207180L, hasher(self.udata))
+
+    def testMurMurHash3_32(self):
+        hasher = murmur3_32()
+
+        self.assertEqual(3127628307, hasher(self.data))
+        self.assertEqual(1973649836, hasher(self.data, self.data))
+
+        self.assertEqual(1351191292, hasher(self.udata))
 
 class TestLookup3(TestHasher):
     def testLookup3(self):
