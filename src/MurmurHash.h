@@ -6,8 +6,8 @@
 #include "MurmurHash/MurmurHash2.h"
 #include "MurmurHash/MurmurHash3.h"
 
-#if defined(__LP64__) || defined(_M_X64)
-  #define __x86_64__
+#if !defined(__x86_64__) && (defined(__LP64__) || defined(_M_X64))
+  #define __x86_64__ 1
 #endif
 
 /**
