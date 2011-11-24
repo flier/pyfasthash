@@ -117,8 +117,15 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
     }
     else if (PyUnicode_CheckExact(arg.ptr()))
     {
+    #ifdef Py_UNICODE_WIDE
+      py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr()));
+
+      const char *buf = PyUnicode_AS_DATA(utf16.ptr());
+      Py_ssize_t len = PyUnicode_GET_DATA_SIZE(utf16.ptr());
+    #else
       const char *buf = PyUnicode_AS_DATA(arg.ptr());
       Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
+    #endif
 
       value = hasher((void *) buf, len, value);
     }

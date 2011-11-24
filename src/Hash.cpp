@@ -18,7 +18,8 @@ BOOST_PYTHON_MODULE(_pyhash)
   murmur2a_32_t::Export("murmur2a_32");
   murmur2_aligned_32_t::Export("murmur2_aligned_32");
   murmur2_neutral_32_t::Export("murmur2_neutral_32");
-  murmur2_64_t::Export("murmur2_64");
+  murmur2_x64_64a_t::Export("murmur2_x64_64a");
+  murmur2_x86_64b_t::Export("murmur2_x86_64b");
   murmur3_32_t::Export("murmur3_32");
 
   lookup3_little_t::Export("lookup3_little");
