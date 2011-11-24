@@ -15,7 +15,8 @@ murmur2_32 = _pyhash.murmur2_32
 murmur2a_32 = _pyhash.murmur2a_32
 murmur2_aligned_32 = _pyhash.murmur2_aligned_32
 murmur2_neutral_32 = _pyhash.murmur2_neutral_32
-murmur2_64 = _pyhash.murmur2_64
+murmur2_x64_64a = _pyhash.murmur2_x64_64a
+murmur2_x86_64b = _pyhash.murmur2_x86_64b
 murmur3_32 = _pyhash.murmur3_32
 
 lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.lookup3_big
@@ -114,12 +115,20 @@ class TestMurMurHash2(TestHasher):
         
         self.assertEqual(2308212514L, hasher(self.udata))
 
-    def testMurMurHash2_64(self):
-        hasher = murmur2_64()
+    def testMurMurHash2_x64_64a(self):
+        hasher = murmur2_x64_64a()
+
+        self.assertEqual(3407684658384555107L, hasher(self.data))
+        self.assertEqual(14278059344916754999L, hasher(self.data, self.data))
+
+        self.assertEqual(9820020607534352415L, hasher(self.udata))
+
+    def testMurMurHash2_x86_64b(self):
+        hasher = murmur2_x86_64b()
 
         self.assertEqual(1560774255606158893L, hasher(self.data))
         self.assertEqual(11567531768634065834L, hasher(self.data, self.data))
-        
+
         self.assertEqual(7104676830630207180L, hasher(self.udata))
 
     def testMurMurHash3_32(self):
