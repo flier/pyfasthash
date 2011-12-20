@@ -59,7 +59,7 @@ pyhash = Extension(name="_pyhash",
 
 
 setup(name='pyhash',
-    version='0.4',
+    version='0.4.1',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library, including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, etc",
     platforms="x86",
