@@ -33,21 +33,16 @@ class TestHasher(unittest.TestCase):
         self.data = 'test'
         self.udata = u'test'
 
-    def testSeed(self):
-        hasher = fnv1_32()
-
-        self.assertEqual(3698262380L, hasher(self.data))
-        self.assertEqual(660137056, hasher(self.data, seed=3698262380L))
-
-class TestFNV1(TestHasher):        
+class TestFNV1(TestHasher):
     def testFNV1_32(self):
         hasher = fnv1_32()
         
         self.assertEqual(3698262380L, hasher(self.data))
         self.assertEqual(660137056, hasher(self.data, self.data))
+        self.assertEqual(660137056, hasher(self.data, seed=3698262380L))
         
         self.assertEqual(3910690890L, hasher(self.udata))
-        
+
     def testFNV1a_32(self):
         hasher = fnv1a_32()
         
@@ -61,9 +56,10 @@ class TestFNV1(TestHasher):
         
         self.assertEqual(17151984479173897804L, hasher(self.data))
         self.assertEqual(6349570372626520864L, hasher(self.data, self.data))
-        
+        self.assertEqual(6349570372626520864L, hasher(self.data, seed=17151984479173897804L))
+
         self.assertEqual(14017453969697934794L, hasher(self.udata))
-        
+
     def testFNV1a_64(self):
         hasher = fnv1a_64()
         
