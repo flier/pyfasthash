@@ -77,6 +77,40 @@ inline void Hasher<T>::Export(const char *name)
 }
 
 template <typename T>
+T extract_hash_value(PyObject *obj)
+{
+  T value = 0;
+
+  if (PyLong_Check(obj))
+  {
+    value = PyLong_AsUnsignedLong(obj);
+  }
+  else if (PyInt_Check(obj))
+  {
+    value = PyInt_AsUnsignedLongMask(obj);
+  }
+
+  return value;
+}
+
+template <>
+uint64_t extract_hash_value<uint64_t>(PyObject *obj)
+{
+  uint64_t value = 0;
+
+  if (PyLong_Check(obj))
+  {
+    value = PyLong_AsUnsignedLongLong(obj);
+  }
+  else if (PyInt_Check(obj))
+  {
+    value = PyInt_AsUnsignedLongLongMask(obj);
+  }
+
+  return value;
+}
+
+template <typename T>
 inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 {
   size_t argc = ::PyTuple_Size(args.ptr());
@@ -98,21 +132,9 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 
   T& hasher = extractor();
   py::list argv(args.slice(1, py::_));  
-
-  typename T::hash_value_t value = 0;
-  
   py::object seed = kwds.get("seed", 0);
 
-  if (PyLong_Check(seed.ptr()))
-  {
-    value = PyLong_AsUnsignedLongLong(seed.ptr());
-  }
-  else if (PyInt_Check(seed.ptr()))
-  {
-    value = PyInt_AsSsize_t(seed.ptr());
-  }
-
-  (PyLong_Check(seed.ptr()) ? PyLong_Check(seed.ptr()) : 0);
+  typename T::hash_value_t value = extract_hash_value<typename T::hash_value_t>(seed.ptr());  
 
   for (Py_ssize_t i=0; i<PyList_Size(argv.ptr()); i++)
   {
