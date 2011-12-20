@@ -97,9 +97,22 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
   }
 
   T& hasher = extractor();
-  py::list argv(args.slice(1, py::_));
+  py::list argv(args.slice(1, py::_));  
 
   typename T::hash_value_t value = 0;
+  
+  py::object seed = kwds.get("seed", 0);
+
+  if (PyLong_Check(seed.ptr()))
+  {
+    value = PyLong_AsUnsignedLongLong(seed.ptr());
+  }
+  else if (PyInt_Check(seed.ptr()))
+  {
+    value = PyInt_AsSsize_t(seed.ptr());
+  }
+
+  (PyLong_Check(seed.ptr()) ? PyLong_Check(seed.ptr()) : 0);
 
   for (Py_ssize_t i=0; i<PyList_Size(argv.ptr()); i++)
   {

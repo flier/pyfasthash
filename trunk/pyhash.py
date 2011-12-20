@@ -33,6 +33,12 @@ class TestHasher(unittest.TestCase):
         self.data = 'test'
         self.udata = u'test'
 
+    def testSeed(self):
+        hasher = fnv1_32()
+
+        self.assertEqual(3698262380L, hasher(self.data))
+        self.assertEqual(660137056, hasher(self.data, seed=3698262380L))
+
 class TestFNV1(TestHasher):        
     def testFNV1_32(self):
         hasher = fnv1_32()
