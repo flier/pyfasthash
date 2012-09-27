@@ -3,7 +3,7 @@
 #if defined(_MSC_VER)
   typedef unsigned char uint8_t;
   typedef unsigned short uint16_t;
-  typedef unsigned long uint32_t;
+  typedef unsigned int uint32_t;
   typedef unsigned __int64 uint64_t;  
 #else
   #include <stdint.h>     /* defines uint32_t etc */
