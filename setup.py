@@ -28,6 +28,9 @@ extra_compile_args = []
 extra_link_args = []
 
 if os.name == "nt":
+    import platform
+    is_64bit = platform.architecture()[0] == "64bit"
+
     macros += [
         ("WIN32", None),
     ]
@@ -41,7 +44,7 @@ if os.name == "nt":
     ]  
 
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
-    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF", "/MACHINE:X86"]
+    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF", "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
 elif os.name == "posix" and sys.platform == "darwin":
     libraries += ["boost_python-mt"]
 elif os.name == "posix":
@@ -59,7 +62,7 @@ pyhash = Extension(name="_pyhash",
 
 
 setup(name='pyhash',
-    version='0.4.1',
+    version='0.4.2',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library, including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, etc",
     platforms="x86",
