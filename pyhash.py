@@ -28,10 +28,12 @@ super_fast_hash = _pyhash.super_fast_hash
 import unittest
 import logging
 
+
 class TestHasher(unittest.TestCase):
     def setUp(self):
         self.data = 'test'
         self.udata = u'test'
+
 
 class TestFNV1(TestHasher):
     def testFNV1_32(self):
@@ -67,7 +69,8 @@ class TestFNV1(TestHasher):
         self.assertEqual(8858165303110309728L, hasher(self.data, self.data))
         
         self.assertEqual(14494269412771327550L, hasher(self.udata))
-            
+
+
 class TestMurMurHash2(TestHasher):
     def testMurMurHash1_32(self):
         hasher = murmur1_32()
@@ -141,6 +144,7 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(1351191292, hasher(self.udata))
 
+
 class TestLookup3(TestHasher):
     def testLookup3(self):
         hasher = lookup3()
@@ -149,7 +153,8 @@ class TestLookup3(TestHasher):
         self.assertEqual(478901866, hasher(self.data, self.data))
         
         self.assertEqual(1380664715, hasher(self.udata))
-            
+
+
 class TestSuperFastHash(TestHasher):
     def testSuperFastHash(self):
         hasher = super_fast_hash()

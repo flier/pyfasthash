@@ -4,7 +4,7 @@
   typedef unsigned char uint8_t;
   typedef unsigned short uint16_t;
   typedef unsigned int uint32_t;
-  typedef unsigned __int64 uint64_t;  
+  typedef unsigned __int64 uint64_t;
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 #endif
@@ -21,13 +21,13 @@ namespace internal
   template <>
   inline PyObject *convert(const int& value)
   {
-    return ::PyInt_FromLong(value);
+    return ::PyLong_FromLong(value);
   }
 
   template <>
   inline PyObject *convert(const unsigned int& value)
   {
-    return ::PyInt_FromSize_t(value);
+    return ::PyLong_FromSize_t(value);
   }
 
   template <>
@@ -60,8 +60,8 @@ class Hasher
 {
 protected:
   Hasher(void) {}
-public:  
-  virtual ~Hasher(void) {}  
+public:
+  virtual ~Hasher(void) {}
 
   static py::object CallWithArgs(py::tuple args, py::dict kwds);
 
@@ -85,10 +85,12 @@ T extract_hash_value(PyObject *obj)
   {
     value = PyLong_AsUnsignedLong(obj);
   }
+#if PY_MAJOR_VERSION < 3
   else if (PyInt_Check(obj))
   {
     value = PyInt_AsUnsignedLongMask(obj);
   }
+#endif
 
   return value;
 }
@@ -102,10 +104,12 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
   {
     value = PyLong_AsUnsignedLongLong(obj);
   }
+#if PY_MAJOR_VERSION < 3
   else if (PyInt_Check(obj))
   {
     value = PyInt_AsUnsignedLongLongMask(obj);
   }
+#endif
 
   return value;
 }
@@ -115,7 +119,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 {
   size_t argc = ::PyTuple_Size(args.ptr());
 
-  if (argc == 0) 
+  if (argc == 0)
   {
     ::PyErr_SetString(::PyExc_TypeError, "missed self argument");
     return py::object(py::handle<>(Py_None));
@@ -124,22 +128,23 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
   py::object self = args[0];
   py::extract<T&> extractor(self);
 
-  if (!extractor.check()) 
+  if (!extractor.check())
   {
     ::PyErr_SetString(::PyExc_TypeError, "wrong type of self argument");
     return py::object(py::handle<>(Py_None));
   }
 
   T& hasher = extractor();
-  py::list argv(args.slice(1, py::_));  
+  py::list argv(args.slice(1, py::_));
   py::object seed = kwds.get("seed", 0);
 
-  typename T::hash_value_t value = extract_hash_value<typename T::hash_value_t>(seed.ptr());  
+  typename T::hash_value_t value = extract_hash_value<typename T::hash_value_t>(seed.ptr());
 
   for (Py_ssize_t i=0; i<PyList_Size(argv.ptr()); i++)
   {
     py::object arg = argv[i];
 
+  #if PY_MAJOR_VERSION < 3
     if (PyString_CheckExact(arg.ptr()))
     {
       char *buf = NULL;
@@ -150,20 +155,32 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
         value = hasher(buf, len, value);
       }
     }
-    else if (PyUnicode_CheckExact(arg.ptr()))
+    else
+  #endif
+    if (PyUnicode_CheckExact(arg.ptr()))
     {
-    #ifdef Py_UNICODE_WIDE
+    #if PY_MAJOR_VERSION > 2
+    # ifdef Py_UNICODE_WIDE
+      Py_UCS4 *buf = PyUnicode_4BYTE_DATA(arg.ptr());
+    # else
+      Py_UCS2 *buf = PyUnicode_2BYTE_DATA(arg.ptr());
+    # endif
+      Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
+    #else
+    # ifdef Py_UNICODE_WIDE
       py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
 
       const char *buf = PyString_AS_STRING(utf16.ptr()) + 2; // skip the BOM
       Py_ssize_t len = PyString_GET_SIZE(utf16.ptr()) - 2;
-    #else
+    # else
       const char *buf = PyUnicode_AS_DATA(arg.ptr());
       Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
+    # endif
     #endif
 
       value = hasher((void *) buf, len, value);
     }
+  #if PY_MAJOR_VERSION < 2
     else if (PyBuffer_Check(arg.ptr()))
     {
       const void *buf = NULL;
@@ -174,6 +191,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
         value = hasher((void *) buf, len, value);
       }
     }
+  #endif
     else
     {
       ::PyErr_SetString(::PyExc_TypeError, "wrong type of argument");
