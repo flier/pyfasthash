@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, os
+from __future__ import unicode_literals
+
+import sys
 
 import _pyhash
 
@@ -31,7 +33,7 @@ import logging
 
 class TestHasher(unittest.TestCase):
     def setUp(self):
-        self.data = 'test'
+        self.data = b'test'
         self.udata = u'test'
 
 

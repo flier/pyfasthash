@@ -155,17 +155,30 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
         value = hasher(buf, len, value);
       }
     }
-    else
+  #else
+    if (PyBytes_Check(arg.ptr()))
+    {
+      char *buf = NULL;
+      Py_ssize_t len = 0;
+
+      if (0 == PyBytes_AsStringAndSize(arg.ptr(), &buf, &len))
+      {
+        value = hasher((void *) buf, len, value);
+      }
+    }
   #endif
-    if (PyUnicode_CheckExact(arg.ptr()))
+    else if (PyUnicode_CheckExact(arg.ptr()))
     {
     #if PY_MAJOR_VERSION > 2
     # ifdef Py_UNICODE_WIDE
-      Py_UCS4 *buf = PyUnicode_4BYTE_DATA(arg.ptr());
+      py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
+
+      Py_UCS2 *buf = PyUnicode_2BYTE_DATA(utf16.ptr()) + 2; // skip the BOM
+      Py_ssize_t len = PyUnicode_GET_LENGTH(utf16.ptr()) * 2 - 2;
     # else
       Py_UCS2 *buf = PyUnicode_2BYTE_DATA(arg.ptr());
+      Py_ssize_t len = PyUnicode_GET_LENGTH(arg.ptr()) * 2;
     # endif
-      Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
     #else
     # ifdef Py_UNICODE_WIDE
       py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
@@ -180,7 +193,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 
       value = hasher((void *) buf, len, value);
     }
-  #if PY_MAJOR_VERSION < 2
+  #if PY_MAJOR_VERSION < 3
     else if (PyBuffer_Check(arg.ptr()))
     {
       const void *buf = NULL;
