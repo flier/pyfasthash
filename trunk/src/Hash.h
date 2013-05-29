@@ -173,8 +173,13 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
     # ifdef Py_UNICODE_WIDE
       py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
 
-      Py_UCS2 *buf = PyUnicode_2BYTE_DATA(utf16.ptr()) + 2; // skip the BOM
-      Py_ssize_t len = PyUnicode_GET_LENGTH(utf16.ptr()) * 2 - 2;
+      char *buf = NULL;
+      Py_ssize_t len = 0;
+
+      int ret = PyBytes_AsStringAndSize(utf16.ptr(), &buf, &len);
+
+      buf += 2;
+      len -= 2;
     # else
       Py_UCS2 *buf = PyUnicode_2BYTE_DATA(arg.ptr());
       Py_ssize_t len = PyUnicode_GET_LENGTH(arg.ptr()) * 2;
