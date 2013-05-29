@@ -176,10 +176,11 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
       char *buf = NULL;
       Py_ssize_t len = 0;
 
-      int ret = PyBytes_AsStringAndSize(utf16.ptr(), &buf, &len);
-
-      buf += 2;
-      len -= 2;
+      if (0 == PyBytes_AsStringAndSize(utf16.ptr(), &buf, &len))
+      {
+        buf += 2;
+        len -= 2;
+      }
     # else
       Py_UCS2 *buf = PyUnicode_2BYTE_DATA(arg.ptr());
       Py_ssize_t len = PyUnicode_GET_LENGTH(arg.ptr()) * 2;
