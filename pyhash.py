@@ -20,6 +20,8 @@ murmur2_neutral_32 = _pyhash.murmur2_neutral_32
 murmur2_x64_64a = _pyhash.murmur2_x64_64a
 murmur2_x86_64b = _pyhash.murmur2_x86_64b
 murmur3_32 = _pyhash.murmur3_32
+murmur3_x86_128 = _pyhash.murmur3_x86_128
+murmur3_x64_128 = _pyhash.murmur3_x64_128
 
 lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.lookup3_big
 lookup3_little = _pyhash.lookup3_little
@@ -40,24 +42,24 @@ class TestHasher(unittest.TestCase):
 class TestFNV1(TestHasher):
     def testFNV1_32(self):
         hasher = fnv1_32()
-        
+
         self.assertEqual(3698262380L, hasher(self.data))
         self.assertEqual(660137056, hasher(self.data, self.data))
         self.assertEqual(660137056, hasher(self.data, seed=3698262380L))
-        
+
         self.assertEqual(3910690890L, hasher(self.udata))
 
     def testFNV1a_32(self):
         hasher = fnv1a_32()
-        
+
         self.assertEqual(1858026756, hasher(self.data))
         self.assertEqual(1357873952, hasher(self.data, self.data))
-        
+
         self.assertEqual(996945022, hasher(self.udata))
-        
+
     def testFNV1_64(self):
         hasher = fnv1_64()
-        
+
         self.assertEqual(17151984479173897804L, hasher(self.data))
         self.assertEqual(6349570372626520864L, hasher(self.data, self.data))
         self.assertEqual(6349570372626520864L, hasher(self.data, seed=17151984479173897804L))
@@ -66,10 +68,10 @@ class TestFNV1(TestHasher):
 
     def testFNV1a_64(self):
         hasher = fnv1a_64()
-        
+
         self.assertEqual(11830222609977404196L, hasher(self.data))
         self.assertEqual(8858165303110309728L, hasher(self.data, self.data))
-        
+
         self.assertEqual(14494269412771327550L, hasher(self.udata))
 
 
@@ -95,7 +97,7 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(403862830, hasher(self.data))
         self.assertEqual(1257009171, hasher(self.data, self.data))
-        
+
         self.assertEqual(2308212514L, hasher(self.udata))
 
     def testMurMurHash2a_32(self):
@@ -103,7 +105,7 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(1026673864, hasher(self.data))
         self.assertEqual(3640713775L, hasher(self.data, self.data))
-        
+
         self.assertEqual(3710634486L, hasher(self.udata))
 
     def testMurMurHash2Aligned32(self):
@@ -111,7 +113,7 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(403862830, hasher(self.data))
         self.assertEqual(1257009171, hasher(self.data, self.data))
-        
+
         self.assertEqual(2308212514L, hasher(self.udata))
 
     def testMurMurHash2Neutral32(self):
@@ -119,7 +121,7 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(403862830, hasher(self.data))
         self.assertEqual(1257009171, hasher(self.data, self.data))
-        
+
         self.assertEqual(2308212514L, hasher(self.udata))
 
     def testMurMurHash2_x64_64a(self):
@@ -146,6 +148,21 @@ class TestMurMurHash2(TestHasher):
 
         self.assertEqual(1351191292, hasher(self.udata))
 
+    def testMurMurHash3_x86_128(self):
+        hasher = murmur3_x86_128()
+
+        self.assertEqual(113049230771270950235709929058346397488L, hasher(self.data))
+        self.assertEqual(201730919445129814667855021331871906456L, hasher(self.data, self.data))
+
+        self.assertEqual(34467989874860051826961972957664456325L, hasher(self.udata))
+
+    def testMurMurHash3_x64_128(self):
+        hasher = murmur3_x64_128()
+
+        self.assertEqual(204797213367049729698754624420042367389L, hasher(self.data))
+        self.assertEqual(25000065729391260169145522623652811022L, hasher(self.data, self.data))
+
+        self.assertEqual(301054382688326301269845371608405900524L, hasher(self.udata))
 
 class TestLookup3(TestHasher):
     def testLookup3(self):
@@ -153,7 +170,7 @@ class TestLookup3(TestHasher):
 
         self.assertEqual(3188463954L, hasher(self.data))
         self.assertEqual(478901866, hasher(self.data, self.data))
-        
+
         self.assertEqual(1380664715, hasher(self.udata))
 
 
@@ -163,15 +180,15 @@ class TestSuperFastHash(TestHasher):
 
         self.assertEqual(942683319, hasher(self.data))
         self.assertEqual(777359542, hasher(self.data, self.data))
-        
+
         self.assertEqual(1430748046, hasher(self.udata))
-            
+
 if __name__ == '__main__':
     if "-v" in sys.argv:
         level = logging.DEBUG
     else:
         level = logging.WARN
-    
+
     logging.basicConfig(level=level, format='%(asctime)s %(levelname)s %(message)s')
-    
+
     unittest.main()
