@@ -171,11 +171,15 @@ class TestCityHash(TestHasher):
                     seed_hash=8806864191580960558L,
                     unicode_hash=7557950076747784205L)
 
+        self.assertFalse(hasattr(city_64, 'has_sse4_2'))
+
     def testCityHash128(self):
         self.doTest(hasher_type=city_128,
                     bytes_hash=195179989828428219998331619914059544201L,
                     seed_hash=206755929755292977387372217469167977636L,
                     unicode_hash=211596129097514838244042408160146499227L)
+
+        self.assertTrue(city_128.has_sse4_2, "support SSE 4.2")
 
 
 class TestSpookyHash(TestHasher):
