@@ -1,12 +1,18 @@
 #pragma once
 
 #if defined(_MSC_VER)
-  typedef unsigned char uint8_t;
-  typedef unsigned short uint16_t;
+  typedef int int32_t;
   typedef unsigned int uint32_t;
+  typedef __int64 int64_t;
   typedef unsigned __int64 uint64_t;
+
+  typedef struct {
+    uint64_t low, high;
+  } uint128_t;
 #else
   #include <stdint.h>     /* defines uint32_t etc */
+
+  typedef unsigned __int128 uint128_t;
 #endif
 
 #include <boost/python.hpp>
@@ -52,6 +58,12 @@ namespace internal
   inline PyObject *convert(const unsigned long long& value)
   {
     return ::PyLong_FromUnsignedLongLong(value);
+  }
+
+  template <>
+  inline PyObject *convert(const uint128_t& value)
+  {
+    return ::_PyLong_FromByteArray((const unsigned char*) &value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
   }
 }
 
