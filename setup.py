@@ -57,8 +57,10 @@ elif os.name == "posix" and sys.platform == "darwin":
         '/usr/local/include'
     ]
     libraries += ["boost_python-mt"]
+    extra_compile_args += ["-msse4.2"]
 elif os.name == "posix":
     libraries += ["boost_python", "rt"]
+    extra_compile_args += ["-msse4.2"]
 
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
