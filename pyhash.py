@@ -32,6 +32,10 @@ super_fast_hash = _pyhash.super_fast_hash
 city_64 = _pyhash.city_64
 city_128 = _pyhash.city_128
 
+spooky_32 = _pyhash.spooky_32
+spooky_64 = _pyhash.spooky_64
+spooky_128 = _pyhash.spooky_128
+
 import unittest
 import logging
 
@@ -172,6 +176,26 @@ class TestCityHash(TestHasher):
                     bytes_hash=195179989828428219998331619914059544201L,
                     seed_hash=206755929755292977387372217469167977636L,
                     unicode_hash=211596129097514838244042408160146499227L)
+
+
+class TestSpookyHash(TestHasher):
+    def testSpookyHash32(self):
+        self.doTest(hasher_type=spooky_32,
+                    bytes_hash=1882037601L,
+                    seed_hash=1324274298L,
+                    unicode_hash=2977967976L)
+
+    def testSpookyHash64(self):
+        self.doTest(hasher_type=spooky_64,
+                    bytes_hash=10130480990056717665L,
+                    seed_hash=1598355329892273278L,
+                    unicode_hash=4093159241144086376L)
+
+    def testSpookyHash128(self):
+        self.doTest(hasher_type=spooky_128,
+                    bytes_hash=241061513486538422840128476001680072033L,
+                    seed_hash=315901747311404831226315334184550174199L,
+                    unicode_hash=207554373952009549684886824908954283880L)
 
 if __name__ == '__main__':
     if "-v" in sys.argv:
