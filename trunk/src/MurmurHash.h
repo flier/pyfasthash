@@ -2,15 +2,15 @@
 
 #include "Hash.h"
 
-#include "MurmurHash/MurmurHash1.h"
-#include "MurmurHash/MurmurHash2.h"
-#include "MurmurHash/MurmurHash3.h"
+#include "smhasher/MurmurHash1.h"
+#include "smhasher/MurmurHash2.h"
+#include "smhasher/MurmurHash3.h"
 
 /**
  * http://code.google.com/p/smhasher/
  */
 
-enum murmur_hash_type
+enum murmur_hash_t
 {
   murmur_hash1,
   murmur_hash1_aligned,
@@ -25,7 +25,7 @@ enum murmur_hash_type
   murmur_hash3_x64_128
 };
 
-template <typename T, typename S, murmur_hash_type TYPE>
+template <typename T, typename S, murmur_hash_t TYPE>
 class murmur_t : public Hasher< murmur_t<T, S, TYPE> >
 {
 public:

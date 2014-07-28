@@ -9,10 +9,16 @@
   typedef struct {
     uint64_t low, high;
   } uint128_t;
+
+  #define U128_LO(v) (v.low)
+  #define U128_HI(v) (v.high)
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 
   typedef unsigned __int128 uint128_t;
+
+  #define U128_LO(v) (v >> 64)
+  #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
 #endif
 
 #include <boost/python.hpp>
@@ -103,6 +109,10 @@ T extract_hash_value(PyObject *obj)
     value = PyInt_AsUnsignedLongMask(obj);
   }
 #endif
+  else
+  {
+    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `int` or `long`");
+  }
 
   return value;
 }
@@ -122,6 +132,27 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
     value = PyInt_AsUnsignedLongLongMask(obj);
   }
 #endif
+  else
+  {
+    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `int` or `long`");
+  }
+
+  return value;
+}
+
+template<>
+uint128_t extract_hash_value<uint128_t>(PyObject *obj)
+{
+  uint128_t value = { 0 };
+
+  if (PyLong_Check(obj))
+  {
+    _PyLong_AsByteArray((PyLongObject *)obj, (unsigned char *) &value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+  }
+  else
+  {
+    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `long`");
+  }
 
   return value;
 }
@@ -148,9 +179,10 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 
   T& hasher = extractor();
   py::list argv(args.slice(1, py::_));
-  py::object seed = kwds.get("seed", 0);
 
-  typename T::hash_value_t value = extract_hash_value<typename T::hash_value_t>(seed.ptr());
+  typename T::hash_value_t value = {0};
+
+  if (kwds.has_key("seed")) value = extract_hash_value<typename T::hash_value_t>(kwds.get("seed").ptr());
 
   for (Py_ssize_t i=0; i<PyList_Size(argv.ptr()); i++)
   {

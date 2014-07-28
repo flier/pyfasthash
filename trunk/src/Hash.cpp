@@ -4,6 +4,7 @@
 #include "MurmurHash.h"
 #include "Lookup3.h"
 #include "SuperFastHash.h"
+#include "CityHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -28,4 +29,7 @@ BOOST_PYTHON_MODULE(_pyhash)
   lookup3_big_t::Export("lookup3_big");
 
   super_fast_hash_t::Export("super_fast_hash");
+
+  city_hash_64_t::Export("city_64");
+  city_hash_128_t::Export("city_128");
 }
