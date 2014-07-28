@@ -5,6 +5,7 @@
 #include "Lookup3.h"
 #include "SuperFastHash.h"
 #include "CityHash.h"
+#include "SpookyHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -32,4 +33,8 @@ BOOST_PYTHON_MODULE(_pyhash)
 
   city_hash_64_t::Export("city_64");
   city_hash_128_t::Export("city_128");
+
+  spooky_hash_32_t::Export("spooky_32");
+  spooky_hash_64_t::Export("spooky_64");
+  spooky_hash_128_t::Export("spooky_128");
 }

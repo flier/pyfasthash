@@ -12,6 +12,8 @@
 
   #define U128_LO(v) (v.low)
   #define U128_HI(v) (v.high)
+
+  #define U128_NEW(LO, HI) { .low = LO, .high = HI}
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 
@@ -19,6 +21,8 @@
 
   #define U128_LO(v) (v >> 64)
   #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
+
+  #define U128_NEW(LO, HI) ((((uint128_t) HI) << 64) + LO)
 #endif
 
 #include <boost/python.hpp>
