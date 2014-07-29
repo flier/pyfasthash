@@ -63,8 +63,9 @@ elif os.name == "posix":
     extra_compile_args += ["-msse4.2"]
 
 if os.getenv('TRAVIS') == 'true':
-    os.link('/usr/lib/libboost_python.so',
-            '/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor))
+    os.remove('/usr/lib/libboost_python.so')
+    os.symlink('/usr/lib/libboost_python.so',
+              '/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor))
 
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
