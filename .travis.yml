@@ -1,6 +1,8 @@
 language: python
 python:
+  - "3.4"
   - "3.3"
+  - "3.2"
   - "2.7"
   - "2.6"
 before_install:
@@ -12,4 +14,4 @@ before_script:
   - rm -rf src/smhasher
   - svn checkout http://smhasher.googlecode.com/svn/trunk/ src/smhasher
 script:
-  - python setup.py test
+  - sudo python setup.py test
