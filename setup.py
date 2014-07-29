@@ -62,7 +62,7 @@ elif os.name == "posix":
     libraries += ["boost_python", "rt"]
     extra_compile_args += ["-msse4.2"]
 
-if sys.getenv('TRAVIS') == 'true':
+if os.getenv('TRAVIS') == 'true':
     os.link('/usr/lib/libboost_python.so',
             '/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor))
 
