@@ -19,12 +19,12 @@ $sudo easy_install pyhash
 ```
 pyhash support the following hash algorithms
 
-* FNV (Fowler-Noll-Vo) hash
+* [FNV](http://isthe.com/chongo/tech/comp/fnv/) (Fowler-Noll-Vo) hash
   - fnv1_32
   - fnv1a_32
   - fnv1_64
   - fnv1a_64
-* MurmurHash 1/2/3
+* [MurmurHash](http://code.google.com/p/smhasher/) 1/2/3
   - murmur1_32
   - murmur1_aligned_32
   - murmur2_32
@@ -36,16 +36,16 @@ pyhash support the following hash algorithms
   - murmur3_32
   - murmur3_x86_128 *NEW!*
   - murmur3_x64_128 *NEW!*
-* lookup3
+* [lookup3](http://burtleburtle.net/bob/hash/doobs.html)
   - lookup3 # base on sys.byteorder
   - lookup3_little
   - lookup3_big
-* SuperFastHash
+* [SuperFastHash](http://www.azillionmonkeys.com/qed/hash.html)
   - super_fast_hash
-* City Hash RECOMMENDED
+* [City Hash](https://code.google.com/p/cityhash/) *RECOMMENDED*
   - city_64 *NEW!*
   - city_128 *NEW!* **build with SSE 4.2 supports**
-* Spooky Hash
+* [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - spooky_32 *NEW!*
   - spooky_64 *NEW!*
   - spooky_128 *NEW!*
