@@ -1,4 +1,4 @@
-![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)
+[![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)](https://travis-ci.org/flier/pyfasthash)
 
   pyhash is a python non-cryptographic hash library. It provide several common hash algorithms with C/C++ implementation for performance.
 
