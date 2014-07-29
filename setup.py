@@ -64,8 +64,8 @@ elif os.name == "posix":
 
 if os.getenv('TRAVIS') == 'true':
     os.remove('/usr/lib/libboost_python.so')
-    os.symlink('/usr/lib/libboost_python.so',
-              '/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor))
+    os.symlink('/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor),
+               '/usr/lib/libboost_python.so')
 
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
