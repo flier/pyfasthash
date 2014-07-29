@@ -18,10 +18,20 @@ script:
 - sudo python setup.py test
 - sudo python setup.py sdist bdist
 deploy:
+  - provider: releases
+    api_key:
+      secure: ToYiWDZVLRIXArdeo8SANYlgcontxCODh8g4CuCVpz26KuIQ9HttDN0ENF+5JrRmVVo6dA3P9WjRh210uLqoldA07lTieNJrwo5ubD40TVlvCdylOvwm2Pm7oF59ws19GohA04ZUAAlJMqryeA2XgENg1x1av8wALUtmi9dNwH8=
+    file: /dist/pyhash-.*\.tar\.gz$/
+    skip_cleanup: true
+    on:
+      tags: true
+      all_branches: true
+      repo: flier/pyfasthash
   - provider: pypi
     user: flier
     password:
       secure: MzQkLw7nm0B/4MOpaAQwzMLDPLEpTh3vfzqL4KVHV61sY8O1X7KTB2AdC7PvZcufviogBAMQF1lGjSuY/xGOBlkbrco0dqjPdBpaGq1w592gsA3D1y4tNJvFQrhkIKhxSjw7hM1PxThYtkDXlEfFprc5NopJ6oq0IZvEcgqgiz4=
+    skip_cleanup: true
     on:
       tags: true
       repo: flier/pyfasthash
