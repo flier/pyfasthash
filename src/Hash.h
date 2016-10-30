@@ -1,5 +1,9 @@
 #pragma once
 
+#include <boost/python.hpp>
+#include <boost/python/raw_function.hpp>
+namespace py = boost::python;
+
 #if defined(_MSC_VER)
   typedef int int32_t;
   typedef unsigned int uint32_t;
@@ -17,17 +21,13 @@
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 
-  typedef unsigned __int128 uint128_t;
+  typedef boost::uint128_type uint128_t;
 
   #define U128_LO(v) (v >> 64)
   #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
 
   #define U128_NEW(LO, HI) ((((uint128_t) HI) << 64) + LO)
 #endif
-
-#include <boost/python.hpp>
-#include <boost/python/raw_function.hpp>
-namespace py = boost::python;
 
 namespace internal
 {
