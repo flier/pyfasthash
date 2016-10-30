@@ -262,7 +262,10 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
     else
     {
       ::PyErr_SetString(::PyExc_TypeError, "wrong type of argument");
-      return py::object(py::handle<>(Py_None));
+
+      py::throw_error_already_set();
+
+      return py::object();
     }
   }
 

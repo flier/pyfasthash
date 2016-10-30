@@ -201,6 +201,27 @@ class TestSpookyHash(TestHasher):
                     seed_hash=315901747311404831226315334184550174199L,
                     unicode_hash=207554373952009549684886824908954283880L)
 
+
+class TestIssues(unittest.TestCase):
+    # https://github.com/flier/pyfasthash/issues/3
+    def testErrorReturnNone(self):
+        h = fnv1_64()
+
+        old_refcnt = sys.getrefcount(None)
+
+        for i in range(10000):
+            try:
+                h(None)
+
+                self.fail("fail to raise exception")
+            except TypeError as ex:
+                pass
+
+        new_refcnt = sys.getrefcount(None)
+
+        self.assertEquals(old_refcnt, new_refcnt+1)
+
+
 if __name__ == '__main__':
     if "-v" in sys.argv:
         level = logging.DEBUG
