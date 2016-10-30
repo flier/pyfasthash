@@ -108,5 +108,8 @@ setup(name='pyhash',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities'
     ],
+    install_requires=[
+        'setuptools >= 5.4.1',
+    ],
     test_suite='pyhash',
     use_2to3=True)
