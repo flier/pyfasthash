@@ -21,7 +21,11 @@ namespace py = boost::python;
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 
+#ifdef BOOST_HAS_INT128
   typedef boost::uint128_type uint128_t;
+#else
+  typedef unsigned __int128 uint128_t;
+#endif
 
   #define U128_LO(v) (v >> 64)
   #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
