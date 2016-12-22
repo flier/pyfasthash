@@ -42,6 +42,15 @@ farm_32 = _pyhash.farm_32
 farm_64 = _pyhash.farm_64
 farm_128 = _pyhash.farm_128
 
+metro_64 = metro_64_1 = _pyhash.metro_64_1
+metro_64_2 = _pyhash.metro_64_2
+metro_128 = metro_128_1 = _pyhash.metro_128_1
+metro_128_2 = _pyhash.metro_128_2
+metro_crc_64 = metro_crc_64_1 = _pyhash.metro_64_crc_1
+metro_crc_64_2 = _pyhash.metro_64_crc_2
+metro_crc_128 = metro_crc_128_1 = _pyhash.metro_128_crc_1
+metro_crc_128_2 = _pyhash.metro_128_crc_2
+
 import unittest
 import logging
 
@@ -237,6 +246,54 @@ class TestFarmHash(TestHasher):
                     seed_hash=49442029837562385903494085441886302499L,
                     unicode_hash=251662992469041432568516527017706898625L)
 
+class TestMetroHash(TestHasher):
+    def testMetroHash64_1(self):
+        self.doTest(hasher_type=metro_64_1,
+                    bytes_hash=7555593383206836236L,
+                    seed_hash=9613011798576657330L,
+                    unicode_hash=5634638029758084150L)
+
+    def testMetroHash128_1(self):
+        self.doTest(hasher_type=metro_128_1,
+                    bytes_hash=310240039238111093048322555259813357218L,
+                    seed_hash=330324289553816260191102680044286377986L,
+                    unicode_hash=160639312567243412360084738183177128736L)
+
+    def testMetroHash64_2(self):
+        self.doTest(hasher_type=metro_64_2,
+                    bytes_hash=13328239478646503906L,
+                    seed_hash=16521803336796657060L,
+                    unicode_hash=5992985172783395072L)
+
+    def testMetroHash128_2(self):
+        self.doTest(hasher_type=metro_128_2,
+                    bytes_hash=308979041176504703647272401075625691044L,
+                    seed_hash=156408679042779357342816971045969684594L,
+                    unicode_hash=169904568621124891123383613748925830588L)
+
+    def testMetroHashCrc64_1(self):
+        self.doTest(hasher_type=metro_crc_64_1,
+                    bytes_hash=6872506084457499713L,
+                    seed_hash=14064239385324957326L,
+                    unicode_hash=5634638029758084150L)
+
+    def testMetroHashCrc128_1(self):
+        self.doTest(hasher_type=metro_crc_128_1,
+                    bytes_hash=44856800307026421677415827141042094245L,
+                    seed_hash=199990471895323666720887863107514038076L,
+                    unicode_hash=53052528140813423722778028047086277728L)
+
+    def testMetroHashCrc64_2(self):
+        self.doTest(hasher_type=metro_crc_64_2,
+                    bytes_hash=9168163846307153532L,
+                    seed_hash=11235719994915751828L,
+                    unicode_hash=15697829093445668111L)
+
+    def testMetroHashCrc128_2(self):
+        self.doTest(hasher_type=metro_crc_128_2,
+                    bytes_hash=29039398407115405218669555123781288008L,
+                    seed_hash=26197404070933777589488526163359489061L,
+                    unicode_hash=136212167639765185451107230087801381416L)
 
 class TestIssues(unittest.TestCase):
     # https://github.com/flier/pyfasthash/issues/3
@@ -255,7 +312,7 @@ class TestIssues(unittest.TestCase):
 
         new_refcnt = sys.getrefcount(None)
 
-        self.assertEquals(old_refcnt, new_refcnt+1)
+        self.assertTrue(old_refcnt >= new_refcnt+1)
 
 
 if __name__ == '__main__':

@@ -7,6 +7,7 @@
 #include "CityHash.h"
 #include "SpookyHash.h"
 #include "FarmHash.h"
+#include "MetroHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -44,4 +45,14 @@ BOOST_PYTHON_MODULE(_pyhash)
   farm_hash_32_t::Export("farm_32");
   farm_hash_64_t::Export("farm_64");
   farm_hash_128_t::Export("farm_128");
+
+  metro_hash_64_1_t::Export("metro_64_1");
+  metro_hash_64_2_t::Export("metro_64_2");
+  metro_hash_128_1_t::Export("metro_128_1");
+  metro_hash_128_2_t::Export("metro_128_2");
+
+  metro_hash_64_crc_1_t::Export("metro_64_crc_1");
+  metro_hash_64_crc_2_t::Export("metro_64_crc_2");
+  metro_hash_128_crc_1_t::Export("metro_128_crc_1");
+  metro_hash_128_crc_2_t::Export("metro_128_crc_2");
 }

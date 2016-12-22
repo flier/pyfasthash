@@ -11,7 +11,8 @@ from setuptools import setup, Extension
 
 libraries = {
     'fnv': ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
-    'smhasher': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp', 'City.cpp', 'Spooky.cpp', 'farmhash-c.c'],
+    'smhasher': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp', 'City.cpp', 'Spooky.cpp', 'farmhash-c.c',
+                 'metrohash64.cpp', 'metrohash64crc.cpp', 'metrohash128.cpp', 'metrohash128crc.cpp'],
     #'MurmurHash': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp'],
     #'cityhash': ['src/City.cc'],
     'lookup3': ['lookup3.c'],
