@@ -1,6 +1,9 @@
+.idea
 build
 dist
 pyhash.egg-info
 
 setuptools*
 *.pyc
+*.pyd
+*.so
