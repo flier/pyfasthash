@@ -21,7 +21,7 @@ namespace py = boost::python;
   #define U128_LO(v) (v >> 64)
   #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
 
-  #define U128_NEW(V, LO, HI) uint128_t V = ((((uint128_t) HI) << 64) + LO)
+  #define U128_NEW(LO, HI) ((((uint128_t) HI) << 64) + LO)
 #endif
 
 namespace internal
