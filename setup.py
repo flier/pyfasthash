@@ -81,10 +81,10 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-    version='0.6.3',
+    version='0.7',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library, "
-                     "including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, CityHash, SpookyHash etc",
+                     "including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, CityHash, SpookyHash, FarmHash, MetroHash etc",
     platforms=["x86", "x64"],
     author='Flier Lu',
     author_email='flier.lu@gmail.com',
