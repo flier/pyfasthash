@@ -31,6 +31,7 @@ super_fast_hash = _pyhash.super_fast_hash
 
 city_64 = _pyhash.city_64
 city_128 = _pyhash.city_128
+city_crc_128 = _pyhash.city_crc_128
 
 spooky_32 = _pyhash.spooky_32
 spooky_64 = _pyhash.spooky_64
@@ -181,6 +182,11 @@ class TestCityHash(TestHasher):
 
         self.assertTrue(city_128.has_sse4_2, "support SSE 4.2")
 
+    def testCityHashCrc128(self):
+        self.doTest(hasher_type=city_crc_128,
+                    bytes_hash=195179989828428219998331619914059544201L,
+                    seed_hash=206755929755292977387372217469167977636L,
+                    unicode_hash=211596129097514838244042408160146499227L)
 
 class TestSpookyHash(TestHasher):
     def testSpookyHash32(self):
