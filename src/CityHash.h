@@ -33,8 +33,15 @@ bool city_hash_t<T>::has_sse4_2 = false;
 
 #endif
 
+typedef city_hash_t<uint32_t> city_hash_32_t;
 typedef city_hash_t<uint64_t> city_hash_64_t;
 typedef city_hash_t<uint128_t> city_hash_128_t;
+
+template<>
+const uint32_t city_hash_t<uint32_t>::operator()(void *buf, size_t len, uint32_t seed) const
+{
+    return CityHash32WithSeed((const char *) buf, len, seed);
+}
 
 template<>
 const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t seed) const

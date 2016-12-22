@@ -31,6 +31,7 @@ BOOST_PYTHON_MODULE(_pyhash)
 
   super_fast_hash_t::Export("super_fast_hash");
 
+  city_hash_32_t::Export("city_32");
   city_hash_64_t::Export("city_64");
   city_hash_128_t::Export("city_128");
   city_hash_crc_128_t::Export("city_crc_128");

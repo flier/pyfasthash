@@ -29,6 +29,7 @@ lookup3_big = _pyhash.lookup3_big
 
 super_fast_hash = _pyhash.super_fast_hash
 
+city_32 = _pyhash.city_32
 city_64 = _pyhash.city_64
 city_128 = _pyhash.city_128
 city_crc_128 = _pyhash.city_crc_128
@@ -166,6 +167,12 @@ class TestSuperFastHash(TestHasher):
 
 
 class TestCityHash(TestHasher):
+    def testCityHash32(self):
+        self.doTest(hasher_type=city_32,
+                    bytes_hash=1633095781L,
+                    seed_hash=3687200064L,
+                    unicode_hash=3574089775L)
+
     def testCityHash64(self):
         self.doTest(hasher_type=city_64,
                     bytes_hash=17703940110308125106L,
