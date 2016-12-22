@@ -49,9 +49,7 @@ const uint128_t spooky_hash_t<uint128_t>::operator()(void *buf, size_t len, uint
 
 	SpookyHash::Hash128(buf, len, &lo, &hi);
 
-	U128_NEW(value, lo, hi);
-
-	return value;
+	return U128_NEW(lo, hi);
 }
 
 #endif
