@@ -38,6 +38,10 @@ spooky_32 = _pyhash.spooky_32
 spooky_64 = _pyhash.spooky_64
 spooky_128 = _pyhash.spooky_128
 
+farm_32 = _pyhash.farm_32
+farm_64 = _pyhash.farm_64
+farm_128 = _pyhash.farm_128
+
 import unittest
 import logging
 
@@ -213,6 +217,25 @@ class TestSpookyHash(TestHasher):
                     bytes_hash=241061513486538422840128476001680072033L,
                     seed_hash=315901747311404831226315334184550174199L,
                     unicode_hash=207554373952009549684886824908954283880L)
+
+class TestFarmHash(TestHasher):
+    def testFarmHash32(self):
+        self.doTest(hasher_type=farm_32,
+                    bytes_hash=1633095781L,
+                    seed_hash=3687200064L,
+                    unicode_hash=3574089775L)
+
+    def testFarmHash64(self):
+        self.doTest(hasher_type=farm_64,
+                    bytes_hash=8581389452482819506L,
+                    seed_hash=10025340881295800991L,
+                    unicode_hash=7274603073818924232L)
+
+    def testFarmHash128(self):
+        self.doTest(hasher_type=farm_128,
+                    bytes_hash=334882099032867325754781607143811124132L,
+                    seed_hash=49442029837562385903494085441886302499L,
+                    unicode_hash=251662992469041432568516527017706898625L)
 
 
 class TestIssues(unittest.TestCase):

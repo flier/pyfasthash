@@ -6,6 +6,7 @@
 #include "SuperFastHash.h"
 #include "CityHash.h"
 #include "SpookyHash.h"
+#include "FarmHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -39,4 +40,8 @@ BOOST_PYTHON_MODULE(_pyhash)
   spooky_hash_32_t::Export("spooky_32");
   spooky_hash_64_t::Export("spooky_64");
   spooky_hash_128_t::Export("spooky_128");
+
+  farm_hash_32_t::Export("farm_32");
+  farm_hash_64_t::Export("farm_64");
+  farm_hash_128_t::Export("farm_128");
 }
