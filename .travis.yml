@@ -13,9 +13,7 @@ before_install:
 install:
 - pip install -r requirements.txt
 before_script:
-- rm -rf src/smhasher/*
-- git clone https://github.com/aappleby/smhasher.git
-- mv smhasher/src/* src/smhasher/
+- git submodule update --remote
 script:
 - sudo python setup.py test
 - sudo python setup.py sdist bdist
