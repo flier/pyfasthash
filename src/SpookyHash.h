@@ -38,7 +38,8 @@ const uint64_t spooky_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64
 	return SpookyHash::Hash64(buf, len, seed);
 }
 
-#ifndef _MSC_VER
+#ifdef BOOST_HAS_INT128
+
 typedef spooky_hash_t<uint128_t> spooky_hash_128_t;
 
 template<>

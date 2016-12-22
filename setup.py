@@ -11,12 +11,16 @@ from setuptools import setup, Extension
 
 libraries = {
     'fnv': ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
-    'smhasher': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp', 'City.cpp', 'Spooky.cpp'],
+    'smhasher': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp', 'City.cpp', 'Spooky.cpp', 
+                 'metrohash64.cpp', 'metrohash64crc.cpp', 'metrohash128.cpp', 'metrohash128crc.cpp'],
     #'MurmurHash': ['MurmurHash1.cpp', 'MurmurHash2.cpp', 'MurmurHash3.cpp'],
     #'cityhash': ['src/City.cc'],
     'lookup3': ['lookup3.c'],
     'SuperFastHash': ['SuperFastHash.c'],
 }
+
+if os.name != "nt":
+    libraries['smhasher'].append('farmhash-c.c')
 
 source_files = [os.path.join('src', filename) for filename in ['Hash.cpp']]
 
@@ -80,10 +84,10 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-    version='0.6.3',
+    version='0.7',
     description='Python Non-cryptographic Hash Library',
     long_description="pyhash is a python non-cryptographic hash library, "
-                     "including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, CityHash, SpookyHash etc",
+                     "including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, CityHash, SpookyHash, FarmHash, MetroHash etc",
     platforms=["x86", "x64"],
     author='Flier Lu',
     author_email='flier.lu@gmail.com',

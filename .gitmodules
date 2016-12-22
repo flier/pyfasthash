@@ -1,0 +1,3 @@
+[submodule "src/smhasher"]
+	path = src/smhasher
+	url = https://github.com/rurban/smhasher.git

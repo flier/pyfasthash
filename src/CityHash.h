@@ -33,7 +33,14 @@ bool city_hash_t<T>::has_sse4_2 = false;
 
 #endif
 
+typedef city_hash_t<uint32_t> city_hash_32_t;
 typedef city_hash_t<uint64_t> city_hash_64_t;
+
+template<>
+const uint32_t city_hash_t<uint32_t>::operator()(void *buf, size_t len, uint32_t seed) const
+{
+    return CityHash32WithSeed((const char *) buf, len, seed);
+}
 
 template<>
 const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t seed) const
@@ -45,7 +52,7 @@ const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t
 	}
 }
 
-#ifndef _MSC_VER
+#ifdef BOOST_HAS_INT128
 
 typedef city_hash_t<uint128_t> city_hash_128_t;
 
@@ -81,6 +88,32 @@ const uint128_t city_hash_t<uint128_t>::operator()(void *buf, size_t len, uint12
 
 #if defined(__SSE4_2__) && defined(__x86_64__)
 
+template <typename T>
+struct city_hash_crc_t : public Hasher< city_hash_crc_t<T> >
+{
+  city_hash_crc_t() {}
+
+  typedef T hash_value_t;
+
+  const hash_value_t operator()(void *buf, size_t len, hash_value_t seed) const;
+};
+
+typedef city_hash_crc_t<uint128_t> city_hash_crc_128_t;
+
+template<>
+const uint128_t city_hash_crc_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
+{
+    if (seed) {
+        const uint128& hash = CityHashCrc128WithSeed((const char *) buf, len, std::make_pair(U128_LO(seed), U128_HI(seed)));
+
+        return *(uint128_t *)&hash;
+    } else {
+        const uint128& hash = CityHashCrc128((const char *) buf, len);
+
+        return *(uint128_t *)&hash;
+    }
+}
+
 bool support_sse4_2(void)
 {
 	unsigned cpuinfo[4] = { 0 };
@@ -110,7 +143,7 @@ bool support_sse4_2(void)
 	return cpuinfo[2] & (1 << 20);
 }
 
-#ifndef _MSC_VER
+#ifdef BOOST_HAS_INT128
 
 template <>
 inline void Hasher<city_hash_128_t>::Export(const char *name)
@@ -120,6 +153,14 @@ inline void Hasher<city_hash_128_t>::Export(const char *name)
   py::class_<city_hash_128_t, boost::noncopyable>(name, py::init<>())
   	.def_readonly("has_sse4_2", city_hash_128_t::has_sse4_2)
     .def("__call__", py::raw_function(&city_hash_128_t::CallWithArgs))
+    ;
+}
+
+template <>
+inline void Hasher<city_hash_crc_128_t>::Export(const char *name)
+{
+  py::class_<city_hash_crc_128_t, boost::noncopyable>(name, py::init<>())
+    .def("__call__", py::raw_function(&city_hash_crc_128_t::CallWithArgs))
     ;
 }
 

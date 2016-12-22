@@ -17,6 +17,6 @@ public:
 
   inline hash_value_t operator()(void *buf, size_t len, hash_value_t val) const
   {
-    return SuperFastHash((const char *) buf, len, val);
+    return SuperFastHash((const char *) buf, (int) len, val);
   }
 };

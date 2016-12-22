@@ -49,9 +49,20 @@ pyhash support the following hash algorithms
 * [SuperFastHash](http://www.azillionmonkeys.com/qed/hash.html)
   - super_fast_hash
 * [City Hash](https://code.google.com/p/cityhash/) **RECOMMENDED**
-  - city_64 **NEW!**
-  - city_128 **NEW!** *build with SSE 4.2 supports*
+  _ city_32 **NEW!**
+  - city_64
+  - city_128
+  - city_crc_128 **NEW!**
 * [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
-  - spooky_32 **NEW!**
-  - spooky_64 **NEW!**
-  - spooky_128 **NEW!**
+  - spooky_32
+  - spooky_64
+  - spooky_128
+* [FarmHash](https://github.com/google/farmhash)
+  - farm_32 **NEW!**
+  - farm_64 **NEW!**
+  - farm_128 **NEW!**
+* [MetroHash](https://github.com/jandrewrogers/MetroHash)
+  - metro_64 **NEW!**
+  - metro_128 **NEW!**
+  - metro_crc_64 **NEW!**
+  - metro_crc_128 **NEW!**
