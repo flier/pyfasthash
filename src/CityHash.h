@@ -2,7 +2,7 @@
 
 #include "Hash.h"
 
-#include "smhasher/src/City.h"
+#include "smhasher/City.h"
 
 /**
 
