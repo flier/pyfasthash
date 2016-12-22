@@ -20,8 +20,8 @@ murmur2_neutral_32 = _pyhash.murmur2_neutral_32
 murmur2_x64_64a = _pyhash.murmur2_x64_64a
 murmur2_x86_64b = _pyhash.murmur2_x86_64b
 murmur3_32 = _pyhash.murmur3_32
-murmur3_x86_128 = _pyhash.murmur3_x86_128
-murmur3_x64_128 = _pyhash.murmur3_x64_128
+murmur3_x86_128 = _pyhash.__dict__.get('murmur3_x86_128')
+murmur3_x64_128 = _pyhash.__dict__.get('murmur3_x64_128')
 
 lookup3 = _pyhash.lookup3_little if sys.byteorder == 'little' else _pyhash.lookup3_big
 lookup3_little = _pyhash.lookup3_little
@@ -31,25 +31,25 @@ super_fast_hash = _pyhash.super_fast_hash
 
 city_32 = _pyhash.city_32
 city_64 = _pyhash.city_64
-city_128 = _pyhash.city_128
-city_crc_128 = _pyhash.city_crc_128
+city_128 = _pyhash.__dict__.get('city_128')
+city_crc_128 = _pyhash.__dict__.get('city_crc_128')
 
 spooky_32 = _pyhash.spooky_32
 spooky_64 = _pyhash.spooky_64
-spooky_128 = _pyhash.spooky_128
+spooky_128 = _pyhash.__dict__.get('spooky_128')
 
-farm_32 = _pyhash.farm_32
-farm_64 = _pyhash.farm_64
-farm_128 = _pyhash.farm_128
+farm_32 = _pyhash.__dict__.get('farm_32')
+farm_64 = _pyhash.__dict__.get('farm_64')
+farm_128 = _pyhash.__dict__.get('farm_128')
 
 metro_64 = metro_64_1 = _pyhash.metro_64_1
 metro_64_2 = _pyhash.metro_64_2
-metro_128 = metro_128_1 = _pyhash.metro_128_1
-metro_128_2 = _pyhash.metro_128_2
+metro_128 = metro_128_1 = _pyhash.__dict__.get('metro_128_1')
+metro_128_2 = _pyhash.__dict__.get('metro_128_2')
 metro_crc_64 = metro_crc_64_1 = _pyhash.metro_64_crc_1
 metro_crc_64_2 = _pyhash.metro_64_crc_2
-metro_crc_128 = metro_crc_128_1 = _pyhash.metro_128_crc_1
-metro_crc_128_2 = _pyhash.metro_128_crc_2
+metro_crc_128 = metro_crc_128_1 = _pyhash.__dict__.get('metro_128_crc_1')
+metro_crc_128_2 = _pyhash.__dict__.get('metro_128_crc_2')
 
 import unittest
 import logging
@@ -60,15 +60,16 @@ class TestHasher(unittest.TestCase):
         self.udata = u'test'
 
     def doTest(self, hasher_type, bytes_hash, seed_hash, unicode_hash):
-        hasher = hasher_type()
+        if hasher_type:
+            hasher = hasher_type()
 
-        self.assertEqual(bytes_hash, hasher(self.data))
+            self.assertEqual(bytes_hash, hasher(self.data))
 
-        self.assertEqual(seed_hash, hasher(self.data, seed=bytes_hash))
+            self.assertEqual(seed_hash, hasher(self.data, seed=bytes_hash))
 
-        self.assertEqual(seed_hash, hasher(self.data, self.data))
+            self.assertEqual(seed_hash, hasher(self.data, self.data))
 
-        self.assertEqual(unicode_hash, hasher(self.udata))
+            self.assertEqual(unicode_hash, hasher(self.udata))
 
 class TestFNV1(TestHasher):
     def testFNV1_32(self):
@@ -200,7 +201,8 @@ class TestCityHash(TestHasher):
                     seed_hash=206755929755292977387372217469167977636L,
                     unicode_hash=211596129097514838244042408160146499227L)
 
-        self.assertTrue(city_128.has_sse4_2, "support SSE 4.2")
+        if hasattr(city_128, 'has_sse4_2'):
+            self.assertTrue(city_128.has_sse4_2, "support SSE 4.2")
 
     def testCityHashCrc128(self):
         self.doTest(hasher_type=city_crc_128,
