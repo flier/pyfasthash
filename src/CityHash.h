@@ -52,7 +52,7 @@ const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t
 	}
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 
 typedef city_hash_t<uint128_t> city_hash_128_t;
 
@@ -143,7 +143,7 @@ bool support_sse4_2(void)
 	return cpuinfo[2] & (1 << 20);
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 
 template <>
 inline void Hasher<city_hash_128_t>::Export(const char *name)

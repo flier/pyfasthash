@@ -36,6 +36,9 @@ libraries = []
 extra_compile_args = []
 extra_link_args = []
 
+if os.name != "nt":
+    extra_compile_args += ["-DSUPPORT_INT128=1"]
+
 if os.name == "nt":
     import platform
     is_64bit = platform.architecture()[0] == "64bit"

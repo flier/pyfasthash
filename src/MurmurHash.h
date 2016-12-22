@@ -47,7 +47,7 @@ typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x64_64a> murmur2_x64_64a_t;
 typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x86_64b> murmur2_x86_64b_t;
 typedef murmur_t<uint32_t, uint32_t, murmur_hash3_32> murmur3_32_t;
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x86_128> murmur3_x86_128_t;
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x64_128> murmur3_x64_128_t;
 #endif
@@ -110,7 +110,7 @@ inline const uint32_t murmur_t<uint32_t, uint32_t, murmur_hash3_32>::operator()(
   return hash;
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 
 template <>
 inline const uint128_t murmur_t<uint128_t, uint32_t, murmur_hash3_x86_128>::operator()(void *buf, size_t len, unsigned int val) const

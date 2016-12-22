@@ -25,7 +25,7 @@ public:
 
 typedef metro_hash_t<uint64_t, 1> metro_hash_64_1_t;
 typedef metro_hash_t<uint64_t, 2> metro_hash_64_2_t;
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 typedef metro_hash_t<uint128_t, 1> metro_hash_128_1_t;
 typedef metro_hash_t<uint128_t, 2> metro_hash_128_2_t;
 #endif
@@ -50,7 +50,7 @@ const uint64_t metro_hash_t<uint64_t, 2>::operator()(void *buf, size_t len, uint
     return hash;
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 template<>
 const uint128_t metro_hash_t<uint128_t, 1>::operator()(void *buf, size_t len, uint128_t seed) const
 {
@@ -85,7 +85,7 @@ public:
 
 typedef metro_hash_crc_t<uint64_t, 1> metro_hash_64_crc_1_t;
 typedef metro_hash_crc_t<uint64_t, 2> metro_hash_64_crc_2_t;
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 typedef metro_hash_crc_t<uint128_t, 1> metro_hash_128_crc_1_t;
 typedef metro_hash_crc_t<uint128_t, 2> metro_hash_128_crc_2_t;
 #endif
@@ -110,7 +110,7 @@ const uint64_t metro_hash_crc_t<uint64_t, 2>::operator()(void *buf, size_t len, 
     return hash;
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 
 template<>
 const uint128_t metro_hash_crc_t<uint128_t, 1>::operator()(void *buf, size_t len, uint128_t seed) const

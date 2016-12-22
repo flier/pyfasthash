@@ -25,7 +25,7 @@ public:
 
 typedef farm_hash_t<uint32_t> farm_hash_32_t;
 typedef farm_hash_t<uint64_t> farm_hash_64_t;
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 typedef farm_hash_t<uint128_t> farm_hash_128_t;
 #endif
 
@@ -49,7 +49,7 @@ const uint64_t farm_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t
     }
 }
 
-#ifdef BOOST_HAS_INT128
+#ifdef SUPPORT_INT128
 template<>
 const uint128_t farm_hash_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
 {
