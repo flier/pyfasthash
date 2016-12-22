@@ -25,7 +25,6 @@ public:
 
 typedef spooky_hash_t<uint32_t> spooky_hash_32_t;
 typedef spooky_hash_t<uint64_t> spooky_hash_64_t;
-typedef spooky_hash_t<uint128_t> spooky_hash_128_t;
 
 template<>
 const uint32_t spooky_hash_t<uint32_t>::operator()(void *buf, size_t len, uint32_t seed) const
@@ -39,6 +38,9 @@ const uint64_t spooky_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64
 	return SpookyHash::Hash64(buf, len, seed);
 }
 
+#ifndef _MSC_VER
+typedef spooky_hash_t<uint128_t> spooky_hash_128_t;
+
 template<>
 const uint128_t spooky_hash_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
 {
@@ -46,5 +48,9 @@ const uint128_t spooky_hash_t<uint128_t>::operator()(void *buf, size_t len, uint
 
 	SpookyHash::Hash128(buf, len, &lo, &hi);
 
-	return U128_NEW(lo, hi);
+	U128_NEW(value, lo, hi);
+
+	return value;
 }
+
+#endif

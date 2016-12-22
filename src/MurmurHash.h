@@ -46,8 +46,11 @@ typedef murmur_t<uint32_t, uint32_t, murmur_hash2_neutral> murmur2_neutral_32_t;
 typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x64_64a> murmur2_x64_64a_t;
 typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x86_64b> murmur2_x86_64b_t;
 typedef murmur_t<uint32_t, uint32_t, murmur_hash3_32> murmur3_32_t;
+
+#ifndef _MSC_VER
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x86_128> murmur3_x86_128_t;
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x64_128> murmur3_x64_128_t;
+#endif
 
 template <>
 inline const uint32_t murmur_t<uint32_t, uint32_t, murmur_hash1>::operator()(void *buf, size_t len, unsigned int val) const
@@ -107,6 +110,8 @@ inline const uint32_t murmur_t<uint32_t, uint32_t, murmur_hash3_32>::operator()(
   return hash;
 }
 
+#ifndef _MSC_VER
+
 template <>
 inline const uint128_t murmur_t<uint128_t, uint32_t, murmur_hash3_x86_128>::operator()(void *buf, size_t len, unsigned int val) const
 {
@@ -126,3 +131,5 @@ inline const uint128_t murmur_t<uint128_t, uint32_t, murmur_hash3_x64_128>::oper
 
   return hash;
 }
+
+#endif

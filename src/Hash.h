@@ -9,15 +9,6 @@ namespace py = boost::python;
   typedef unsigned int uint32_t;
   typedef __int64 int64_t;
   typedef unsigned __int64 uint64_t;
-
-  typedef struct {
-    uint64_t low, high;
-  } uint128_t;
-
-  #define U128_LO(v) (v.low)
-  #define U128_HI(v) (v.high)
-
-  #define U128_NEW(LO, HI) { .low = LO, .high = HI}
 #else
   #include <stdint.h>     /* defines uint32_t etc */
 
@@ -30,7 +21,7 @@ namespace py = boost::python;
   #define U128_LO(v) (v >> 64)
   #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
 
-  #define U128_NEW(LO, HI) ((((uint128_t) HI) << 64) + LO)
+  #define U128_NEW(V, LO, HI) uint128_t V = ((((uint128_t) HI) << 64) + LO)
 #endif
 
 namespace internal
@@ -74,11 +65,13 @@ namespace internal
     return ::PyLong_FromUnsignedLongLong(value);
   }
 
+#ifndef _MSC_VER
   template <>
   inline PyObject *convert(const uint128_t& value)
   {
     return ::_PyLong_FromByteArray((const unsigned char*) &value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
   }
+#endif
 }
 
 template <typename T>
@@ -148,6 +141,7 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
   return value;
 }
 
+#ifndef _MSC_VER
 template<>
 uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 {
@@ -164,6 +158,7 @@ uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 
   return value;
 }
+#endif
 
 template <typename T>
 inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)

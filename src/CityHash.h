@@ -34,7 +34,6 @@ bool city_hash_t<T>::has_sse4_2 = false;
 #endif
 
 typedef city_hash_t<uint64_t> city_hash_64_t;
-typedef city_hash_t<uint128_t> city_hash_128_t;
 
 template<>
 const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t seed) const
@@ -45,6 +44,10 @@ const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t
 		return CityHash64((const char *) buf, len);
 	}
 }
+
+#ifndef _MSC_VER
+
+typedef city_hash_t<uint128_t> city_hash_128_t;
 
 template<>
 const uint128_t city_hash_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
@@ -73,6 +76,8 @@ const uint128_t city_hash_t<uint128_t>::operator()(void *buf, size_t len, uint12
 		return *(uint128_t *)&hash;
 	}
 }
+
+#endif
 
 #if defined(__SSE4_2__) && defined(__x86_64__)
 
@@ -105,6 +110,8 @@ bool support_sse4_2(void)
 	return cpuinfo[2] & (1 << 20);
 }
 
+#ifndef _MSC_VER
+
 template <>
 inline void Hasher<city_hash_128_t>::Export(const char *name)
 {
@@ -115,5 +122,7 @@ inline void Hasher<city_hash_128_t>::Export(const char *name)
     .def("__call__", py::raw_function(&city_hash_128_t::CallWithArgs))
     ;
 }
+
+#endif
 
 #endif
