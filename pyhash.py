@@ -231,10 +231,18 @@ class TestSpookyHash(TestHasher):
 
 class TestFarmHash(TestHasher):
     def testFarmHash32(self):
-        self.doTest(hasher_type=farm_32,
-                    bytes_hash=1633095781L,
-                    seed_hash=3687200064L,
-                    unicode_hash=3574089775L)
+        hasher = farm_32()
+
+        h1 = hasher(self.data)
+        h2 = hasher(self.data, seed=123)
+        h3 = hasher(self.udata)
+
+        self.assertTrue(h1 != 0)
+        self.assertTrue(h2 != 0)
+        self.assertTrue(h3 != 0)
+        self.assertNotEqual(h1, h2)
+        self.assertNotEqual(h1, h3)
+        self.assertNotEqual(h2, h3)
 
     def testFarmHash64(self):
         self.doTest(hasher_type=farm_64,
