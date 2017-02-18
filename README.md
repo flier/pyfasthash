@@ -73,3 +73,6 @@ pyhash support the following hash algorithms
   - t1_32_be **NEW!**
   - t1_64 **NEW!**
   - t1_64_be **NEW!**
+* [XXHash](https://github.com/Cyan4973/xxHash)
+  - xx_32 **NEW!**
+  - xx_64 **NEW!**

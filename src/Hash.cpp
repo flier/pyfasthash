@@ -12,6 +12,7 @@
 #include "MetroHash.h"
 #include "Mum.h"
 #include "T1.h"
+#include "xxHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -80,4 +81,7 @@ BOOST_PYTHON_MODULE(_pyhash)
   t1_hash_32_be_t::Export("t1_32_be");
   t1_hash_64_t::Export("t1_64");
   t1_hash_64_be_t::Export("t1_64_be");
+
+  xx_hash_32_t::Export("xx_32");
+  xx_hash_64_t::Export("xx_64");
 };

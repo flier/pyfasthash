@@ -58,6 +58,9 @@ t1_32_be = _pyhash.t1_32_be
 t1_64 = _pyhash.t1_64
 t1_64_be = _pyhash.t1_64_be
 
+xx_32 = _pyhash.xx_32
+xx_64 = _pyhash.xx_64
+
 import unittest
 import logging
 
@@ -351,6 +354,20 @@ class TestT1Hash(TestHasher):
                     bytes_hash=10616215634819799576L,
                     seed_hash=6056749954736269874L,
                     unicode_hash=18194209408316694427L)
+
+
+class TestXXHash(TestHasher):
+    def testXXHash32(self):
+        self.doTest(hasher_type=xx_32,
+                    bytes_hash=1042293711L,
+                    seed_hash=1018767936L,
+                    unicode_hash=2783988247L)
+
+    def testXXHash64(self):
+        self.doTest(hasher_type=xx_64,
+                    bytes_hash=5754696928334414137L,
+                    seed_hash=12934826212537126916L,
+                    unicode_hash=16125048496228390453L)
 
 
 class TestIssues(unittest.TestCase):
