@@ -53,6 +53,11 @@ metro_crc_128_2 = _pyhash.__dict__.get('metro_128_crc_2')
 
 mum_64 = _pyhash.mum_64
 
+t1_32 = _pyhash.t1_32
+t1_32_be = _pyhash.t1_32_be
+t1_64 = _pyhash.t1_64
+t1_64_be = _pyhash.t1_64_be
+
 import unittest
 import logging
 
@@ -320,6 +325,32 @@ class TestMumHash(TestHasher):
                     bytes_hash=8715813407503360407L,
                     seed_hash=1160173209250992409L,
                     unicode_hash=16548684777514844522L)
+
+
+class TestT1Hash(TestHasher):
+    def testT1Hash32(self):
+        self.doTest(hasher_type=t1_32,
+                    bytes_hash=3522842737L,
+                    seed_hash=1183993215L,
+                    unicode_hash=4227842359L)
+
+    def testT1Hash32Be(self):
+        self.doTest(hasher_type=t1_32_be,
+                    bytes_hash=3775388856L,
+                    seed_hash=2897901480L,
+                    unicode_hash=1664992048L)
+
+    def testT1Hash64(self):
+        self.doTest(hasher_type=t1_64,
+                    bytes_hash=10616215634819799576L,
+                    seed_hash=6056749954736269874L,
+                    unicode_hash=18194209408316694427L)
+
+    def testT1Hash64Be(self):
+        self.doTest(hasher_type=t1_64_be,
+                    bytes_hash=10616215634819799576L,
+                    seed_hash=6056749954736269874L,
+                    unicode_hash=18194209408316694427L)
 
 
 class TestIssues(unittest.TestCase):
