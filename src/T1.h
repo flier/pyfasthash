@@ -23,7 +23,11 @@ typedef t1_hash_t<uint64_t, true> t1_hash_64_be_t;
 template<>
 const uint32_t t1_hash_t<uint32_t, true>::operator()(void *buf, size_t len, uint32_t seed) const
 {
+#if defined(__SSE4_2__) && defined(__x86_64__)
+    return t1ha_ia32crc(buf, len, seed);
+#else
     return t1ha_32le(buf, len, seed);
+#endif
 }
 
 template<>

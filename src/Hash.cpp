@@ -16,6 +16,10 @@
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
+#if defined(__SSE4_2__) && defined(__x86_64__)
+  py::scope().attr("build_with_sse42") = true;
+#endif
+
   fnv1_32_t::Export("fnv1_32");
   fnv1a_32_t::Export("fnv1a_32");
   fnv1_64_t::Export("fnv1_64");

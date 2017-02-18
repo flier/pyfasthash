@@ -332,10 +332,16 @@ class TestMumHash(TestHasher):
 
 class TestT1Hash(TestHasher):
     def testT1Hash32(self):
-        self.doTest(hasher_type=t1_32,
-                    bytes_hash=3522842737L,
-                    seed_hash=1183993215L,
-                    unicode_hash=4227842359L)
+        if _pyhash.build_with_sse42:
+            self.doTest(hasher_type=t1_32,
+                        bytes_hash=1818352152L,
+                        seed_hash=2109716410L,
+                        unicode_hash=1338597275L)
+        else:
+            self.doTest(hasher_type=t1_32,
+                        bytes_hash=3522842737L,
+                        seed_hash=1183993215L,
+                        unicode_hash=4227842359L)
 
     def testT1Hash32Be(self):
         self.doTest(hasher_type=t1_32_be,
