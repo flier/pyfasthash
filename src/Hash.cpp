@@ -10,9 +10,16 @@
 #include "FarmHash.h"
 #endif
 #include "MetroHash.h"
+#include "Mum.h"
+#include "T1.h"
+#include "xxHash.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
+#if defined(__SSE4_2__) && defined(__x86_64__)
+  py::scope().attr("build_with_sse42") = true;
+#endif
+
   fnv1_32_t::Export("fnv1_32");
   fnv1a_32_t::Export("fnv1a_32");
   fnv1_64_t::Export("fnv1_64");
@@ -71,4 +78,14 @@ BOOST_PYTHON_MODULE(_pyhash)
   metro_hash_128_crc_1_t::Export("metro_128_crc_1");
   metro_hash_128_crc_2_t::Export("metro_128_crc_2");
 #endif
+
+  mum_hash_64_t::Export("mum_64");
+
+  t1_hash_32_t::Export("t1_32");
+  t1_hash_32_be_t::Export("t1_32_be");
+  t1_hash_64_t::Export("t1_64");
+  t1_hash_64_be_t::Export("t1_64_be");
+
+  xx_hash_32_t::Export("xx_32");
+  xx_hash_64_t::Export("xx_64");
 };
