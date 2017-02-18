@@ -77,7 +77,7 @@ elif os.name == "posix":
     extra_compile_args += ["-msse4.2", "-maes"]
 
 if os.getenv('TRAVIS') == 'true':
-    print("force to link boost::python base on Python version v%d.%d" % (sys.version_info.major, sys.version_info.minor))
+    print("force to link boost::python base on Python v%d.%d" % (sys.version_info.major, sys.version_info.minor))
 
     os.remove('/usr/lib/libboost_python.so')
     os.symlink('/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor),
@@ -94,36 +94,35 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-    version='0.8',
-    description='Python Non-cryptographic Hash Library',
-    long_description="pyhash is a python non-cryptographic hash library, "
-                     "including FNV1, MurmurHash1/2/3, lookup3, SuperFastHash, CityHash, SpookyHash, FarmHash, MetroHash etc",
-    platforms=["x86", "x64"],
-    author='Flier Lu',
-    author_email='flier.lu@gmail.com',
-    url='https://github.com/flier/pyfasthash',
-    download_url='https://github.com/flier/pyfasthash/releases',
-    license="Apache Software License",
-    py_modules=['pyhash'],
-    ext_modules=[pyhash],
-    classifiers=[
-        'Development Status :: 4 - Beta',
-        'Intended Audience :: Developers',
-        'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: Apache Software License',
-        'Natural Language :: English',
-        'Operating System :: Microsoft :: Windows',
-        'Operating System :: POSIX',
-        'Programming Language :: C++',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
-        'Topic :: Internet',
-        'Topic :: Software Development',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-        'Topic :: Utilities'
-    ],
-    install_requires=[
-        'setuptools >= 5.4.1',
-    ],
-    test_suite='pyhash',
-    use_2to3=True)
+      version='0.8',
+      description='Python Non-cryptographic Hash Library',
+      long_description="pyhash is a python non-cryptographic hash library",
+      platforms=["x86", "x64"],
+      author='Flier Lu',
+      author_email='flier.lu@gmail.com',
+      url='https://github.com/flier/pyfasthash',
+      download_url='https://github.com/flier/pyfasthash/releases',
+      license="Apache Software License",
+      py_modules=['pyhash'],
+      ext_modules=[pyhash],
+      classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
+          'Intended Audience :: System Administrators',
+          'License :: OSI Approved :: Apache Software License',
+          'Natural Language :: English',
+          'Operating System :: Microsoft :: Windows',
+          'Operating System :: POSIX',
+          'Programming Language :: C++',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 3',
+          'Topic :: Internet',
+          'Topic :: Software Development',
+          'Topic :: Software Development :: Libraries :: Python Modules',
+          'Topic :: Utilities'
+      ],
+      install_requires=[
+          'setuptools >= 5.4.1',
+      ],
+      test_suite='pyhash',
+      use_2to3=True)
