@@ -4,9 +4,6 @@ import sys
 import os
 import math
 
-from ez_setup import use_setuptools
-use_setuptools()
-
 from setuptools import setup, Extension
 
 libraries = {
@@ -96,12 +93,12 @@ pyhash = Extension(name="_pyhash",
 setup(name='pyhash',
       version='0.8',
       description='Python Non-cryptographic Hash Library',
-      long_description="pyhash is a python non-cryptographic hash library",
+      long_description="a python non-cryptographic hash library",
+      url='https://github.com/flier/pyfasthash',
+      download_url='https://github.com/flier/pyfasthash/releases',
       platforms=["x86", "x64"],
       author='Flier Lu',
       author_email='flier.lu@gmail.com',
-      url='https://github.com/flier/pyfasthash',
-      download_url='https://github.com/flier/pyfasthash/releases',
       license="Apache Software License",
       py_modules=['pyhash'],
       ext_modules=[pyhash],
@@ -115,14 +112,14 @@ setup(name='pyhash',
           'Operating System :: POSIX',
           'Programming Language :: C++',
           'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 3',
           'Topic :: Internet',
           'Topic :: Software Development',
           'Topic :: Software Development :: Libraries :: Python Modules',
           'Topic :: Utilities'
       ],
-      install_requires=[
-          'setuptools >= 5.4.1',
-      ],
+      keywords='hash hashing fasthash',
+      install_requires=[],
       test_suite='pyhash',
       use_2to3=True)
