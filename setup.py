@@ -20,7 +20,7 @@ libraries = {
                  'metrohash64crc.cpp',
                  'metrohash128.cpp',
                  'metrohash128crc.cpp',
-                 't1ha.cc',
+                 't1ha.c',
                  'xxhash.c'],
     'lookup3': ['lookup3.c'],
     'SuperFastHash': ['SuperFastHash.c'],
