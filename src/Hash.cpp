@@ -10,6 +10,7 @@
 #include "FarmHash.h"
 #endif
 #include "MetroHash.h"
+#include "Mum.h"
 
 BOOST_PYTHON_MODULE(_pyhash)
 {
@@ -71,4 +72,6 @@ BOOST_PYTHON_MODULE(_pyhash)
   metro_hash_128_crc_1_t::Export("metro_128_crc_1");
   metro_hash_128_crc_2_t::Export("metro_128_crc_2");
 #endif
+
+  mum_hash_64_t::Export("mum_64");
 };

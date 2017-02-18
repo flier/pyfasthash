@@ -51,8 +51,11 @@ metro_crc_64_2 = _pyhash.metro_64_crc_2
 metro_crc_128 = metro_crc_128_1 = _pyhash.__dict__.get('metro_128_crc_1')
 metro_crc_128_2 = _pyhash.__dict__.get('metro_128_crc_2')
 
+mum_64 = _pyhash.mum_64
+
 import unittest
 import logging
+
 
 class TestHasher(unittest.TestCase):
     def setUp(self):
@@ -70,6 +73,7 @@ class TestHasher(unittest.TestCase):
             self.assertEqual(seed_hash, hasher(self.data, self.data))
 
             self.assertEqual(unicode_hash, hasher(self.udata))
+
 
 class TestFNV1(TestHasher):
     def testFNV1_32(self):
@@ -164,6 +168,7 @@ class TestMurMurHash(TestHasher):
                     seed_hash=25000065729391260169145522623652811022L,
                     unicode_hash=301054382688326301269845371608405900524L)
 
+
 class TestLookup3(TestHasher):
     def testLookup3(self):
         self.doTest(hasher_type=lookup3,
@@ -210,6 +215,7 @@ class TestCityHash(TestHasher):
                     seed_hash=206755929755292977387372217469167977636L,
                     unicode_hash=211596129097514838244042408160146499227L)
 
+
 class TestSpookyHash(TestHasher):
     def testSpookyHash32(self):
         self.doTest(hasher_type=spooky_32,
@@ -228,6 +234,7 @@ class TestSpookyHash(TestHasher):
                     bytes_hash=241061513486538422840128476001680072033L,
                     seed_hash=315901747311404831226315334184550174199L,
                     unicode_hash=207554373952009549684886824908954283880L)
+
 
 class TestFarmHash(TestHasher):
     def testFarmHash32(self):
@@ -255,6 +262,7 @@ class TestFarmHash(TestHasher):
                     bytes_hash=334882099032867325754781607143811124132L,
                     seed_hash=49442029837562385903494085441886302499L,
                     unicode_hash=251662992469041432568516527017706898625L)
+
 
 class TestMetroHash(TestHasher):
     def testMetroHash64_1(self):
@@ -305,6 +313,15 @@ class TestMetroHash(TestHasher):
                     seed_hash=26197404070933777589488526163359489061L,
                     unicode_hash=136212167639765185451107230087801381416L)
 
+
+class TestMumHash(TestHasher):
+    def testMumHash64(self):
+        self.doTest(hasher_type=mum_64,
+                    bytes_hash=8715813407503360407L,
+                    seed_hash=1160173209250992409L,
+                    unicode_hash=16548684777514844522L)
+
+
 class TestIssues(unittest.TestCase):
     # https://github.com/flier/pyfasthash/issues/3
     def testErrorReturnNone(self):
@@ -331,6 +348,7 @@ if __name__ == '__main__':
     else:
         level = logging.WARN
 
-    logging.basicConfig(level=level, format='%(asctime)s %(levelname)s %(message)s')
+    logging.basicConfig(level=level,
+                        format='%(asctime)s %(levelname)s %(message)s')
 
     unittest.main()
