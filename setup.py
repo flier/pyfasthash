@@ -71,10 +71,10 @@ elif os.name == "posix" and sys.platform == "darwin":
         '/usr/local/include'
     ]
     libraries += ["boost_python-mt"]
-    extra_compile_args += ["-msse4.2"]
+    extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
     libraries += ["boost_python", "rt"]
-    extra_compile_args += ["-msse4.2"]
+    extra_compile_args += ["-msse4.2", "-maes"]
 
 if os.getenv('TRAVIS') == 'true':
     print("force to link boost::python base on Python version v%d.%d" % (sys.version_info.major, sys.version_info.minor))
