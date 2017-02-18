@@ -40,29 +40,36 @@ pyhash support the following hash algorithms
   - murmur2_x64_64a
   - murmur2_x86_64b
   - murmur3_32
-  - murmur3_x86_128 **NEW!**
-  - murmur3_x64_128 **NEW!**
+  - murmur3_x86_128
+  - murmur3_x64_128
 * [lookup3](http://burtleburtle.net/bob/hash/doobs.html)
   - lookup3 # base on sys.byteorder
   - lookup3_little
   - lookup3_big
 * [SuperFastHash](http://www.azillionmonkeys.com/qed/hash.html)
   - super_fast_hash
-* [City Hash](https://code.google.com/p/cityhash/) **RECOMMENDED**
-  _ city_32 **NEW!**
+* [City Hash](https://code.google.com/p/cityhash/)
+  _ city_32
   - city_64
   - city_128
-  - city_crc_128 **NEW!**
+  - city_crc_128
 * [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - spooky_32
   - spooky_64
   - spooky_128
 * [FarmHash](https://github.com/google/farmhash)
-  - farm_32 **NEW!**
-  - farm_64 **NEW!**
-  - farm_128 **NEW!**
+  - farm_32
+  - farm_64
+  - farm_128
 * [MetroHash](https://github.com/jandrewrogers/MetroHash)
-  - metro_64 **NEW!**
-  - metro_128 **NEW!**
-  - metro_crc_64 **NEW!**
-  - metro_crc_128 **NEW!**
+  - metro_64
+  - metro_128
+  - metro_crc_64
+  - metro_crc_128
+* [MumHash](https://github.com/vnmakarov/mum-hash)
+  - mum_64 **NEW!**
+* [T1Hash](https://github.com/leo-yuriev/t1ha)
+  - t1_32 **NEW!**
+  - t1_32_be **NEW!**
+  - t1_64 **NEW!**
+  - t1_64_be **NEW!**
