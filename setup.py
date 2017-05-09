@@ -91,7 +91,7 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-      version='0.8',
+      version='0.8.1',
       description='Python Non-cryptographic Hash Library',
       long_description="a python non-cryptographic hash library",
       url='https://github.com/flier/pyfasthash',
