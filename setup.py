@@ -70,7 +70,7 @@ elif os.name == "posix" and sys.platform == "darwin":
     libraries += ["boost_python-mt"]
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
-    libraries += ["boost_python", "rt"]
+    libraries += ["boost_python", "rt", "gcc"]
     extra_compile_args += ["-msse4.2", "-maes"]
 
 if os.getenv('TRAVIS') == 'true':
