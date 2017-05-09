@@ -70,7 +70,7 @@ elif os.name == "posix" and sys.platform == "darwin":
     libraries += ["boost_python-mt"]
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
-    libraries += ["boost_python", "rt"]
+    libraries += ["boost_python", "rt", "gcc"]
     extra_compile_args += ["-msse4.2", "-maes"]
 
 if os.getenv('TRAVIS') == 'true':
@@ -91,7 +91,7 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-      version='0.8',
+      version='0.8.1',
       description='Python Non-cryptographic Hash Library',
       long_description="a python non-cryptographic hash library",
       url='https://github.com/flier/pyfasthash',
