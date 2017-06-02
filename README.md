@@ -37,7 +37,7 @@ Notes: `pyhash` depends on `Boost` library to build
 
 - OSX
 
-> brew install boost
+> brew install boost boost-python
 
 # Algorithms
 
