@@ -72,8 +72,8 @@ elif os.name == "posix" and sys.platform == "darwin":
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
     libraries += [
-        "boost_python-py%d%d.so" % (sys.version_info.major,
-                                    sys.version_info.minor),
+        "boost_python-py%d%d" % (sys.version_info.major,
+                                 sys.version_info.minor),
         "rt",
         "gcc"
     ]
