@@ -7,9 +7,10 @@ python:
 - 'pypy'
 - '2.7'
 - '2.6'
-before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -y libboost-python1.48-dev
+addons:
+  apt:
+    packages:
+    - libboost-python-dev
 install:
 - pip install -r requirements.txt
 before_script:
