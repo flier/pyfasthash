@@ -8,15 +8,10 @@ python:
   - 'pypy'
   - '2.7'
   - '2.6'
-os:
-  - linux
-  - osx
 addons:
   apt:
     packages:
       - libboost-python-dev
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install boost; fi
 install:
   - pip install -r requirements.txt
 before_script:
