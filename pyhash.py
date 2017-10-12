@@ -393,7 +393,7 @@ class TestIssues(unittest.TestCase):
 
         new_refcnt = sys.getrefcount(None)
 
-        self.assertTrue(old_refcnt >= new_refcnt+1)
+        self.assertTrue(old_refcnt >= new_refcnt)
 
 
 if __name__ == '__main__':
