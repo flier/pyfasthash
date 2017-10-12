@@ -60,7 +60,8 @@ if os.name == "nt":
     ]
 
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
-    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF", "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
+    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
+                        "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
 elif os.name == "posix" and sys.platform == "darwin":
     is_64bit = math.trunc(math.ceil(math.log(sys.maxsize, 2)) + 1) == 64
     include_dirs += [
@@ -70,11 +71,17 @@ elif os.name == "posix" and sys.platform == "darwin":
     libraries += ["boost_python-mt"]
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
-    libraries += ["boost_python", "rt", "gcc"]
+    libraries += [
+        "boost_python-py%d%d.so" % (sys.version_info.major,
+                                    sys.version_info.minor),
+        "rt",
+        "gcc"
+    ]
     extra_compile_args += ["-msse4.2", "-maes"]
 
 if os.getenv('TRAVIS') == 'true':
-    print("force to link boost::python base on Python v%d.%d" % (sys.version_info.major, sys.version_info.minor))
+    print("force to link boost::python base on Python v%d.%d" %
+          (sys.version_info.major, sys.version_info.minor))
 
     os.remove('/usr/lib/libboost_python.so')
     os.symlink('/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor),
