@@ -396,6 +396,231 @@ class TestIssues(unittest.TestCase):
         self.assertTrue(old_refcnt >= new_refcnt)
 
 
+try:
+    import pytest
+
+    def bench_hasher(benchmark, hasher, hash):
+        h = hasher()
+        data = b"".join([chr(i) for i in range(256)])
+
+        @benchmark
+        def result():
+            return h(data)
+
+        assert result == hash
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_fnv1_32(benchmark):
+        bench_hasher(benchmark, fnv1_32, 4117514240L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_fnv1a_32(benchmark):
+        bench_hasher(benchmark, fnv1a_32, 1500862464L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_fnv1_64(benchmark):
+        bench_hasher(benchmark, fnv1_64, 487086381785722880L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_fnv1a_64(benchmark):
+        bench_hasher(benchmark, fnv1a_64, 13917847256464560128L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash1_32(benchmark):
+        bench_hasher(benchmark, murmur1_32, 3043957486L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash1_aligned_32(benchmark):
+        bench_hasher(benchmark, murmur1_aligned_32, 3043957486L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash2_32(benchmark):
+        bench_hasher(benchmark, murmur2_32, 2373126550L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash2a_32(benchmark):
+        bench_hasher(benchmark, murmur2a_32, 178525084L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash2_aligned_32(benchmark):
+        bench_hasher(benchmark, murmur2_aligned_32, 2373126550L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash2_neutral_32(benchmark):
+        bench_hasher(benchmark, murmur2_neutral_32, 2373126550L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_murmur_hash2_x64_64a(benchmark):
+        bench_hasher(benchmark, murmur2_x64_64a, 12604435678857905857L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_murmur_hash2_x86_64b(benchmark):
+        bench_hasher(benchmark, murmur2_x86_64b, 3759496224018757553L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_murmur_hash3_32(benchmark):
+        bench_hasher(benchmark, murmur3_32, 3825864278L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_murmur_hash3_x86_128(benchmark):
+        bench_hasher(benchmark, murmur3_x86_128, 97431559281111809997269275467939498127L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_murmur_hash3_x64_128(benchmark):
+        bench_hasher(benchmark, murmur3_x64_128, 149984839147466660491291446859193586361L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_lookup3(benchmark):
+        bench_hasher(benchmark, lookup3, 3792570419L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_super_fast_hash(benchmark):
+        bench_hasher(benchmark, super_fast_hash, 2804200527L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_city_hash32(benchmark):
+        bench_hasher(benchmark, city_32, 2824210825L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_city_hash64(benchmark):
+        bench_hasher(benchmark, city_64, 894299094737143437L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_city_hash128(benchmark):
+        bench_hasher(benchmark, city_128, 254849646208103091500548480943427727100L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_city_hash_crc128(benchmark):
+        bench_hasher(benchmark, city_crc_128, 254849646208103091500548480943427727100L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_spooky_hash32(benchmark):
+        bench_hasher(benchmark, spooky_32, 2489700128L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_spooky_hash64(benchmark):
+        bench_hasher(benchmark, spooky_64, 8714752859576848160L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_spooky_hash128(benchmark):
+        bench_hasher(benchmark, spooky_128, 69975394272542483818884528997491134240L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_farm_hash32(benchmark):
+        bench_hasher(benchmark, farm_32, 3977123615L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_farm_hash64(benchmark):
+        bench_hasher(benchmark, farm_64, 5291657088564336415L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_farm_hash128(benchmark):
+        bench_hasher(benchmark, farm_128, 2614362402971166945389138950146702896L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_metro_hash64_1(benchmark):
+        bench_hasher(benchmark, metro_64_1, 6897098198286496634L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_metro_hash128_1(benchmark):
+        bench_hasher(benchmark, metro_128_1, 284089860902754045805586152203438670446L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_metro_hash64_2(benchmark):
+        bench_hasher(benchmark, metro_64_2, 9928248983045338067L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_metro_hash128_2(benchmark):
+        bench_hasher(benchmark, metro_128_2, 298961466275459716490100873977629041349L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_metro_hash_crc64_1(benchmark):
+        bench_hasher(benchmark, metro_crc_64_1, 15625740387403976237L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_metro_hash_crc128_1(benchmark):
+        bench_hasher(benchmark, metro_crc_128_1, 221795002586229010982769362009963170208L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_metro_hash_crc64_2(benchmark):
+        bench_hasher(benchmark, metro_crc_64_2, 9313388757605283934L)
+
+
+    @pytest.mark.benchmark(group='hash128', disable_gc=True)
+    def test_metro_hash_crc128_2(benchmark):
+        bench_hasher(benchmark, metro_crc_128_2, 319940271611864595969873671463832146628L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_mum_hash3(benchmark):
+        bench_hasher(benchmark, mum_64, 5704960907050105809L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_t1hash32(benchmark):
+        bench_hasher(benchmark, t1_32, 677439739L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_t1hash32be(benchmark):
+        bench_hasher(benchmark, t1_32_be, 967014975L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_t1hash64(benchmark):
+        bench_hasher(benchmark, t1_64, 6501324028002495964L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_t1hash64be(benchmark):
+        bench_hasher(benchmark, t1_64_be, 6501324028002495964L)
+
+
+    @pytest.mark.benchmark(group='hash32', disable_gc=True)
+    def test_xx_hash32(benchmark):
+        bench_hasher(benchmark, xx_32, 1497633363L)
+
+
+    @pytest.mark.benchmark(group='hash64', disable_gc=True)
+    def test_xx_hash64(benchmark):
+        bench_hasher(benchmark, xx_64, 2282408585429094475L)
+
+except ImportError:
+    pass
+
 if __name__ == '__main__':
     if "-v" in sys.argv:
         level = logging.DEBUG
