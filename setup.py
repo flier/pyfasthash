@@ -60,7 +60,8 @@ if os.name == "nt":
     ]
 
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
-    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF", "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
+    extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
+                        "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
 elif os.name == "posix" and sys.platform == "darwin":
     is_64bit = math.trunc(math.ceil(math.log(sys.maxsize, 2)) + 1) == 64
     include_dirs += [
@@ -70,15 +71,17 @@ elif os.name == "posix" and sys.platform == "darwin":
     libraries += ["boost_python-mt"]
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
-    libraries += ["boost_python", "rt", "gcc"]
+    import platform
+
+    libraries += ["rt", "gcc"]
+
+    if platform.dist()[0] == "Ubuntu":
+        libraries += ["boost_python-py%d%d" % (sys.version_info.major,
+                                               sys.version_info.minor)]
+    else:
+        libraries += ["boost_python"]
+
     extra_compile_args += ["-msse4.2", "-maes"]
-
-if os.getenv('TRAVIS') == 'true':
-    print("force to link boost::python base on Python v%d.%d" % (sys.version_info.major, sys.version_info.minor))
-
-    os.remove('/usr/lib/libboost_python.so')
-    os.symlink('/usr/lib/libboost_python-py%d%d.so' % (sys.version_info.major, sys.version_info.minor),
-               '/usr/lib/libboost_python.so')
 
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
@@ -91,7 +94,7 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-      version='0.8.1',
+      version='0.8.2',
       description='Python Non-cryptographic Hash Library',
       long_description="a python non-cryptographic hash library",
       url='https://github.com/flier/pyfasthash',

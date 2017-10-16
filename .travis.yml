@@ -1,22 +1,24 @@
 language: python
 python:
-- '3.5'
-- '3.4'
-- '3.3'
-- '3.2'
-- 'pypy'
-- '2.7'
-- '2.6'
-before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -y libboost-python1.48-dev
+  - '3.6'
+  - '3.5'
+  - '3.4'
+  - '3.3'
+  - '3.2'
+  - 'pypy'
+  - '2.7'
+  - '2.6'
+addons:
+  apt:
+    packages:
+      - libboost-python-dev
 install:
-- pip install -r requirements.txt
+  - pip install -r requirements.txt
 before_script:
-- git submodule update --remote
+  - git submodule update --remote
 script:
-- sudo python setup.py test
-- sudo python setup.py sdist bdist
+  - sudo python setup.py test
+  - sudo python setup.py sdist bdist
 deploy:
   - provider: pypi
     user: flier
