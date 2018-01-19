@@ -1,6 +1,6 @@
 # Introduction [![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)](https://travis-ci.org/flier/pyfasthash)
 
-  pyhash is a python non-cryptographic hash library. It provide several common hash algorithms with C/C++ implementation for performance.
+  pyhash is a python non-cryptographic hash library. It provides several common hash algorithms with C/C++ implementation for performance.
 
 ```python
 >>> import pyhash
@@ -41,7 +41,7 @@ Notes: `pyhash` depends on `Boost` library to build
 
 # Algorithms
 
-pyhash support the following hash algorithms
+pyhash supports the following hash algorithms
 
 - [FNV](http://isthe.com/chongo/tech/comp/fnv/) (Fowler-Noll-Vo) hash
   - fnv1_32
