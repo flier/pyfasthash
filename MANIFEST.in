@@ -1,4 +1,4 @@
 include README.md
+include LICENSE.txt
 include requirements.txt
-include ez_setup.py
 recursive-include src *.h *.c *.cc *.cpp

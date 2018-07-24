@@ -6,6 +6,11 @@ import math
 
 from setuptools import setup, Extension
 
+here = os.path.abspath(os.path.dirname(__file__))
+
+with open(os.path.join(here, 'README.md')) as f:
+    long_description = f.read()
+
 libraries = {
     'fnv': ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
     'smhasher': ['MurmurHash1.cpp',
@@ -100,9 +105,10 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-      version='0.8.2',
+      version='0.8.3',
       description='Python Non-cryptographic Hash Library',
-      long_description="a python non-cryptographic hash library",
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       url='https://github.com/flier/pyfasthash',
       download_url='https://github.com/flier/pyfasthash/releases',
       platforms=["x86", "x64"],
@@ -112,7 +118,7 @@ setup(name='pyhash',
       py_modules=['pyhash'],
       ext_modules=[pyhash],
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Developers',
           'Intended Audience :: System Administrators',
           'License :: OSI Approved :: Apache Software License',
