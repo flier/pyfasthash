@@ -5,41 +5,21 @@ import os
 import math
 
 from setuptools import setup, Extension
+from distutils.sysconfig import customize_compiler
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
 
-libraries = {
-    'fnv': ['hash_32.c', 'hash_32a.c', 'hash_64.c', 'hash_64a.c'],
-    'smhasher': ['MurmurHash1.cpp',
-                 'MurmurHash2.cpp',
-                 'MurmurHash3.cpp',
-                 'City.cpp',
-                 'Spooky.cpp',
-                 'metrohash64.cpp',
-                 'metrohash64crc.cpp',
-                 'metrohash128.cpp',
-                 'metrohash128crc.cpp',
-                 't1ha.c',
-                 'xxhash.c'],
-    'lookup3': ['lookup3.c'],
-    'SuperFastHash': ['SuperFastHash.c'],
-}
-
-if os.name != "nt":
-    libraries['smhasher'].append('farmhash-c.c')
-
-source_files = [os.path.join('src', filename) for filename in ['Hash.cpp']]
-
-for lib, files in libraries.items():
-    source_files += [os.path.join('src', lib, filename) for filename in files]
+source_files = ['src/Hash.cpp']
 
 macros = [
     ("BOOST_PYTHON_STATIC_LIB", None),
 ]
-include_dirs = []
+include_dirs = [
+    "src/pybind11/include",
+]
 library_dirs = []
 libraries = []
 extra_compile_args = []
@@ -94,13 +74,53 @@ elif os.name == "posix":
 
     extra_compile_args += ["-msse4.2", "-maes"]
 
+c_libraries = [(
+    'fnv', {
+        "sources": [
+            'src/fnv/hash_32.c',
+            'src/fnv/hash_32a.c',
+            'src/fnv/hash_64.c',
+            'src/fnv/hash_64a.c'
+        ]
+    }
+), (
+    'smhasher', {
+        "sources": [
+            'src/smhasher/MurmurHash1.cpp',
+            'src/smhasher/MurmurHash2.cpp',
+            'src/smhasher/MurmurHash3.cpp',
+            'src/smhasher/City.cpp',
+            'src/smhasher/Spooky.cpp',
+            'src/smhasher/metrohash64.cpp',
+            'src/smhasher/metrohash64crc.cpp',
+            'src/smhasher/metrohash128.cpp',
+            'src/smhasher/metrohash128crc.cpp',
+            'src/smhasher/t1ha.c',
+            'src/smhasher/xxhash.c',
+        ],
+        "cflags": extra_compile_args,
+    }
+), (
+    'lookup3', {
+        "sources": ['src/lookup3/lookup3.c']
+    }
+), (
+    'SuperFastHash', {
+        "sources": ['src/SuperFastHash/SuperFastHash.c']
+    }
+)]
+
+if os.name != "nt":
+    c_libraries[1][1]['sources'].append('src/smhasher/farmhash-c.c')
+
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
                    define_macros=macros,
                    include_dirs=include_dirs,
                    library_dirs=library_dirs,
                    libraries=libraries,
-                   extra_compile_args=extra_compile_args,
+                   depends=["lib%s.a" for (libname, _) in c_libraries],
+                   extra_compile_args=extra_compile_args + ["-std=c++11"],
                    extra_link_args=extra_link_args,
                    )
 
@@ -116,6 +136,7 @@ setup(name='pyhash',
       author_email='flier.lu@gmail.com',
       license="Apache Software License",
       py_modules=['pyhash'],
+      libraries=c_libraries,
       ext_modules=[pyhash],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
