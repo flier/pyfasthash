@@ -26,6 +26,36 @@ typedef unsigned __int128 uint128_t;
 
 #define U128_NEW(LO, HI) ((((uint128_t)HI) << 64) + LO)
 
+namespace pybind11
+{
+namespace detail
+{
+template <>
+struct type_caster<uint128_t>
+{
+public:
+  PYBIND11_TYPE_CASTER(uint128_t, _("uint128_t"));
+
+  bool load(handle src, bool)
+  {
+    PyObject *source = src.ptr();
+    PyObject *tmp = PyNumber_Long(source);
+    if (!tmp)
+      return false;
+    _PyLong_AsByteArray((PyLongObject *)tmp, (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    Py_DECREF(tmp);
+
+    return !(value == -1 && !PyErr_Occurred());
+  }
+
+  static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
+  {
+    return ::_PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+  }
+};
+} // namespace detail
+} // namespace pybind11
+
 #endif // defined(SUPPORT_INT128)
 
 #endif // defined(_MSC_VER)
@@ -36,51 +66,51 @@ template <typename T>
 py::handle convert(const T &value);
 
 template <>
- py::handle convert(const int &value)
+py::handle convert(const int &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
- py::handle convert(const unsigned int &value)
+py::handle convert(const unsigned int &value)
 {
   return ::PyLong_FromSize_t(value);
 }
 
 template <>
- py::handle convert(const long &value)
+py::handle convert(const long &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
- py::handle convert(const unsigned long &value)
+py::handle convert(const unsigned long &value)
 {
   return ::PyLong_FromUnsignedLong(value);
 }
 
 template <>
- py::handle convert(const long long &value)
+py::handle convert(const long long &value)
 {
   return ::PyLong_FromLongLong(value);
 }
 
 template <>
- py::handle convert(const unsigned long long &value)
+py::handle convert(const unsigned long long &value)
 {
   return ::PyLong_FromUnsignedLongLong(value);
 }
 
 #ifndef _MSC_VER
 template <>
- py::handle convert(const uint128_t &value)
+py::handle convert(const uint128_t &value)
 {
   return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 }
 #endif
 
 template <typename T>
- T extract_hash_value(PyObject *obj)
+T extract_hash_value(PyObject *obj)
 {
   T value = 0;
 
@@ -103,7 +133,7 @@ template <typename T>
 }
 
 template <>
- uint64_t extract_hash_value<uint64_t>(PyObject *obj)
+uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 {
   uint64_t value = 0;
 
@@ -127,7 +157,7 @@ template <>
 
 #if defined(SUPPORT_INT128)
 template <>
- uint128_t extract_hash_value<uint128_t>(PyObject *obj)
+uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 {
   uint128_t value = {0};
 
@@ -168,7 +198,7 @@ public:
 };
 
 template <typename T, typename S, typename H>
- void Hasher<T, S, H>::Export(const py::module &m, const char *name)
+void Hasher<T, S, H>::Export(const py::module &m, const char *name)
 {
   py::class_<T>(m, name)
       .def(py::init<seed_value_t>(), py::arg("seed") = 0)
@@ -177,7 +207,7 @@ template <typename T, typename S, typename H>
 }
 
 template <typename T, typename S, typename H>
- py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
+py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
   if (args.size() == 0)
     throw std::invalid_argument("missed self argument");
