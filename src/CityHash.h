@@ -13,19 +13,20 @@ https://code.google.com/p/cityhash/
 **/
 
 template <typename T>
-struct city_hash_t : public Hasher<city_hash_t<T>>
+struct city_hash_t : public Hasher<city_hash_t<T>, T>
 {
 #if defined(__SSE4_2__) && defined(__x86_64__)
 	static bool has_sse4_2;
 #endif
 
-	city_hash_t()
-	{
-	}
+  public:
+	typedef Hasher<city_hash_t<T>, T> __hasher_t;
+	typedef typename __hasher_t::hash_value_t hash_value_t;
+	typedef typename __hasher_t::seed_value_t seed_value_t;
 
-	typedef T hash_value_t;
+	city_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-	const hash_value_t operator()(void *buf, size_t len, hash_value_t seed) const;
+	const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
 };
 
 #if defined(__SSE4_2__) && defined(__x86_64__)
@@ -37,15 +38,18 @@ bool city_hash_t<T>::has_sse4_2 = false;
 
 typedef city_hash_t<uint32_t> city_hash_32_t;
 typedef city_hash_t<uint64_t> city_hash_64_t;
+#ifdef SUPPORT_INT128
+typedef city_hash_t<uint128_t> city_hash_128_t;
+#endif
 
 template <>
-const uint32_t city_hash_t<uint32_t>::operator()(void *buf, size_t len, uint32_t seed) const
+const city_hash_32_t::hash_value_t city_hash_32_t::operator()(void *buf, size_t len, city_hash_32_t::seed_value_t seed) const
 {
 	return CityHash32WithSeed((const char *)buf, len, seed);
 }
 
 template <>
-const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t seed) const
+const city_hash_64_t::hash_value_t city_hash_64_t::operator()(void *buf, size_t len, city_hash_64_t::seed_value_t seed) const
 {
 	if (seed)
 	{
@@ -59,10 +63,8 @@ const uint64_t city_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t
 
 #ifdef SUPPORT_INT128
 
-typedef city_hash_t<uint128_t> city_hash_128_t;
-
 template <>
-const uint128_t city_hash_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
+inline const city_hash_128_t::hash_value_t city_hash_128_t::operator()(void *buf, size_t len, city_hash_128_t::seed_value_t seed) const
 {
 #if defined(__SSE4_2__) && defined(__x86_64__)
 	if (has_sse4_2)
@@ -101,19 +103,20 @@ const uint128_t city_hash_t<uint128_t>::operator()(void *buf, size_t len, uint12
 #if defined(__SSE4_2__) && defined(__x86_64__)
 
 template <typename T>
-struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>>
+struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>, T>
 {
-	city_hash_crc_t() {}
+  public:
+	typedef Hasher<city_hash_crc_t<T>, T> __hasher_t;
+	typedef typename __hasher_t::hash_value_t hash_value_t;
+	typedef typename __hasher_t::seed_value_t seed_value_t;
 
-	typedef T hash_value_t;
-
-	const hash_value_t operator()(void *buf, size_t len, hash_value_t seed) const;
+	const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
 };
 
 typedef city_hash_crc_t<uint128_t> city_hash_crc_128_t;
 
 template <>
-const uint128_t city_hash_crc_t<uint128_t>::operator()(void *buf, size_t len, uint128_t seed) const
+inline const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *buf, size_t len, city_hash_crc_128_t::seed_value_t seed) const
 {
 	if (seed)
 	{
@@ -161,7 +164,7 @@ bool support_sse4_2(void)
 #ifdef SUPPORT_INT128
 
 template <>
-inline void Hasher<city_hash_128_t>::Export(const py::module &m, const char *name)
+inline void city_hash_128_t::__hasher_t::Export(const py::module &m, const char *name)
 {
 	city_hash_128_t::has_sse4_2 = support_sse4_2();
 
@@ -172,7 +175,7 @@ inline void Hasher<city_hash_128_t>::Export(const py::module &m, const char *nam
 }
 
 template <>
-inline void Hasher<city_hash_crc_128_t>::Export(const py::module &m, const char *name)
+inline void city_hash_crc_128_t::__hasher_t::Export(const py::module &m, const char *name)
 {
 	py::class_<city_hash_crc_128_t>(m, name)
 		.def(py::init<>())

@@ -5,26 +5,28 @@
 #include "smhasher/xxhash.h"
 
 template <typename T>
-class xx_hash_t : public Hasher< xx_hash_t<T> >
+class xx_hash_t : public Hasher<xx_hash_t<T>, T>
 {
 public:
-  xx_hash_t() {}
+  typedef Hasher<xx_hash_t<T>, T> __hasher_t;
+  typedef typename __hasher_t::hash_value_t hash_value_t;
+  typedef typename __hasher_t::seed_value_t seed_value_t;
 
-  typedef T hash_value_t;
+  xx_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-  const hash_value_t operator()(void *buf, size_t len, hash_value_t seed) const;
+  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
 };
 
 typedef xx_hash_t<uint32_t> xx_hash_32_t;
 typedef xx_hash_t<uint64_t> xx_hash_64_t;
 
-template<>
-const uint32_t xx_hash_t<uint32_t>::operator()(void *buf, size_t len, uint32_t seed) const
+template <>
+inline const xx_hash_32_t::hash_value_t xx_hash_32_t::operator()(void *buf, size_t len, xx_hash_32_t::seed_value_t seed) const
 {
-	return XXH32(buf, len, seed);
+  return XXH32(buf, len, seed);
 }
-template<>
-const uint64_t xx_hash_t<uint64_t>::operator()(void *buf, size_t len, uint64_t seed) const
+template <>
+inline const xx_hash_64_t::hash_value_t xx_hash_64_t::operator()(void *buf, size_t len, xx_hash_64_t::seed_value_t seed) const
 {
-	return XXH64(buf, len, seed);
+  return XXH64(buf, len, seed);
 }

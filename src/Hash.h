@@ -144,11 +144,20 @@ inline uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 
 } // namespace internal
 
-template <typename T>
+template <typename T, typename S, typename H = S>
 class Hasher
 {
+public:
+  typedef S seed_value_t;
+  typedef H hash_value_t;
+
+private:
+  S _seed;
+
 protected:
-  Hasher(void) {}
+  Hasher(S seed = 0) : _seed(seed) {}
+
+  virtual const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 
 public:
   virtual ~Hasher(void) {}
@@ -158,16 +167,16 @@ public:
   static void Export(const py::module &m, const char *name);
 };
 
-template <typename T>
-inline void Hasher<T>::Export(const py::module &m, const char *name)
+template <typename T, typename S, typename H>
+inline void Hasher<T, S, H>::Export(const py::module &m, const char *name)
 {
   py::class_<T>(m, name)
-      .def(py::init<>())
+      .def(py::init<S>(), py::arg("seed") = 0)
       .def("__call__", &T::CallWithArgs);
 }
 
-template <typename T>
-inline py::object Hasher<T>::CallWithArgs(py::args args, py::kwargs kwargs)
+template <typename T, typename S, typename H>
+inline py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
   if (args.size() == 0)
     throw std::invalid_argument("missed self argument");
@@ -178,7 +187,7 @@ inline py::object Hasher<T>::CallWithArgs(py::args args, py::kwargs kwargs)
     throw std::invalid_argument("wrong type of self argument");
 
   const T &hasher = self.cast<T>();
-  typename T::hash_value_t value = {0};
+  typename T::hash_value_t value = hasher._seed;
 
   if (kwargs.contains("seed"))
     value = internal::extract_hash_value<typename T::hash_value_t>(kwargs["seed"].ptr());

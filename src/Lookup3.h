@@ -5,50 +5,52 @@
 /**
  * http://burtleburtle.net/bob/hash/doobs.html
  */
-extern "C" {
+extern "C"
+{
 
-uint32_t hashword(const uint32_t *k,      /* the key, an array of uint32_t values */
-                  size_t          length, /* the length of the key, in uint32_ts */
-                  uint32_t        initval);
+  uint32_t hashword(const uint32_t *k, /* the key, an array of uint32_t values */
+                    size_t length,     /* the length of the key, in uint32_ts */
+                    uint32_t initval);
 
-void hashword2 (const uint32_t *k,        /* the key, an array of uint32_t values */
-                size_t          length,   /* the length of the key, in uint32_ts */
-                uint32_t       *pc,       /* IN: seed OUT: primary hash value */
-                uint32_t       *pb);      /* IN: more seed OUT: secondary hash value */
+  void hashword2(const uint32_t *k, /* the key, an array of uint32_t values */
+                 size_t length,     /* the length of the key, in uint32_ts */
+                 uint32_t *pc,      /* IN: seed OUT: primary hash value */
+                 uint32_t *pb);     /* IN: more seed OUT: secondary hash value */
 
-uint32_t hashlittle( const void *key, size_t length, uint32_t initval);
+  uint32_t hashlittle(const void *key, size_t length, uint32_t initval);
 
-void hashlittle2(const void *key,       /* the key to hash */
-                 size_t      length,    /* length of the key */
-                 uint32_t   *pc,        /* IN: primary initval, OUT: primary hash */
-                 uint32_t   *pb);       /* IN: secondary initval, OUT: secondary hash */
+  void hashlittle2(const void *key, /* the key to hash */
+                   size_t length,   /* length of the key */
+                   uint32_t *pc,    /* IN: primary initval, OUT: primary hash */
+                   uint32_t *pb);   /* IN: secondary initval, OUT: secondary hash */
 
-uint32_t hashbig( const void *key, size_t length, uint32_t initval);
-
+  uint32_t hashbig(const void *key, size_t length, uint32_t initval);
 }
 
 template <bool ORDER>
-class lookup3_t : public Hasher< lookup3_t<ORDER> >
+class lookup3_t : public Hasher<lookup3_t<ORDER>, uint32_t>
 {
 public:
-  lookup3_t() {}
+  typedef Hasher<lookup3_t<ORDER>, uint32_t> __hasher_t;
+  typedef typename __hasher_t::hash_value_t hash_value_t;
+  typedef typename __hasher_t::seed_value_t seed_value_t;
 
-  typedef uint32_t hash_value_t;
+  lookup3_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-  uint32_t operator()(void *buf, size_t len, uint32_t seed) const;
+  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
 };
 
 typedef lookup3_t<true> lookup3_little_t;
 typedef lookup3_t<false> lookup3_big_t;
 
 template <>
-inline uint32_t lookup3_t<true>::operator()(void *buf, size_t len, uint32_t val) const
+inline const lookup3_little_t::hash_value_t lookup3_little_t::operator()(void *buf, size_t len, lookup3_little_t::seed_value_t seed) const
 {
-  return hashlittle(buf, len, val);
+  return hashlittle(buf, len, seed);
 }
 
 template <>
-inline uint32_t lookup3_t<false>::operator()(void *buf, size_t len, uint32_t val) const
+inline const lookup3_big_t::hash_value_t lookup3_big_t::operator()(void *buf, size_t len, lookup3_big_t::seed_value_t seed) const
 {
-  return hashbig(buf, len, val);
+  return hashbig(buf, len, seed);
 }
