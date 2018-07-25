@@ -1,6 +1,6 @@
 language: python
 python:
-  - '3.7'
+  - '3.7-dev'
   - '3.6'
   - '3.5'
   - '3.4'
@@ -17,8 +17,8 @@ before_script:
   - git submodule update
 script:
   - python setup.py build_clib build_ext
-  - pytest --benchmark-disable
-  - python setup.py sdist bdist
+  - python setup.py test --benchmark-disable
+  - python setup.py sdist bdist bdist_wheel
 deploy:
   - provider: pypi
     user: flier
