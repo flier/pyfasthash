@@ -14,6 +14,6 @@ python:
   - 'pypy3.5'
 install:
   - pip install -r requirements.txt
-  - python setup.py build_clib build_ext
+  - python setup.py install
 script:
   - python setup.py test
