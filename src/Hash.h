@@ -152,10 +152,10 @@ public:
   typedef H hash_value_t;
 
 private:
-  S _seed;
+  seed_value_t _seed;
 
 protected:
-  Hasher(S seed = 0) : _seed(seed) {}
+  Hasher(seed_value_t seed = 0) : _seed(seed) {}
 
   virtual const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 
@@ -171,7 +171,8 @@ template <typename T, typename S, typename H>
 inline void Hasher<T, S, H>::Export(const py::module &m, const char *name)
 {
   py::class_<T>(m, name)
-      .def(py::init<S>(), py::arg("seed") = 0)
+      .def(py::init<seed_value_t>(), py::arg("seed") = 0)
+      .def_readwrite("seed", &T::_seed)
       .def("__call__", &T::CallWithArgs);
 }
 
@@ -187,10 +188,7 @@ inline py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs
     throw std::invalid_argument("wrong type of self argument");
 
   const T &hasher = self.cast<T>();
-  typename T::hash_value_t value = hasher._seed;
-
-  if (kwargs.contains("seed"))
-    value = internal::extract_hash_value<typename T::hash_value_t>(kwargs["seed"].ptr());
+  typename T::hash_value_t value = kwargs.contains("seed") ? internal::extract_hash_value<typename T::hash_value_t>(kwargs["seed"].ptr()) : hasher._seed;
 
   std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
 #if PY_MAJOR_VERSION < 3
