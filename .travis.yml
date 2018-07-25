@@ -12,12 +12,9 @@ python:
   - 'pypy3.5'
 install:
   - pip install -r requirements.txt
-before_script:
-  - git submodule init
-  - git submodule update
 script:
   - python setup.py build_clib build_ext
-  - python setup.py test --benchmark-disable
+  - python setup.py test
   - python setup.py sdist bdist bdist_wheel
 deploy:
   - provider: pypi
