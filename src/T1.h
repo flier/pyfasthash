@@ -28,7 +28,7 @@ class t1_hash_t : public Hasher<t1_hash_t<T, A>, T>
 
     t1_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef t1_hash_t<uint64_t, t1ha2_atonce_a> t1ha2_atonce_t;
@@ -45,14 +45,14 @@ typedef t1_hash_t<uint64_t, t1ha0_ia32aes_avx_a> t1ha0_ia32aes_avx_t;
 typedef t1_hash_t<uint64_t, t1ha0_ia32aes_avx2_a> t1ha0_ia32aes_avx2_t;
 
 template <>
-inline const t1ha2_atonce_t::hash_value_t t1ha2_atonce_t::operator()(void *buf, size_t len, t1ha2_atonce_t::seed_value_t seed) const
+const t1ha2_atonce_t::hash_value_t t1ha2_atonce_t::operator()(void *buf, size_t len, t1ha2_atonce_t::seed_value_t seed) const
 {
     return t1ha2_atonce(buf, len, seed);
 }
 
 #if defined(SUPPORT_INT128)
 template <>
-inline const t1ha2_atonce128_t::hash_value_t t1ha2_atonce128_t::operator()(void *buf, size_t len, t1ha2_atonce128_t::seed_value_t seed) const
+const t1ha2_atonce128_t::hash_value_t t1ha2_atonce128_t::operator()(void *buf, size_t len, t1ha2_atonce128_t::seed_value_t seed) const
 {
     uint64_t hi = 0;
     uint64_t lo = t1ha2_atonce128(&hi, buf, len, seed);
@@ -62,49 +62,49 @@ inline const t1ha2_atonce128_t::hash_value_t t1ha2_atonce128_t::operator()(void 
 #endif
 
 template <>
-inline const t1ha1_le_t::hash_value_t t1ha1_le_t::operator()(void *buf, size_t len, t1ha1_le_t::seed_value_t seed) const
+const t1ha1_le_t::hash_value_t t1ha1_le_t::operator()(void *buf, size_t len, t1ha1_le_t::seed_value_t seed) const
 {
     return t1ha1_le(buf, len, seed);
 }
 
 template <>
-inline const t1ha1_be_t::hash_value_t t1ha1_be_t::operator()(void *buf, size_t len, t1ha1_be_t::seed_value_t seed) const
+const t1ha1_be_t::hash_value_t t1ha1_be_t::operator()(void *buf, size_t len, t1ha1_be_t::seed_value_t seed) const
 {
     return t1ha1_be(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_t::hash_value_t t1ha0_t::operator()(void *buf, size_t len, t1ha0_t::seed_value_t seed) const
+const t1ha0_t::hash_value_t t1ha0_t::operator()(void *buf, size_t len, t1ha0_t::seed_value_t seed) const
 {
     return t1ha0(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_32le_t::hash_value_t t1ha0_32le_t::operator()(void *buf, size_t len, t1ha0_32le_t::seed_value_t seed) const
+const t1ha0_32le_t::hash_value_t t1ha0_32le_t::operator()(void *buf, size_t len, t1ha0_32le_t::seed_value_t seed) const
 {
     return t1ha0_32le(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_32be_t::hash_value_t t1ha0_32be_t::operator()(void *buf, size_t len, t1ha0_32be_t::seed_value_t seed) const
+const t1ha0_32be_t::hash_value_t t1ha0_32be_t::operator()(void *buf, size_t len, t1ha0_32be_t::seed_value_t seed) const
 {
     return t1ha0_32be(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_ia32aes_noavx_t::hash_value_t t1ha0_ia32aes_noavx_t::operator()(void *buf, size_t len, t1ha0_ia32aes_noavx_t::seed_value_t seed) const
+const t1ha0_ia32aes_noavx_t::hash_value_t t1ha0_ia32aes_noavx_t::operator()(void *buf, size_t len, t1ha0_ia32aes_noavx_t::seed_value_t seed) const
 {
     return t1ha0_ia32aes_noavx(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_ia32aes_avx_t::hash_value_t t1ha0_ia32aes_avx_t::operator()(void *buf, size_t len, t1ha0_ia32aes_avx_t::seed_value_t seed) const
+const t1ha0_ia32aes_avx_t::hash_value_t t1ha0_ia32aes_avx_t::operator()(void *buf, size_t len, t1ha0_ia32aes_avx_t::seed_value_t seed) const
 {
     return t1ha0_ia32aes_avx(buf, len, seed);
 }
 
 template <>
-inline const t1ha0_ia32aes_avx2_t::hash_value_t t1ha0_ia32aes_avx2_t::operator()(void *buf, size_t len, t1ha0_ia32aes_avx2_t::seed_value_t seed) const
+const t1ha0_ia32aes_avx2_t::hash_value_t t1ha0_ia32aes_avx2_t::operator()(void *buf, size_t len, t1ha0_ia32aes_avx2_t::seed_value_t seed) const
 {
     return t1ha0_ia32aes_avx2(buf, len, seed);
 }

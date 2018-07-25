@@ -22,7 +22,7 @@ class metro_hash_t : public Hasher<metro_hash_t<T, S>, T>
 
     metro_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef metro_hash_t<uint64_t, 1> metro_hash_64_1_t;
@@ -33,7 +33,7 @@ typedef metro_hash_t<uint128_t, 2> metro_hash_128_2_t;
 #endif
 
 template <>
-inline const metro_hash_64_1_t::hash_value_t metro_hash_64_1_t::operator()(void *buf, size_t len, metro_hash_64_1_t::seed_value_t seed) const
+ const metro_hash_64_1_t::hash_value_t metro_hash_64_1_t::operator()(void *buf, size_t len, metro_hash_64_1_t::seed_value_t seed) const
 {
     uint64_t hash;
 
@@ -43,7 +43,7 @@ inline const metro_hash_64_1_t::hash_value_t metro_hash_64_1_t::operator()(void 
 }
 
 template <>
-inline const metro_hash_64_2_t::hash_value_t metro_hash_64_2_t::operator()(void *buf, size_t len, metro_hash_64_2_t::seed_value_t seed) const
+ const metro_hash_64_2_t::hash_value_t metro_hash_64_2_t::operator()(void *buf, size_t len, metro_hash_64_2_t::seed_value_t seed) const
 {
     uint64_t hash;
 
@@ -55,7 +55,7 @@ inline const metro_hash_64_2_t::hash_value_t metro_hash_64_2_t::operator()(void 
 #ifdef SUPPORT_INT128
 
 template <>
-inline const metro_hash_128_1_t::hash_value_t metro_hash_128_1_t::operator()(void *buf, size_t len, metro_hash_128_1_t::seed_value_t seed) const
+ const metro_hash_128_1_t::hash_value_t metro_hash_128_1_t::operator()(void *buf, size_t len, metro_hash_128_1_t::seed_value_t seed) const
 {
     uint128_t hash;
 
@@ -65,7 +65,7 @@ inline const metro_hash_128_1_t::hash_value_t metro_hash_128_1_t::operator()(voi
 }
 
 template <>
-inline const metro_hash_128_2_t::hash_value_t metro_hash_128_2_t::operator()(void *buf, size_t len, metro_hash_128_2_t::seed_value_t seed) const
+ const metro_hash_128_2_t::hash_value_t metro_hash_128_2_t::operator()(void *buf, size_t len, metro_hash_128_2_t::seed_value_t seed) const
 {
     uint128_t hash;
 
@@ -85,7 +85,7 @@ class metro_hash_crc_t : public Hasher<metro_hash_crc_t<T, S>, T>
 
     metro_hash_crc_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef metro_hash_crc_t<uint64_t, 1> metro_hash_64_crc_1_t;
@@ -96,7 +96,7 @@ typedef metro_hash_crc_t<uint128_t, 2> metro_hash_128_crc_2_t;
 #endif
 
 template <>
-inline const metro_hash_64_crc_1_t::hash_value_t metro_hash_64_crc_1_t::operator()(void *buf, size_t len, metro_hash_64_crc_1_t::seed_value_t seed) const
+ const metro_hash_64_crc_1_t::hash_value_t metro_hash_64_crc_1_t::operator()(void *buf, size_t len, metro_hash_64_crc_1_t::seed_value_t seed) const
 {
     uint64_t hash;
 
@@ -106,7 +106,7 @@ inline const metro_hash_64_crc_1_t::hash_value_t metro_hash_64_crc_1_t::operator
 }
 
 template <>
-inline const metro_hash_64_crc_2_t::hash_value_t metro_hash_64_crc_2_t::operator()(void *buf, size_t len, metro_hash_64_crc_2_t::seed_value_t seed) const
+ const metro_hash_64_crc_2_t::hash_value_t metro_hash_64_crc_2_t::operator()(void *buf, size_t len, metro_hash_64_crc_2_t::seed_value_t seed) const
 {
     uint64_t hash;
 
@@ -118,7 +118,7 @@ inline const metro_hash_64_crc_2_t::hash_value_t metro_hash_64_crc_2_t::operator
 #ifdef SUPPORT_INT128
 
 template <>
-inline const metro_hash_128_crc_1_t::hash_value_t metro_hash_128_crc_1_t::operator()(void *buf, size_t len, metro_hash_128_crc_1_t::seed_value_t seed) const
+ const metro_hash_128_crc_1_t::hash_value_t metro_hash_128_crc_1_t::operator()(void *buf, size_t len, metro_hash_128_crc_1_t::seed_value_t seed) const
 {
     uint128_t hash;
 
@@ -128,7 +128,7 @@ inline const metro_hash_128_crc_1_t::hash_value_t metro_hash_128_crc_1_t::operat
 }
 
 template <>
-inline const metro_hash_128_crc_2_t::hash_value_t metro_hash_128_crc_2_t::operator()(void *buf, size_t len, metro_hash_128_crc_2_t::seed_value_t seed) const
+ const metro_hash_128_crc_2_t::hash_value_t metro_hash_128_crc_2_t::operator()(void *buf, size_t len, metro_hash_128_crc_2_t::seed_value_t seed) const
 {
     uint128_t hash;
 

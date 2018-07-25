@@ -37,20 +37,20 @@ public:
 
   lookup3_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef lookup3_t<true> lookup3_little_t;
 typedef lookup3_t<false> lookup3_big_t;
 
 template <>
-inline const lookup3_little_t::hash_value_t lookup3_little_t::operator()(void *buf, size_t len, lookup3_little_t::seed_value_t seed) const
+const lookup3_little_t::hash_value_t lookup3_little_t::operator()(void *buf, size_t len, lookup3_little_t::seed_value_t seed) const
 {
   return hashlittle(buf, len, seed);
 }
 
 template <>
-inline const lookup3_big_t::hash_value_t lookup3_big_t::operator()(void *buf, size_t len, lookup3_big_t::seed_value_t seed) const
+const lookup3_big_t::hash_value_t lookup3_big_t::operator()(void *buf, size_t len, lookup3_big_t::seed_value_t seed) const
 {
   return hashbig(buf, len, seed);
 }

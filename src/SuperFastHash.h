@@ -17,7 +17,7 @@ public:
 
   super_fast_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override
+  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const
   {
     return SuperFastHash((const char *)buf, (int)len, seed);
   }

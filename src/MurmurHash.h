@@ -35,7 +35,7 @@ public:
 
   murmur_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+  const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef murmur_t<uint32_t, uint32_t, murmur_hash1> murmur1_32_t;
@@ -54,55 +54,55 @@ typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x64_128> murmur3_x64_128_t;
 #endif
 
 template <>
-inline const murmur1_32_t::hash_value_t murmur1_32_t::operator()(void *buf, size_t len, murmur1_32_t::seed_value_t seed) const
+const murmur1_32_t::hash_value_t murmur1_32_t::operator()(void *buf, size_t len, murmur1_32_t::seed_value_t seed) const
 {
   return MurmurHash1(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur1_aligned_32_t::hash_value_t murmur1_aligned_32_t::operator()(void *buf, size_t len, murmur1_aligned_32_t::seed_value_t seed) const
+const murmur1_aligned_32_t::hash_value_t murmur1_aligned_32_t::operator()(void *buf, size_t len, murmur1_aligned_32_t::seed_value_t seed) const
 {
   return MurmurHash1Aligned(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2_32_t::hash_value_t murmur2_32_t::operator()(void *buf, size_t len, murmur2_32_t::seed_value_t seed) const
+const murmur2_32_t::hash_value_t murmur2_32_t::operator()(void *buf, size_t len, murmur2_32_t::seed_value_t seed) const
 {
   return MurmurHash2(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2a_32_t::hash_value_t murmur2a_32_t::operator()(void *buf, size_t len, murmur2a_32_t::seed_value_t seed) const
+const murmur2a_32_t::hash_value_t murmur2a_32_t::operator()(void *buf, size_t len, murmur2a_32_t::seed_value_t seed) const
 {
   return MurmurHash2A(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2_aligned_32_t::hash_value_t murmur2_aligned_32_t::operator()(void *buf, size_t len, murmur2_aligned_32_t::seed_value_t seed) const
+const murmur2_aligned_32_t::hash_value_t murmur2_aligned_32_t::operator()(void *buf, size_t len, murmur2_aligned_32_t::seed_value_t seed) const
 {
   return MurmurHashAligned2(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2_neutral_32_t::hash_value_t murmur2_neutral_32_t::operator()(void *buf, size_t len, murmur2_neutral_32_t::seed_value_t seed) const
+const murmur2_neutral_32_t::hash_value_t murmur2_neutral_32_t::operator()(void *buf, size_t len, murmur2_neutral_32_t::seed_value_t seed) const
 {
   return MurmurHashNeutral2(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2_x64_64a_t::hash_value_t murmur2_x64_64a_t::operator()(void *buf, size_t len, murmur2_x64_64a_t::seed_value_t seed) const
+const murmur2_x64_64a_t::hash_value_t murmur2_x64_64a_t::operator()(void *buf, size_t len, murmur2_x64_64a_t::seed_value_t seed) const
 {
   return MurmurHash64A(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur2_x86_64b_t::hash_value_t murmur2_x86_64b_t::operator()(void *buf, size_t len, murmur2_x86_64b_t::seed_value_t seed) const
+const murmur2_x86_64b_t::hash_value_t murmur2_x86_64b_t::operator()(void *buf, size_t len, murmur2_x86_64b_t::seed_value_t seed) const
 {
   return MurmurHash64B(buf, (int)len, seed);
 }
 
 template <>
-inline const murmur3_32_t::hash_value_t murmur3_32_t::operator()(void *buf, size_t len, murmur3_32_t::seed_value_t seed) const
+const murmur3_32_t::hash_value_t murmur3_32_t::operator()(void *buf, size_t len, murmur3_32_t::seed_value_t seed) const
 {
   unsigned int hash = 0;
 
@@ -114,7 +114,7 @@ inline const murmur3_32_t::hash_value_t murmur3_32_t::operator()(void *buf, size
 #ifdef SUPPORT_INT128
 
 template <>
-inline const murmur3_x86_128_t::hash_value_t murmur3_x86_128_t::operator()(void *buf, size_t len, murmur3_x86_128_t::seed_value_t seed) const
+const murmur3_x86_128_t::hash_value_t murmur3_x86_128_t::operator()(void *buf, size_t len, murmur3_x86_128_t::seed_value_t seed) const
 {
   uint128_t hash = 0;
 
@@ -124,7 +124,7 @@ inline const murmur3_x86_128_t::hash_value_t murmur3_x86_128_t::operator()(void 
 }
 
 template <>
-inline const murmur3_x64_128_t::hash_value_t murmur3_x64_128_t::operator()(void *buf, size_t len, murmur3_x64_128_t::seed_value_t seed) const
+const murmur3_x64_128_t::hash_value_t murmur3_x64_128_t::operator()(void *buf, size_t len, murmur3_x64_128_t::seed_value_t seed) const
 {
   uint128_t hash = 0;
 

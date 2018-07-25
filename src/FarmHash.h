@@ -22,14 +22,14 @@ class farm_hash_t : public Hasher<farm_hash_t<T>, T>
 
     farm_hash_t(seed_value_t seed = 0) : __hasher_t(seed) {}
 
-    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const override;
+    const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef farm_hash_t<uint32_t> farm_hash_32_t;
 typedef farm_hash_t<uint64_t> farm_hash_64_t;
 
 template <>
-inline const farm_hash_32_t::hash_value_t farm_hash_32_t::operator()(void *buf, size_t len, farm_hash_32_t::seed_value_t seed) const
+const farm_hash_32_t::hash_value_t farm_hash_32_t::operator()(void *buf, size_t len, farm_hash_32_t::seed_value_t seed) const
 {
     if (seed)
     {
@@ -42,7 +42,7 @@ inline const farm_hash_32_t::hash_value_t farm_hash_32_t::operator()(void *buf, 
 }
 
 template <>
-inline const farm_hash_64_t::hash_value_t farm_hash_64_t::operator()(void *buf, size_t len, farm_hash_64_t::seed_value_t seed) const
+const farm_hash_64_t::hash_value_t farm_hash_64_t::operator()(void *buf, size_t len, farm_hash_64_t::seed_value_t seed) const
 {
     if (seed)
     {
@@ -58,7 +58,7 @@ inline const farm_hash_64_t::hash_value_t farm_hash_64_t::operator()(void *buf, 
 typedef farm_hash_t<uint128_t> farm_hash_128_t;
 
 template <>
-inline const farm_hash_128_t::hash_value_t farm_hash_128_t::operator()(void *buf, size_t len, farm_hash_128_t::seed_value_t seed) const
+const farm_hash_128_t::hash_value_t farm_hash_128_t::operator()(void *buf, size_t len, farm_hash_128_t::seed_value_t seed) const
 {
     uint128_c_t hash;
 

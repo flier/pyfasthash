@@ -36,51 +36,51 @@ template <typename T>
 py::handle convert(const T &value);
 
 template <>
-inline py::handle convert(const int &value)
+ py::handle convert(const int &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
-inline py::handle convert(const unsigned int &value)
+ py::handle convert(const unsigned int &value)
 {
   return ::PyLong_FromSize_t(value);
 }
 
 template <>
-inline py::handle convert(const long &value)
+ py::handle convert(const long &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
-inline py::handle convert(const unsigned long &value)
+ py::handle convert(const unsigned long &value)
 {
   return ::PyLong_FromUnsignedLong(value);
 }
 
 template <>
-inline py::handle convert(const long long &value)
+ py::handle convert(const long long &value)
 {
   return ::PyLong_FromLongLong(value);
 }
 
 template <>
-inline py::handle convert(const unsigned long long &value)
+ py::handle convert(const unsigned long long &value)
 {
   return ::PyLong_FromUnsignedLongLong(value);
 }
 
 #ifndef _MSC_VER
 template <>
-inline py::handle convert(const uint128_t &value)
+ py::handle convert(const uint128_t &value)
 {
   return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 }
 #endif
 
 template <typename T>
-inline T extract_hash_value(PyObject *obj)
+ T extract_hash_value(PyObject *obj)
 {
   T value = 0;
 
@@ -103,7 +103,7 @@ inline T extract_hash_value(PyObject *obj)
 }
 
 template <>
-inline uint64_t extract_hash_value<uint64_t>(PyObject *obj)
+ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 {
   uint64_t value = 0;
 
@@ -127,7 +127,7 @@ inline uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 
 #if defined(SUPPORT_INT128)
 template <>
-inline uint128_t extract_hash_value<uint128_t>(PyObject *obj)
+ uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 {
   uint128_t value = {0};
 
@@ -159,8 +159,6 @@ private:
 protected:
   Hasher(seed_value_t seed = 0) : _seed(seed) {}
 
-  virtual const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
-
 public:
   virtual ~Hasher(void) {}
 
@@ -170,7 +168,7 @@ public:
 };
 
 template <typename T, typename S, typename H>
-inline void Hasher<T, S, H>::Export(const py::module &m, const char *name)
+ void Hasher<T, S, H>::Export(const py::module &m, const char *name)
 {
   py::class_<T>(m, name)
       .def(py::init<seed_value_t>(), py::arg("seed") = 0)
@@ -179,7 +177,7 @@ inline void Hasher<T, S, H>::Export(const py::module &m, const char *name)
 }
 
 template <typename T, typename S, typename H>
-inline py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
+ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
   if (args.size() == 0)
     throw std::invalid_argument("missed self argument");
