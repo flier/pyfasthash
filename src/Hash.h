@@ -247,7 +247,7 @@ inline py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs
       value = hasher((void *)buf, len, value);
     }
 #if PY_MAJOR_VERSION < 3
-    else if (PyBuffer_Check(arg.ptr()))
+    else if (PyObject_CheckReadBuffer(arg.ptr()))
     {
       const void *buf = NULL;
       Py_ssize_t len = 0;
@@ -255,6 +255,10 @@ inline py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs
       if (0 == PyObject_AsReadBuffer(arg.ptr(), &buf, &len))
       {
         value = hasher((void *)buf, len, value);
+      }
+      else
+      {
+        throw py::error_already_set();
       }
     }
 #endif
