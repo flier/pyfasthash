@@ -1,21 +1,24 @@
 language: python
 python:
+  - '3.7'
   - '3.6'
   - '3.5'
   - '3.4'
   - '3.3'
   - '3.2'
-  - 'pypy'
   - '2.7'
   - '2.6'
+  - 'pypy2.7'
+  - 'pypy3.5'
 install:
   - pip install -r requirements.txt
 before_script:
   - git submodule init
   - git submodule update
 script:
-  - sudo python setup.py test
-  - sudo python setup.py sdist bdist
+  - python setup.py build_clib build_ext
+  - pytest --benchmark-disable
+  - python setup.py sdist bdist
 deploy:
   - provider: pypi
     user: flier

@@ -1,1 +1,2 @@
+pytest >= 3.6
 pytest-benchmark >= 3.1

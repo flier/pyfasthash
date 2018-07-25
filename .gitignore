@@ -2,6 +2,9 @@
 build
 dist
 pyhash.egg-info
+.tox
+.eggs
+.pytest_cache
 
 setuptools*
 *.pyc
