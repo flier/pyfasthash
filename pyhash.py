@@ -53,10 +53,16 @@ metro_crc_128_2 = _pyhash.__dict__.get('metro_128_crc_2')
 
 mum_64 = _pyhash.mum_64
 
-t1_32 = _pyhash.t1_32
-t1_32_be = _pyhash.t1_32_be
-t1_64 = _pyhash.t1_64
-t1_64_be = _pyhash.t1_64_be
+t1ha2 = t1ha2_atonce = _pyhash.t1ha2_atonce
+t1ha2_128 = t1ha2_atonce128 = _pyhash.__dict__.get('t1ha2_atonce128')
+t1ha1 = t1ha1_le = _pyhash.t1ha1_le
+t1ha1_be = _pyhash.t1ha1_be
+t1ha0 = _pyhash.t1ha0
+t1ha0_ia32aes_noavx = _pyhash.t1ha0_ia32aes_noavx
+t1ha0_ia32aes_avx = _pyhash.t1ha0_ia32aes_avx
+t1ha0_ia32aes_avx2 = _pyhash.t1ha0_ia32aes_avx2
+t1ha0_32le = _pyhash.t1ha0_32le
+t1ha0_32be = _pyhash.t1ha0_32be
 
 xx_32 = _pyhash.xx_32
 xx_64 = _pyhash.xx_64
@@ -81,6 +87,8 @@ class TestHasher(unittest.TestCase):
             self.assertEqual(seed_hash, hasher(self.data, self.data))
 
             self.assertEqual(unicode_hash, hasher(self.udata))
+        else:
+            print("WARN: skip test cases for `%s` hasher", hasher_type)
 
 
 class TestFNV1(TestHasher):
@@ -331,35 +339,65 @@ class TestMumHash(TestHasher):
 
 
 class TestT1Hash(TestHasher):
-    def testT1Hash32(self):
-        if _pyhash.build_with_sse42:
-            self.doTest(hasher_type=t1_32,
-                        bytes_hash=1818352152L,
-                        seed_hash=2109716410L,
-                        unicode_hash=1338597275L)
-        else:
-            self.doTest(hasher_type=t1_32,
-                        bytes_hash=3522842737L,
-                        seed_hash=1183993215L,
-                        unicode_hash=4227842359L)
+    def testT1ha2_atonce(self):
+        self.doTest(hasher_type=t1ha2_atonce,
+                    bytes_hash=11576265462006865275L,
+                    seed_hash=9383269742356701786L,
+                    unicode_hash=10647421798084574537L)
 
-    def testT1Hash32Be(self):
-        self.doTest(hasher_type=t1_32_be,
-                    bytes_hash=3775388856L,
-                    seed_hash=2897901480L,
-                    unicode_hash=1664992048L)
+    def testT1ha2_atonce128(self):
+        self.doTest(hasher_type=t1ha2_atonce128,
+                    bytes_hash=111289500776795915835395169778666467727L,
+                    seed_hash=86921791256626059574547663004160252269L,
+                    unicode_hash=265347458704473149675948059533744938455L)
 
-    def testT1Hash64(self):
-        self.doTest(hasher_type=t1_64,
+    def testT1ha1_le(self):
+        self.doTest(hasher_type=t1ha1_le,
                     bytes_hash=10616215634819799576L,
                     seed_hash=6056749954736269874L,
                     unicode_hash=18194209408316694427L)
 
-    def testT1Hash64Be(self):
-        self.doTest(hasher_type=t1_64_be,
+    def testT1ha1_be(self):
+        self.doTest(hasher_type=t1ha1_be,
                     bytes_hash=7811195108528602730L,
                     seed_hash=16139937605191117723L,
                     unicode_hash=4258761466277697735L)
+
+    def testT1ha0(self):
+        self.doTest(hasher_type=t1ha0,
+                    bytes_hash=11576265462006865275L,
+                    seed_hash=9383269742356701786L,
+                    unicode_hash=10647421798084574537L)
+
+    def testT1ha0_ia32aes_noavx(self):
+        self.doTest(hasher_type=t1ha0_ia32aes_noavx,
+                    bytes_hash=11576265462006865275L,
+                    seed_hash=9383269742356701786L,
+                    unicode_hash=10647421798084574537L)
+
+    def testT1ha0_ia32aes_avx(self):
+        self.doTest(hasher_type=t1ha0_ia32aes_avx,
+                    bytes_hash=11576265462006865275L,
+                    seed_hash=9383269742356701786L,
+                    unicode_hash=10647421798084574537L)
+
+    def testT1ha0_ia32aes_avx2(self):
+        self.doTest(hasher_type=t1ha0_ia32aes_avx2,
+                    bytes_hash=11576265462006865275L,
+                    seed_hash=9383269742356701786L,
+                    unicode_hash=10647421798084574537L)
+
+    def testT1ha032Le(self):
+        self.doTest(hasher_type=t1ha0_32le,
+                    bytes_hash=16542733703039638821L,
+                    seed_hash=5534863457605050332L,
+                    unicode_hash=15700811497736998998L)
+
+    def testT1ha032Be(self):
+        self.doTest(hasher_type=t1ha0_32be,
+                    bytes_hash=17260815661605337945L,
+                    seed_hash=7926505876120298959L,
+                    unicode_hash=6364648105040243647L)
 
 
 class TestXXHash(TestHasher):

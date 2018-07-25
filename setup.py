@@ -50,13 +50,13 @@ elif os.name == "posix" and sys.platform == "darwin":
         '/usr/local/include'
     ]
 
-    extra_compile_args += ["-msse4.2", "-maes"]
+    extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2", ]
 elif os.name == "posix":
     import platform
 
     libraries += ["rt", "gcc"]
 
-    extra_compile_args += ["-msse4.2", "-maes"]
+    extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2", ]
 
 c_libraries = [(
     'fnv', {
@@ -79,8 +79,23 @@ c_libraries = [(
             'src/smhasher/metrohash64crc.cpp',
             'src/smhasher/metrohash128.cpp',
             'src/smhasher/metrohash128crc.cpp',
-            'src/smhasher/t1ha.c',
             'src/smhasher/xxhash.c',
+        ],
+        "cflags": extra_compile_args,
+    }
+), (
+    't1ha', {
+        "sources": [
+            'src/smhasher/t1ha/t1ha0.c',
+            'src/smhasher/t1ha/t1ha0_ia32aes_avx.c',
+            'src/smhasher/t1ha/t1ha0_ia32aes_avx2.c',
+            'src/smhasher/t1ha/t1ha0_ia32aes_noavx.c',
+            'src/smhasher/t1ha/t1ha1.c',
+            'src/smhasher/t1ha/t1ha2.c',
+        ],
+        "macros": [
+            ("T1HA0_AESNI_AVAILABLE", 1),
+            ("T1HA0_RUNTIME_SELECT", 1),
         ],
         "cflags": extra_compile_args,
     }

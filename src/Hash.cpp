@@ -85,10 +85,16 @@ PYBIND11_MODULE(_pyhash, m)
 
   mum_hash_64_t::Export(m, "mum_64");
 
-  t1_hash_32_t::Export(m, "t1_32");
-  t1_hash_32_be_t::Export(m, "t1_32_be");
-  t1_hash_64_t::Export(m, "t1_64");
-  t1_hash_64_be_t::Export(m, "t1_64_be");
+  t1ha2_atonce_t::Export(m, "t1ha2_atonce");
+  t1ha2_atonce128_t::Export(m, "t1ha2_atonce128");
+  t1ha1_le_t::Export(m, "t1ha1_le");
+  t1ha1_be_t::Export(m, "t1ha1_be");
+  t1ha0_t::Export(m, "t1ha0");
+  t1ha0_32le_t::Export(m, "t1ha0_32le");
+  t1ha0_32be_t::Export(m, "t1ha0_32be");
+  t1ha0_ia32aes_noavx_t::Export(m, "t1ha0_ia32aes_noavx");
+  t1ha0_ia32aes_avx_t::Export(m, "t1ha0_ia32aes_avx");
+  t1ha0_ia32aes_avx2_t::Export(m, "t1ha0_ia32aes_avx2");
 
   xx_hash_32_t::Export(m, "xx_32");
   xx_hash_64_t::Export(m, "xx_64");
