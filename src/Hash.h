@@ -5,24 +5,28 @@
 namespace py = pybind11;
 
 #if defined(_MSC_VER)
+
 typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
-#else
-#include <stdint.h> /* defines uint32_t etc */
 
-#ifdef BOOST_HAS_INT128
-typedef boost::uint128_type uint128_t;
-#else
+#else // defined(_MSC_VER)
+
+#include <stdint.h>
+
+#if defined(SUPPORT_INT128)
+
 typedef unsigned __int128 uint128_t;
-#endif
 
 #define U128_LO(v) (v >> 64)
 #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
 
 #define U128_NEW(LO, HI) ((((uint128_t)HI) << 64) + LO)
-#endif
+
+#endif // defined(SUPPORT_INT128)
+
+#endif // defined(_MSC_VER)
 
 namespace internal
 {
@@ -119,7 +123,7 @@ inline uint64_t extract_hash_value<uint64_t>(PyObject *obj)
   return value;
 }
 
-#ifndef _MSC_VER
+#if defined(SUPPORT_INT128)
 template <>
 inline uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 {
