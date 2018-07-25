@@ -1,8 +1,8 @@
 #pragma once
 
-#include <boost/python.hpp>
-#include <boost/python/raw_function.hpp>
-namespace py = boost::python;
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
 
 #if defined(_MSC_VER)
 typedef int int32_t;
@@ -27,76 +27,54 @@ typedef unsigned __int128 uint128_t;
 namespace internal
 {
 template <typename T>
-PyObject *convert(const T &value);
+py::handle convert(const T &value);
 
 template <>
-inline PyObject *convert(const int &value)
+inline py::handle convert(const int &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
-inline PyObject *convert(const unsigned int &value)
+inline py::handle convert(const unsigned int &value)
 {
   return ::PyLong_FromSize_t(value);
 }
 
 template <>
-inline PyObject *convert(const long &value)
+inline py::handle convert(const long &value)
 {
   return ::PyLong_FromLong(value);
 }
 
 template <>
-inline PyObject *convert(const unsigned long &value)
+inline py::handle convert(const unsigned long &value)
 {
   return ::PyLong_FromUnsignedLong(value);
 }
 
 template <>
-inline PyObject *convert(const long long &value)
+inline py::handle convert(const long long &value)
 {
   return ::PyLong_FromLongLong(value);
 }
 
 template <>
-inline PyObject *convert(const unsigned long long &value)
+inline py::handle convert(const unsigned long long &value)
 {
   return ::PyLong_FromUnsignedLongLong(value);
 }
 
 #ifndef _MSC_VER
 template <>
-inline PyObject *convert(const uint128_t &value)
+inline py::handle convert(const uint128_t &value)
 {
   return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 }
 #endif
-} // namespace internal
 
 template <typename T>
-class Hasher
-{
-protected:
-  Hasher(void) {}
-
-public:
-  virtual ~Hasher(void) {}
-
-  static py::object CallWithArgs(py::tuple args, py::dict kwds);
-
-  static void Export(const char *name);
-};
-
-template <typename T>
-inline void Hasher<T>::Export(const char *name)
-{
-  py::class_<T, boost::noncopyable>(name, py::init<>())
-      .def("__call__", py::raw_function(&T::CallWithArgs));
-}
-
-template <typename T>
-T extract_hash_value(PyObject *obj)
+inline T extract_hash_value(PyObject *obj)
 {
   T value = 0;
 
@@ -119,7 +97,7 @@ T extract_hash_value(PyObject *obj)
 }
 
 template <>
-uint64_t extract_hash_value<uint64_t>(PyObject *obj)
+inline uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 {
   uint64_t value = 0;
 
@@ -143,7 +121,7 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 
 #ifndef _MSC_VER
 template <>
-uint128_t extract_hash_value<uint128_t>(PyObject *obj)
+inline uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 {
   uint128_t value = {0};
 
@@ -160,38 +138,48 @@ uint128_t extract_hash_value<uint128_t>(PyObject *obj)
 }
 #endif
 
-template <typename T>
-inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
-{
-  size_t argc = ::PyTuple_Size(args.ptr());
+} // namespace internal
 
-  if (argc == 0)
-  {
-    ::PyErr_SetString(::PyExc_TypeError, "missed self argument");
-    return py::object(py::handle<>(Py_None));
-  }
+template <typename T>
+class Hasher
+{
+protected:
+  Hasher(void) {}
+
+public:
+  virtual ~Hasher(void) {}
+
+  static py::object CallWithArgs(py::args args, py::kwargs kwargs);
+
+  static void Export(const py::module &m, const char *name);
+};
+
+template <typename T>
+inline void Hasher<T>::Export(const py::module &m, const char *name)
+{
+  py::class_<T>(m, name)
+      .def(py::init<>())
+      .def("__call__", &T::CallWithArgs);
+}
+
+template <typename T>
+inline py::object Hasher<T>::CallWithArgs(py::args args, py::kwargs kwargs)
+{
+  if (args.size() == 0)
+    throw std::invalid_argument("missed self argument");
 
   py::object self = args[0];
-  py::extract<T &> extractor(self);
 
-  if (!extractor.check())
-  {
-    ::PyErr_SetString(::PyExc_TypeError, "wrong type of self argument");
-    return py::object(py::handle<>(Py_None));
-  }
+  if (!self)
+    throw std::invalid_argument("wrong type of self argument");
 
-  T &hasher = extractor();
-  py::list argv(args.slice(1, py::_));
-
+  const T &hasher = self.cast<T>();
   typename T::hash_value_t value = {0};
 
-  if (kwds.has_key("seed"))
-    value = extract_hash_value<typename T::hash_value_t>(kwds.get("seed").ptr());
+  if (kwargs.contains("seed"))
+    value = internal::extract_hash_value<typename T::hash_value_t>(kwargs["seed"].ptr());
 
-  for (Py_ssize_t i = 0; i < PyList_Size(argv.ptr()); i++)
-  {
-    py::object arg = argv[i];
-
+  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
 #if PY_MAJOR_VERSION < 3
     if (PyString_CheckExact(arg.ptr()))
     {
@@ -219,7 +207,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
     {
 #if PY_MAJOR_VERSION > 2
 #ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
+      py::object utf16 = py::reinterpret_borrow<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
 
       char *buf = NULL;
       Py_ssize_t len = 0;
@@ -235,7 +223,7 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 #endif
 #else
 #ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::object(py::handle<>(PyUnicode_AsUTF16String(arg.ptr())));
+      py::object utf16 = py::reinterpret_borrow<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
 
       const char *buf = PyString_AS_STRING(utf16.ptr()) + 2; // skip the BOM
       Py_ssize_t len = PyString_GET_SIZE(utf16.ptr()) - 2;
@@ -261,13 +249,9 @@ inline py::object Hasher<T>::CallWithArgs(py::tuple args, py::dict kwds)
 #endif
     else
     {
-      ::PyErr_SetString(::PyExc_TypeError, "wrong type of argument");
-
-      py::throw_error_already_set();
-
-      return py::object();
+      throw std::invalid_argument("wrong type of argument");
     }
-  }
+  });
 
-  return py::object(py::handle<>(internal::convert(value)));
+  return py::reinterpret_steal<py::object>(internal::convert(value));
 }

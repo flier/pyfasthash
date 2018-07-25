@@ -18,7 +18,7 @@ public:
 typedef t1_hash_t<uint32_t, true> t1_hash_32_t;
 typedef t1_hash_t<uint32_t, false> t1_hash_32_be_t;
 typedef t1_hash_t<uint64_t, true> t1_hash_64_t;
-typedef t1_hash_t<uint64_t, true> t1_hash_64_be_t;
+typedef t1_hash_t<uint64_t, false> t1_hash_64_be_t;
 
 template<>
 const uint32_t t1_hash_t<uint32_t, true>::operator()(void *buf, size_t len, uint32_t seed) const

@@ -14,9 +14,7 @@ with open(os.path.join(here, 'README.md')) as f:
 
 source_files = ['src/Hash.cpp']
 
-macros = [
-    ("BOOST_PYTHON_STATIC_LIB", None),
-]
+macros = []
 include_dirs = [
     "src/pybind11/include",
 ]
@@ -36,11 +34,9 @@ if os.name == "nt":
         ("WIN32", None),
     ]
     include_dirs += [
-        os.environ.get('BOOST_HOME'),
         os.path.join(os.environ.get('PYTHON_HOME'), 'include'),
     ]
     library_dirs += [
-        os.path.join(os.environ.get('BOOST_HOME'), 'stage/lib'),
         os.path.join(os.environ.get('PYTHON_HOME'), 'libs'),
     ]
 
@@ -54,23 +50,11 @@ elif os.name == "posix" and sys.platform == "darwin":
         '/usr/local/include'
     ]
 
-    if sys.platform == "darwin":
-        libraries += ["boost_python%d%d" % (sys.version_info.major,
-                                            sys.version_info.minor)]
-    else:
-        libraries += ["boost_python-mt"]
-
     extra_compile_args += ["-msse4.2", "-maes"]
 elif os.name == "posix":
     import platform
 
     libraries += ["rt", "gcc"]
-
-    if platform.dist()[0] == "Ubuntu":
-        libraries += ["boost_python-py%d%d" % (sys.version_info.major,
-                                               sys.version_info.minor)]
-    else:
-        libraries += ["boost_python"]
 
     extra_compile_args += ["-msse4.2", "-maes"]
 

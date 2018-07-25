@@ -357,9 +357,9 @@ class TestT1Hash(TestHasher):
 
     def testT1Hash64Be(self):
         self.doTest(hasher_type=t1_64_be,
-                    bytes_hash=10616215634819799576L,
-                    seed_hash=6056749954736269874L,
-                    unicode_hash=18194209408316694427L)
+                    bytes_hash=7811195108528602730L,
+                    seed_hash=16139937605191117723L,
+                    unicode_hash=4258761466277697735L)
 
 
 class TestXXHash(TestHasher):
@@ -379,21 +379,22 @@ class TestXXHash(TestHasher):
 class TestIssues(unittest.TestCase):
     # https://github.com/flier/pyfasthash/issues/3
     def testErrorReturnNone(self):
-        h = fnv1_64()
+        if hasattr(sys, 'getrefcount'):  # skip pypy
+            h = fnv1_64()
 
-        old_refcnt = sys.getrefcount(None)
+            old_refcnt = sys.getrefcount(None)
 
-        for i in range(10000):
-            try:
-                h(None)
+            for i in range(10000):
+                try:
+                    h(None)
 
-                self.fail("fail to raise exception")
-            except TypeError as ex:
-                pass
+                    self.fail("fail to raise exception")
+                except ValueError:
+                    pass
 
-        new_refcnt = sys.getrefcount(None)
+            new_refcnt = sys.getrefcount(None)
 
-        self.assertTrue(old_refcnt >= new_refcnt)
+            self.assertTrue(old_refcnt >= new_refcnt)
 
     # https://github.com/flier/pyfasthash/issues/24
     def testDefaultStringType(self):
