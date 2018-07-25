@@ -1,3 +1,4 @@
+sudo: false
 language: python
 python:
   - '3.7-dev'
@@ -12,16 +13,6 @@ python:
   - 'pypy3.5'
 install:
   - pip install -r requirements.txt
+  - pip install .
 script:
-  - python setup.py build_clib build_ext
-  - python setup.py test
-  - python setup.py sdist bdist bdist_wheel
-deploy:
-  - provider: pypi
-    user: flier
-    password:
-      secure: MzQkLw7nm0B/4MOpaAQwzMLDPLEpTh3vfzqL4KVHV61sY8O1X7KTB2AdC7PvZcufviogBAMQF1lGjSuY/xGOBlkbrco0dqjPdBpaGq1w592gsA3D1y4tNJvFQrhkIKhxSjw7hM1PxThYtkDXlEfFprc5NopJ6oq0IZvEcgqgiz4=
-    skip_cleanup: true
-    on:
-      tags: true
-      repo: flier/pyfasthash
+  - pytest -v
