@@ -68,37 +68,37 @@ py::handle convert(const T &value);
 template <>
 py::handle convert(const int &value)
 {
-  return ::PyLong_FromLong(value);
+  return PyLong_FromLong(value);
 }
 
 template <>
 py::handle convert(const unsigned int &value)
 {
-  return ::PyLong_FromSize_t(value);
+  return PyLong_FromSize_t(value);
 }
 
 template <>
 py::handle convert(const long &value)
 {
-  return ::PyLong_FromLong(value);
+  return PyLong_FromLong(value);
 }
 
 template <>
 py::handle convert(const unsigned long &value)
 {
-  return ::PyLong_FromUnsignedLong(value);
+  return PyLong_FromUnsignedLong(value);
 }
 
 template <>
 py::handle convert(const long long &value)
 {
-  return ::PyLong_FromLongLong(value);
+  return PyLong_FromLongLong(value);
 }
 
 template <>
 py::handle convert(const unsigned long long &value)
 {
-  return ::PyLong_FromUnsignedLongLong(value);
+  return PyLong_FromUnsignedLongLong(value);
 }
 
 #ifndef _MSC_VER
@@ -110,9 +110,12 @@ py::handle convert(const uint128_t &value)
 #endif
 
 template <typename T>
-T extract_hash_value(PyObject *obj)
+T extract_hash_value(PyObject *obj);
+
+template <>
+uint32_t extract_hash_value(PyObject *obj)
 {
-  T value = 0;
+  uint32_t value = 0;
 
   if (PyLong_Check(obj))
   {
@@ -126,7 +129,7 @@ T extract_hash_value(PyObject *obj)
 #endif
   else
   {
-    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `int` or `long`");
+    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
   }
 
   return value;
@@ -149,7 +152,7 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
 #endif
   else
   {
-    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `int` or `long`");
+    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
   }
 
   return value;
@@ -167,7 +170,7 @@ uint128_t extract_hash_value<uint128_t>(PyObject *obj)
   }
   else
   {
-    ::PyErr_SetString(::PyExc_TypeError, "unknown `seed` type, expected `long`");
+    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
   }
 
   return value;
