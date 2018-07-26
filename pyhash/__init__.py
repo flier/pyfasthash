@@ -55,12 +55,12 @@ metro_crc_128_2 = _pyhash.__dict__.get('metro_128_crc_2')
 
 mum_64 = _pyhash.mum_64
 
-t1ha2 = t1ha2_atonce = _pyhash.t1ha2_atonce
+t1ha2 = t1ha2_64 = t1ha2_atonce = _pyhash.t1ha2_atonce
 t1ha2_128 = t1ha2_atonce128 = _pyhash.__dict__.get('t1ha2_atonce128')
-t1ha1_le = _pyhash.t1ha1_le
-t1ha1_be = _pyhash.t1ha1_be
-t1ha1 = t1ha1_le if __is_little_endian__ else t1ha1_be
-t1ha0 = _pyhash.t1ha0
+t1ha1_le = t1ha1_64le = _pyhash.t1ha1_le
+t1ha1_be = t1ha1_64be = _pyhash.t1ha1_be
+t1ha1 = t1ha1_64 = t1ha1_le if __is_little_endian__ else t1ha1_be
+t1ha0 = t1ha0_64 = _pyhash.t1ha0
 t1ha0_ia32aes_noavx = _pyhash.t1ha0_ia32aes_noavx
 t1ha0_ia32aes_avx = _pyhash.t1ha0_ia32aes_avx
 t1ha0_ia32aes_avx2 = _pyhash.t1ha0_ia32aes_avx2
