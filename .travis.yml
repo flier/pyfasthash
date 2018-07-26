@@ -6,8 +6,8 @@ python:
   - '3.5'
   - '3.4'
   - '2.7'
-  - 'pypy2'
-  - 'pypy3'
+  - 'pypy2.7'
+  - 'pypy3.5'
 install:
   - pip install -U setuptools pip
   - pip install -r requirements.txt
