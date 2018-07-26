@@ -156,6 +156,6 @@ setup(name='pyhash',
       ],
       keywords='hash hashing fasthash',
       install_requires=[],
-      setup_requires=["pytest-runner"],
-      tests_require=["pytest"],
+      setup_requires=['pytest-runner', 'pytest-benchmark'],
+      tests_require=['pytest'],
       use_2to3=True)
