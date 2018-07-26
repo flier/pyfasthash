@@ -19,25 +19,13 @@
 
 # Installation
 
-Please use pyhash to install it from pypi
+Please use pyhash to install it with `pip`.
 
 ```bash
 $sudo pip install pyhash
 ```
 
-Notes: `pyhash` depends on `Boost` library to build
-
-- Ubuntu
-
-> sudo apt-get install libboost-all-dev
-
-- CentOS
-
-> sudo yum install boost-devel
-
-- OSX
-
-> brew install boost boost-python
+**Notes** `pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
 
 # Algorithms
 
@@ -87,10 +75,22 @@ pyhash supports the following hash algorithms
 - [MumHash](https://github.com/vnmakarov/mum-hash)
   - mum_64
 - [T1Hash](https://github.com/leo-yuriev/t1ha)
-  - t1_32
-  - t1_32_be
-  - t1_64
-  - t1_64_be
+  - t1ha2 **recommended**
+  - t1ha2_128 **recommended**
+  - t1ha1 _(64-bit native-endian)_
+  - t1ha1_le _(64-bit little-endian)_
+  - t1ha1_be _(64-bit big-endian)_
+  - t1ha0 _(choice fastest function in runtime.)_
+  - t1ha0_ia32aes_noavx _(x86 with AES-NI without AVX extensions)_
+  - t1ha0_ia32aes_avx _(x86 with AES-NI and AVX extensions)_
+  - t1ha0_ia32aes_avx2 _(x86 with AES-NI and AVX2 extensions)_
+  - t1ha0_32 _(32-bit native-endian)_
+  - t1ha0_32le _(32-bit little-endian)_
+  - t1ha0_32be _(32-bit big-endian)_
+  - ~~t1_32~~
+  - ~~t1_32_be~~
+  - ~~t1_64~~
+  - ~~t1_64_be~~
 - [XXHash](https://github.com/Cyan4973/xxHash)
   - xx_32
   - xx_64
