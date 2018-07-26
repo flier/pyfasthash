@@ -19,10 +19,10 @@ enum t1_hash_a
 };
 
 template <typename T, t1_hash_a A>
-class t1_hash_t : public Hasher<t1_hash_t<T, A>, T>
+class t1_hash_t : public Hasher<t1_hash_t<T, A>, uint64_t, T>
 {
   public:
-    typedef Hasher<t1_hash_t<T, A>, T> __hasher_t;
+    typedef Hasher<t1_hash_t<T, A>, uint64_t, T> __hasher_t;
     typedef typename __hasher_t::hash_value_t hash_value_t;
     typedef typename __hasher_t::seed_value_t seed_value_t;
 

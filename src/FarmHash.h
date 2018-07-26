@@ -27,6 +27,9 @@ class farm_hash_t : public Hasher<farm_hash_t<T>, T>
 
 typedef farm_hash_t<uint32_t> farm_hash_32_t;
 typedef farm_hash_t<uint64_t> farm_hash_64_t;
+#ifdef SUPPORT_INT128
+typedef farm_hash_t<uint128_t> farm_hash_128_t;
+#endif
 
 template <>
 const farm_hash_32_t::hash_value_t farm_hash_32_t::operator()(void *buf, size_t len, farm_hash_32_t::seed_value_t seed) const
@@ -55,8 +58,6 @@ const farm_hash_64_t::hash_value_t farm_hash_64_t::operator()(void *buf, size_t 
 }
 
 #ifdef SUPPORT_INT128
-typedef farm_hash_t<uint128_t> farm_hash_128_t;
-
 template <>
 const farm_hash_128_t::hash_value_t farm_hash_128_t::operator()(void *buf, size_t len, farm_hash_128_t::seed_value_t seed) const
 {
