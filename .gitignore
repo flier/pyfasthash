@@ -6,6 +6,7 @@ pyhash.egg-info
 .tox
 .eggs
 .pytest_cache
+.coverage
 
 setuptools*
 *.pyc

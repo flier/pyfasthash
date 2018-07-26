@@ -13,11 +13,22 @@ matrix:
   allow_failures:
     - python: 'pypy2.7-5.10'
     - python: 'pypy3.5'
+addons:
+  apt:
+    packages:
+      - lcov
+env:
+  - CFLAGS="-coverage"
 install:
   - pip install -U setuptools pip
   - pip install -r requirements.txt -r tests/requirements.txt
   - pip install .
 script:
+  - python setup.py build_clib build_ext --inplace
   - pytest -v
+  - pytest --benchmark-disable --cov=./ tests
+  - lcov --capture --directory . --output-file build/coverage.info
+  - lcov --remove build/coverage.info '/usr/*' "${PWD}/src/fnv/*" "${PWD}/src/lookup3/*" "${PWD}/src/SuperFastHash/*" "${PWD}/src/smhasher/*" "${PWD}/src/pybind11/*" -o build/coverage_filtered.info
+  - genhtml --legend --title "${TRAVIS_COMMIT} ${TRAVIS_COMMIT_MESSAGE}" --prefix src build/coverage_filtered.info --output-directory build/coverage
 after_success:
   - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'
