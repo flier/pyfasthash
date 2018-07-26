@@ -32,3 +32,4 @@ script:
   - genhtml --legend --title "${TRAVIS_COMMIT} ${TRAVIS_COMMIT_MESSAGE}" --prefix src build/coverage_filtered.info --output-directory build/coverage
 after_success:
   - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'
+  - codecov
