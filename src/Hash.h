@@ -6,7 +6,7 @@
 
 namespace py = pybind11;
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
 
 typedef int int32_t;
 typedef unsigned int uint32_t;
@@ -17,7 +17,7 @@ typedef unsigned __int64 uint64_t;
 
 #include <stdint.h>
 
-#if defined(SUPPORT_INT128)
+#ifdef SUPPORT_INT128
 
 typedef unsigned __int128 uint128_t;
 
@@ -45,7 +45,7 @@ public:
     _PyLong_AsByteArray((PyLongObject *)tmp, (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
     Py_DECREF(tmp);
 
-    return !(value == -1 && !PyErr_Occurred());
+    return !PyErr_Occurred();
   }
 
   static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
@@ -56,9 +56,9 @@ public:
 } // namespace detail
 } // namespace pybind11
 
-#endif // defined(SUPPORT_INT128)
+#endif // SUPPORT_INT128
 
-#endif // defined(_MSC_VER)
+#endif // _MSC_VER
 
 namespace internal
 {
