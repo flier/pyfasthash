@@ -36,7 +36,7 @@ pyhash supports the following hash algorithms
   - fnv1a_32
   - fnv1_64
   - fnv1a_64
-- [MurmurHash](http://code.google.com/p/smhasher/) 1/2/3
+- [MurmurHash](http://code.google.com/p/smhasher/)
   - murmur1_32
   - murmur1_aligned_32
   - murmur2_32
@@ -49,7 +49,7 @@ pyhash supports the following hash algorithms
   - murmur3_x86_128
   - murmur3_x64_128
 - [lookup3](http://burtleburtle.net/bob/hash/doobs.html)
-  - lookup3 # base on sys.byteorder
+  - lookup3
   - lookup3_little
   - lookup3_big
 - [SuperFastHash](http://www.azillionmonkeys.com/qed/hash.html)
@@ -75,15 +75,15 @@ pyhash supports the following hash algorithms
 - [MumHash](https://github.com/vnmakarov/mum-hash)
   - mum_64
 - [T1Hash](https://github.com/leo-yuriev/t1ha)
-  - t1ha2 **recommended**
-  - t1ha2_128 **recommended**
+  - t1ha2 _(64-bit little-endian)_
+  - t1ha2_128 _(128-bit little-endian)_
   - t1ha1 _(64-bit native-endian)_
   - t1ha1_le _(64-bit little-endian)_
   - t1ha1_be _(64-bit big-endian)_
-  - t1ha0 _(choice fastest function in runtime.)_
-  - t1ha0_ia32aes_noavx _(x86 with AES-NI without AVX extensions)_
-  - t1ha0_ia32aes_avx _(x86 with AES-NI and AVX extensions)_
-  - t1ha0_ia32aes_avx2 _(x86 with AES-NI and AVX2 extensions)_
+  - t1ha0 _(64-bit, choice fastest function in runtime.)_
+  - t1ha0_ia32aes_noavx _(64-bit, x86 with AES-NI without AVX extensions)_
+  - t1ha0_ia32aes_avx _(64-bit, x86 with AES-NI and AVX extensions)_
+  - t1ha0_ia32aes_avx2 _(64-bit, x86 with AES-NI and AVX2 extensions)_
   - t1ha0_32 _(32-bit native-endian)_
   - t1ha0_32le _(32-bit little-endian)_
   - t1ha0_32be _(32-bit big-endian)_
