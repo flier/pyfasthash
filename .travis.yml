@@ -15,3 +15,5 @@ install:
   - pip install .
 script:
   - pytest -v
+after_success:
+  - bash <(curl -s https://codecov.io/bash) || echo 'Codecov failed to upload'
