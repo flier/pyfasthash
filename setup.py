@@ -112,19 +112,20 @@ c_libraries = [(
 if os.name != "nt":
     c_libraries[1][1]['sources'].append('src/smhasher/farmhash-c.c')
 
+libraries += [libname for (libname, _) in c_libraries]
+
 pyhash = Extension(name="_pyhash",
                    sources=source_files,
                    define_macros=macros,
                    include_dirs=include_dirs,
                    library_dirs=library_dirs,
                    libraries=libraries,
-                   depends=["lib%s.a" for (libname, _) in c_libraries],
                    extra_compile_args=extra_compile_args + ["-std=c++11"],
                    extra_link_args=extra_link_args,
                    )
 
 setup(name='pyhash',
-      version='0.8.3',
+      version='0.9.0',
       description='Python Non-cryptographic Hash Library',
       long_description=long_description,
       long_description_content_type='text/markdown',
