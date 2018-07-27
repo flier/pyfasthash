@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+import sys
+
 import pytest
 
 import pyhash
@@ -10,14 +12,14 @@ def test_data():
     return b'test', u'test'
 
 
-@pytest.fixture(scope="module")
-def city_64():
-    return pyhash.city_64
+for name in pyhash.__hasher__:
+    def generate_fixture(name, hasher):
+        @pytest.fixture(scope='module', name=name)
+        def wrap():
+            return hasher
+        return wrap
 
-
-@pytest.fixture(scope="module")
-def city_128():
-    return pyhash.city_128
+    globals()[name] = generate_fixture(name, getattr(pyhash, name))
 
 
 @pytest.fixture(scope="module")

@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 import sys
+import inspect
 
 import _pyhash
 
@@ -75,3 +76,5 @@ t1ha0_32 = t1ha0_32le if __is_little_endian__ else t1ha0_32be
 
 xx_32 = _pyhash.xx_32
 xx_64 = _pyhash.xx_64
+
+__hasher__ = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
