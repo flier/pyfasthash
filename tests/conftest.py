@@ -49,6 +49,11 @@ def fingerprint_tester():
         assert unicode_fingerprint == fingerprinter(
             udata), "unicode fingerprint should be %d" % fingerprinter(udata)
 
+        bytes_fingerprints = fingerprinter(data, data)
+
+        assert [bytes_fingerprint,
+                bytes_fingerprint] == bytes_fingerprints, "bytes fingerprint should be %s" % bytes_fingerprints
+
     return do_test
 
 
