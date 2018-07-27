@@ -59,7 +59,7 @@ pyhash supports the following hash algorithms
   - city_64
   - city_128
   - city_crc_128
-  - city_crc_256 _(ignore seed)_
+  - city_fingerprint_256
 - [Spooky Hash](http://burtleburtle.net/bob/hash/spooky.html)
   - spooky_32
   - spooky_64

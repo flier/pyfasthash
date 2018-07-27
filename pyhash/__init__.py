@@ -35,7 +35,7 @@ city_32 = _pyhash.city_32
 city_64 = _pyhash.city_64
 city_128 = _pyhash.__dict__.get('city_128')
 city_crc_128 = _pyhash.__dict__.get('city_crc_128')
-city_crc_256 = _pyhash.__dict__.get('city_crc_256')
+city_fingerprint_256 = _pyhash.__dict__.get('city_fingerprint_256')
 
 spooky_32 = _pyhash.spooky_32
 spooky_64 = _pyhash.spooky_64

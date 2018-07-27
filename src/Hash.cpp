@@ -53,7 +53,7 @@ PYBIND11_MODULE(_pyhash, m)
 #ifdef SUPPORT_INT128
   city_hash_128_t::Export(m, "city_128");
   city_hash_crc_128_t::Export(m, "city_crc_128");
-  city_hash_crc_256_t::Export(m, "city_crc_256");
+  city_fingerprint_256_t::Export(m, "city_fingerprint_256");
 #endif
 
   spooky_hash_32_t::Export(m, "spooky_32");

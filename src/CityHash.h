@@ -137,13 +137,26 @@ struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>, T>
 	typedef typename __hasher_t::hash_value_t hash_value_t;
 	typedef typename __hasher_t::seed_value_t seed_value_t;
 
-	city_hash_crc_t(seed_value_t seed = 0) : __hasher_t(seed) {}
+	city_hash_crc_t(seed_value_t seed = {}) : __hasher_t(seed) {}
 
 	const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
+template <typename T>
+struct city_fingerprint_t : public Fingerprinter<city_fingerprint_t<T>, T>
+{
+  public:
+	typedef Fingerprinter<city_fingerprint_t<T>, T> __fingerprinter_t;
+	typedef typename __fingerprinter_t::hash_value_t hash_value_t;
+	typedef typename __fingerprinter_t::seed_value_t seed_value_t;
+
+	city_fingerprint_t() = default;
+
+	const hash_value_t operator()(void *buf, size_t len, seed_value_t _ignored) const;
+};
+
 typedef city_hash_crc_t<uint128_t> city_hash_crc_128_t;
-typedef city_hash_crc_t<uint256_t> city_hash_crc_256_t;
+typedef city_fingerprint_t<uint256_t> city_fingerprint_256_t;
 
 template <>
 const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *buf, size_t len, city_hash_crc_128_t::seed_value_t seed) const
@@ -163,7 +176,7 @@ const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *bu
 }
 
 template <>
-const city_hash_crc_256_t::hash_value_t city_hash_crc_256_t::operator()(void *buf, size_t len, city_hash_crc_256_t::seed_value_t seed) const
+const city_fingerprint_256_t::hash_value_t city_fingerprint_256_t::operator()(void *buf, size_t len, seed_value_t _ignored) const
 {
 	uint256_t result = {};
 

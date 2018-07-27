@@ -241,24 +241,33 @@ private:
   seed_value_t _seed;
 
 protected:
-  Hasher(seed_value_t seed = 0) : _seed(seed) {}
+  Hasher(seed_value_t seed = {}) : _seed(seed) {}
 
 public:
   virtual ~Hasher(void) {}
 
   static py::object CallWithArgs(py::args args, py::kwargs kwargs);
 
-  static void Export(const py::module &m, const char *name);
+  static void Export(const py::module &m, const char *name)
+  {
+    py::class_<T>(m, name)
+        .def(py::init<seed_value_t>(), py::arg("seed") = 0)
+        .def_readwrite("seed", &T::_seed)
+        .def("__call__", &T::CallWithArgs);
+  }
 };
 
-template <typename T, typename S, typename H>
-void Hasher<T, S, H>::Export(const py::module &m, const char *name)
+template <typename T, typename H>
+class Fingerprinter : public Hasher<T, H>
 {
-  py::class_<T>(m, name)
-      .def(py::init<seed_value_t>(), py::arg("seed") = 0)
-      .def_readwrite("seed", &T::_seed)
-      .def("__call__", &T::CallWithArgs);
-}
+public:
+  static void Export(const py::module &m, const char *name)
+  {
+    py::class_<T>(m, name)
+        .def(py::init<>())
+        .def("__call__", &T::CallWithArgs);
+  }
+};
 
 template <typename T, typename S, typename H>
 py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)

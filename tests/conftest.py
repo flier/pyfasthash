@@ -11,19 +11,41 @@ def test_data():
 @pytest.fixture(scope="module")
 def hash_tester():
     def do_test(hasher_type, bytes_hash, seed_hash, unicode_hash):
-        if hasher_type:
-            data, udata = test_data()
-            hasher = hasher_type()
+        assert hasher_type
 
-            assert hasher
-            assert bytes_hash == hasher(data), "bytes hash: %d" % hasher(data)
-            assert seed_hash == hasher(
-                data, seed=bytes_hash), "bytes hash with seed: %d" % hasher(data, seed=bytes_hash)
-            assert seed_hash == hasher(data, data)
-            assert unicode_hash == hasher(
-                udata), "unicode hash: %d" % hasher(udata)
-        else:
-            print("WARN: skip test cases for `%s` hasher", hasher_type)
+        assert hasattr(hasher_type, 'seed')
+
+        data, udata = test_data()
+        hasher = hasher_type()
+
+        assert hasher
+        assert hasattr(hasher, 'seed')
+        assert bytes_hash == hasher(data), "bytes hash: %d" % hasher(data)
+        assert seed_hash == hasher(
+            data, seed=bytes_hash), "bytes hash with seed: %d" % hasher(data, seed=bytes_hash)
+        assert seed_hash == hasher(data, data)
+        assert unicode_hash == hasher(
+            udata), "unicode hash: %d" % hasher(udata)
+
+    return do_test
+
+
+@pytest.fixture(scope="module")
+def fingerprint_tester():
+    def do_test(fingerprinter_type, bytes_fingerprint, unicode_fingerprint):
+        assert fingerprinter_type
+
+        assert not hasattr(fingerprinter_type, 'seed')
+
+        data, udata = test_data()
+        fingerprinter = fingerprinter_type()
+
+        assert fingerprinter
+        assert not hasattr(fingerprinter, 'seed')
+        assert bytes_fingerprint == fingerprinter(
+            data), "bytes fingerprint: %d" % fingerprinter(data)
+        assert unicode_fingerprint == fingerprinter(
+            udata), "unicode fingerprint: %d" % fingerprinter(udata)
 
     return do_test
 
