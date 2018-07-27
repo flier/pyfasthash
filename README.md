@@ -1,20 +1,46 @@
 # Introduction [![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)](https://travis-ci.org/flier/pyfasthash) [![codecov](https://codecov.io/gh/flier/pyfasthash/branch/master/graph/badge.svg)](https://codecov.io/gh/flier/pyfasthash)
 
-  pyhash is a python non-cryptographic hash library. It provides several common hash algorithms with C/C++ implementation for performance.
+`pyhash` is a python non-cryptographic hash library.
+
+It provides several common hash algorithms with C/C++ implementation for performance and compatibility.
 
 ```python
 >>> import pyhash
 >>> hasher = pyhash.fnv1_32()
+
 >>> hasher('hello world')
 2805756500L
 
 >>> hasher('hello', ' ', 'world')
 2805756500L
 
->>> hasher('hello ')
-406904344
->>> hasher('world', seed=406904344)
+>>> hasher('world', seed=hasher('hello '))
 2805756500L
+```
+
+**Notes**
+
+`hasher('hello', ' ', 'world')` is a syntax sugar for `hasher('world', seed=hasher(' ', seed=hasher('hello')))`, and may not equals to `hasher('hello world')`, because some hash algorithm use different `hash` and `seed` size.
+
+For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
+
+```python
+>>> import pyhash
+>>> hasher = pyhash.metro_64()
+
+>>> hasher('hello world')
+>>> 5622782129197849471L
+
+>>> hasher('hello', ' ', 'world')
+>>> 16402988188088019159L
+
+>>> hasher('world', seed=hasher(' ', seed=hasher('hello')))
+>>> 16402988188088019159L
+```
+
+It also can be used to generate fingerprints without seed.
+
+```python
 ```
 
 # Installation
@@ -99,7 +125,7 @@ pyhash supports the following hash algorithms
   - xx_32
   - xx_64
 
-**Notes**
+## String and Bytes literals
 
 Python has two types can be used to present string literals, the hash values of the two types are definitely different.
 

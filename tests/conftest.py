@@ -25,6 +25,7 @@ def hash_tester():
         assert seed_hash == hasher(
             data, seed=bytes_hash), "bytes hash with seed should be %d" % hasher(data, seed=bytes_hash)
         assert seed_hash == hasher(data, data)
+        assert seed_hash == hasher(data, seed=hasher(data))
         assert unicode_hash == hasher(
             udata), "unicode hash should be %d" % hasher(udata)
 
