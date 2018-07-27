@@ -364,5 +364,12 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
     return py::cast(results.front());
   }
 
-  return py::cast(results);
+  py::list fingerprintes;
+
+  for (auto result : results)
+  {
+    fingerprintes.append(py::cast(result));
+  }
+
+  return fingerprintes;
 }
