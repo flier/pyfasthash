@@ -29,6 +29,13 @@ typedef std::array<uint64_t, 4> uint256_t;
 
 #define U128_NEW(LO, HI) ((((uint128_t)HI) << 64) + LO)
 
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+const int IS_LITTLE_ENDIAN = 1;
+#else
+const int IS_LITTLE_ENDIAN = 0;
+#endif
+const int PyLong_Unsigned = 0;
+
 namespace pybind11
 {
 namespace detail
@@ -48,14 +55,14 @@ public:
       return false;
     }
 
-    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
 
     return !PyErr_Occurred();
   }
 
   static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
   {
-    return ::_PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    return _PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
   }
 };
 
@@ -74,14 +81,14 @@ public:
       return false;
     }
 
-    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
 
     return !PyErr_Occurred();
   }
 
   static handle cast(uint256_t src, return_value_policy /* policy */, handle /* parent */)
   {
-    return ::_PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    return _PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
   }
 };
 } // namespace detail
