@@ -258,9 +258,15 @@ public:
 };
 
 template <typename T, typename H>
-class Fingerprinter : public Hasher<T, H>
+class Fingerprinter
 {
 public:
+  typedef H fingerprint_t;
+
+  virtual ~Fingerprinter(void) {}
+
+  static py::object CallWithArgs(py::args args, py::kwargs kwargs);
+
   static void Export(const py::module &m, const char *name)
   {
     py::class_<T>(m, name)
@@ -334,6 +340,12 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 
         buf += internal::BOM_MARK_SIZE;
         len -= internal::BOM_MARK_SIZE;
+
+        if (buf && len)
+        {
+          value = hasher((void *)buf, len, value);
+          return;
+        }
 #ifndef Py_UNICODE_WIDE
       }
 #endif
@@ -346,11 +358,16 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
       }
 
       buf = PyString_AS_STRING(utf16.ptr()) + internal::BOM_MARK_SIZE;
-       len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
+      len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
 #else
       buf = PyUnicode_AS_DATA(arg.ptr());
       len = PyUnicode_GET_DATA_SIZE(arg.ptr());
 #endif
+      if (buf && len)
+      {
+        value = hasher((void *)buf, len, value);
+        return;
+      }
 #endif
     }
 #if PY_MAJOR_VERSION < 3
@@ -374,4 +391,116 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   });
 
   return py::reinterpret_steal<py::object>(internal::wrap_value(value));
+}
+
+template <typename T, typename H>
+py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
+{
+  if (args.size() == 0)
+  {
+    throw std::invalid_argument("missed self argument");
+  }
+
+  py::object self = args[0];
+
+  if (!self)
+  {
+    throw std::invalid_argument("wrong type of self argument");
+  }
+
+  const T &fingerprinter = self.cast<T>();
+  std::vector<typename T::fingerprint_t> results;
+
+  std::transform(std::next(args.begin()), args.end(), std::back_inserter(results), [&](const py::handle &arg) {
+    const char *buf = nullptr;
+    Py_ssize_t len = 0;
+
+#if PY_MAJOR_VERSION < 3
+    if (PyString_CheckExact(arg.ptr()))
+    {
+      if (-1 == PyString_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
+      {
+        throw py::error_already_set();
+      }
+    }
+#else
+    if (PyBytes_CheckExact(arg.ptr()))
+    {
+      if (-1 == PyBytes_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
+      {
+        throw py::error_already_set();
+      }
+    }
+#endif
+    else if (PyUnicode_CheckExact(arg.ptr()))
+    {
+#if PY_MAJOR_VERSION > 2
+#ifndef Py_UNICODE_WIDE
+      if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(arg.ptr()) && PyUnicode_IS_READY(arg.ptr()))
+      {
+        buf = PyUnicode_2BYTE_DATA(arg.ptr());
+        len = PyUnicode_GET_LENGTH(arg.ptr()) * Py_UNICODE_SIZE;
+      }
+      else
+      {
+#endif
+        py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
+
+        if (!utf16)
+        {
+          throw py::error_already_set();
+        }
+
+        if (-1 == PyBytes_AsStringAndSize(utf16.ptr(), (char **)&buf, &len))
+        {
+          throw py::error_already_set();
+        }
+
+        buf += internal::BOM_MARK_SIZE;
+        len -= internal::BOM_MARK_SIZE;
+
+        return fingerprinter((void *)buf, len);
+#ifndef Py_UNICODE_WIDE
+      }
+#endif
+#else
+#ifdef Py_UNICODE_WIDE
+      py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
+
+      if (!utf16) {
+        throw py::error_already_set();
+      }
+
+      buf = PyString_AS_STRING(utf16.ptr()) + internal::BOM_MARK_SIZE;
+      len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
+#else
+      buf = PyUnicode_AS_DATA(arg.ptr());
+      len = PyUnicode_GET_DATA_SIZE(arg.ptr());
+#endif
+        return fingerprinter((void *)buf, len);
+#endif
+    }
+#if PY_MAJOR_VERSION < 3
+    else if (PyObject_CheckReadBuffer(arg.ptr()))
+    {
+      if (-1 == PyObject_AsReadBuffer(arg.ptr(), (const void **)&buf, &len))
+      {
+        throw py::error_already_set();
+      }
+    }
+#endif
+    else
+    {
+      throw std::invalid_argument("wrong type of argument");
+    }
+
+    return fingerprinter((void *)buf, len);
+  });
+
+  if (results.size() == 1)
+  {
+    return py::reinterpret_steal<py::object>(internal::wrap_value(results.front()));
+  }
+
+  return py::make_iterator(results.begin(), results.end());
 }
