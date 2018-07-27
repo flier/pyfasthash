@@ -147,12 +147,11 @@ struct city_fingerprint_t : public Fingerprinter<city_fingerprint_t<T>, T>
 {
   public:
 	typedef Fingerprinter<city_fingerprint_t<T>, T> __fingerprinter_t;
-	typedef typename __fingerprinter_t::hash_value_t hash_value_t;
-	typedef typename __fingerprinter_t::seed_value_t seed_value_t;
+	typedef typename __fingerprinter_t::fingerprint_t fingerprint_value_t;
 
 	city_fingerprint_t() = default;
 
-	const hash_value_t operator()(void *buf, size_t len, seed_value_t _ignored) const;
+	const fingerprint_value_t operator()(void *buf, size_t len) const;
 };
 
 typedef city_hash_crc_t<uint128_t> city_hash_crc_128_t;
@@ -176,7 +175,7 @@ const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *bu
 }
 
 template <>
-const city_fingerprint_256_t::hash_value_t city_fingerprint_256_t::operator()(void *buf, size_t len, seed_value_t _ignored) const
+const city_fingerprint_256_t::fingerprint_value_t city_fingerprint_256_t::operator()(void *buf, size_t len) const
 {
 	uint256_t result = {};
 

@@ -68,6 +68,9 @@ pyhash supports the following hash algorithms
   - farm_32
   - farm_64
   - farm_128
+  - farm_fingerprint_32
+  - farm_fingerprint_64
+  - farm_fingerprint_128
 - [MetroHash](https://github.com/jandrewrogers/MetroHash)
   - metro_64
   - metro_128

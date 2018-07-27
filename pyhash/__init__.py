@@ -45,6 +45,10 @@ farm_32 = _pyhash.__dict__.get('farm_32')
 farm_64 = _pyhash.__dict__.get('farm_64')
 farm_128 = _pyhash.__dict__.get('farm_128')
 
+farm_fingerprint_32 = _pyhash.__dict__.get('farm_fingerprint_32')
+farm_fingerprint_64 = _pyhash.__dict__.get('farm_fingerprint_64')
+farm_fingerprint_128 = _pyhash.__dict__.get('farm_fingerprint_128')
+
 metro_64 = metro_64_1 = _pyhash.metro_64_1
 metro_64_2 = _pyhash.metro_64_2
 metro_128 = metro_128_1 = _pyhash.__dict__.get('metro_128_1')

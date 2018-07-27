@@ -70,6 +70,14 @@ PYBIND11_MODULE(_pyhash, m)
 #endif
 #endif
 
+#ifndef _MSC_VER
+  farm_fingerprint_32_t::Export(m, "farm_fingerprint_32");
+  farm_fingerprint_64_t::Export(m, "farm_fingerprint_64");
+#ifdef SUPPORT_INT128
+  farm_fingerprint_128_t::Export(m, "farm_fingerprint_128");
+#endif
+#endif
+
   metro_hash_64_1_t::Export(m, "metro_64_1");
   metro_hash_64_2_t::Export(m, "metro_64_2");
 #ifdef SUPPORT_INT128

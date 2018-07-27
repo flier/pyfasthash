@@ -20,12 +20,13 @@ def hash_tester():
 
         assert hasher
         assert hasattr(hasher, 'seed')
-        assert bytes_hash == hasher(data), "bytes hash: %d" % hasher(data)
+        assert bytes_hash == hasher(
+            data), "bytes hash should be %d" % hasher(data)
         assert seed_hash == hasher(
-            data, seed=bytes_hash), "bytes hash with seed: %d" % hasher(data, seed=bytes_hash)
+            data, seed=bytes_hash), "bytes hash with seed should be %d" % hasher(data, seed=bytes_hash)
         assert seed_hash == hasher(data, data)
         assert unicode_hash == hasher(
-            udata), "unicode hash: %d" % hasher(udata)
+            udata), "unicode hash should be %d" % hasher(udata)
 
     return do_test
 
@@ -43,9 +44,9 @@ def fingerprint_tester():
         assert fingerprinter
         assert not hasattr(fingerprinter, 'seed')
         assert bytes_fingerprint == fingerprinter(
-            data), "bytes fingerprint: %d" % fingerprinter(data)
+            data), "bytes fingerprint should be %d" % fingerprinter(data)
         assert unicode_fingerprint == fingerprinter(
-            udata), "unicode fingerprint: %d" % fingerprinter(udata)
+            udata), "unicode fingerprint should be %d" % fingerprinter(udata)
 
     return do_test
 
