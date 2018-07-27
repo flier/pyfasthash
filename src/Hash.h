@@ -13,7 +13,7 @@ typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 
-#else // defined(_MSC_VER)
+#else // _MSC_VER
 
 #include <stdint.h>
 
@@ -62,58 +62,60 @@ public:
 
 namespace internal
 {
+const size_t BOM_MARK_SIZE = 2;
+
 template <typename T>
-py::handle convert(const T &value);
+PyObject *wrap_value(const T &value);
 
 template <>
-py::handle convert(const int &value)
+PyObject *wrap_value(const int &value)
 {
   return PyLong_FromLong(value);
 }
 
 template <>
-py::handle convert(const unsigned int &value)
+PyObject *wrap_value(const unsigned int &value)
 {
   return PyLong_FromSize_t(value);
 }
 
 template <>
-py::handle convert(const long &value)
+PyObject *wrap_value(const long &value)
 {
   return PyLong_FromLong(value);
 }
 
 template <>
-py::handle convert(const unsigned long &value)
+PyObject *wrap_value(const unsigned long &value)
 {
   return PyLong_FromUnsignedLong(value);
 }
 
 template <>
-py::handle convert(const long long &value)
+PyObject *wrap_value(const long long &value)
 {
   return PyLong_FromLongLong(value);
 }
 
 template <>
-py::handle convert(const unsigned long long &value)
+PyObject *wrap_value(const unsigned long long &value)
 {
   return PyLong_FromUnsignedLongLong(value);
 }
 
 #ifndef _MSC_VER
 template <>
-py::handle convert(const uint128_t &value)
+PyObject *wrap_value(const uint128_t &value)
 {
   return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 }
 #endif
 
 template <typename T>
-T extract_hash_value(PyObject *obj);
+T extract_value(PyObject *obj);
 
 template <>
-uint32_t extract_hash_value(PyObject *obj)
+uint32_t extract_value(PyObject *obj)
 {
   uint32_t value = 0;
 
@@ -136,7 +138,7 @@ uint32_t extract_hash_value(PyObject *obj)
 }
 
 template <>
-uint64_t extract_hash_value<uint64_t>(PyObject *obj)
+uint64_t extract_value<uint64_t>(PyObject *obj)
 {
   uint64_t value = 0;
 
@@ -158,9 +160,9 @@ uint64_t extract_hash_value<uint64_t>(PyObject *obj)
   return value;
 }
 
-#if defined(SUPPORT_INT128)
+#ifdef SUPPORT_INT128
 template <>
-uint128_t extract_hash_value<uint128_t>(PyObject *obj)
+uint128_t extract_value<uint128_t>(PyObject *obj)
 {
   uint128_t value = {0};
 
@@ -213,83 +215,90 @@ template <typename T, typename S, typename H>
 py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
   if (args.size() == 0)
+  {
     throw std::invalid_argument("missed self argument");
+  }
 
   py::object self = args[0];
 
   if (!self)
+  {
     throw std::invalid_argument("wrong type of self argument");
+  }
 
   const T &hasher = self.cast<T>();
-  typename T::hash_value_t value = kwargs.contains("seed") ? internal::extract_hash_value<typename T::hash_value_t>(kwargs["seed"].ptr()) : hasher._seed;
+  typename T::hash_value_t value = kwargs.contains("seed") ? internal::extract_value<typename T::hash_value_t>(kwargs["seed"].ptr()) : hasher._seed;
 
   std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
+    const char *buf = nullptr;
+    Py_ssize_t len = 0;
+
 #if PY_MAJOR_VERSION < 3
     if (PyString_CheckExact(arg.ptr()))
     {
-      char *buf = NULL;
-      Py_ssize_t len = 0;
-
-      if (0 == PyString_AsStringAndSize(arg.ptr(), &buf, &len))
+      if (-1 == PyString_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
       {
-        value = hasher(buf, len, value);
+        throw py::error_already_set();
       }
     }
 #else
     if (PyBytes_CheckExact(arg.ptr()))
     {
-      char *buf = NULL;
-      Py_ssize_t len = 0;
-
-      if (0 == PyBytes_AsStringAndSize(arg.ptr(), &buf, &len))
+      if (-1 == PyBytes_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
       {
-        value = hasher((void *)buf, len, value);
+        throw py::error_already_set();
       }
     }
 #endif
     else if (PyUnicode_CheckExact(arg.ptr()))
     {
 #if PY_MAJOR_VERSION > 2
-#ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::reinterpret_borrow<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
-
-      char *buf = NULL;
-      Py_ssize_t len = 0;
-
-      if (0 == PyBytes_AsStringAndSize(utf16.ptr(), &buf, &len))
+#ifndef Py_UNICODE_WIDE
+      if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(arg.ptr()) && PyUnicode_IS_READY(arg.ptr()))
       {
-        buf += 2;
-        len -= 2;
+        buf = PyUnicode_2BYTE_DATA(arg.ptr());
+        len = PyUnicode_GET_LENGTH(arg.ptr()) * Py_UNICODE_SIZE;
       }
-#else
-      Py_UCS2 *buf = PyUnicode_2BYTE_DATA(arg.ptr());
-      Py_ssize_t len = PyUnicode_GET_LENGTH(arg.ptr()) * 2;
+      else
+      {
+#endif
+        py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
+
+        if (!utf16)
+        {
+          throw py::error_already_set();
+        }
+
+        if (-1 == PyBytes_AsStringAndSize(utf16.ptr(), (char **)&buf, &len))
+        {
+          throw py::error_already_set();
+        }
+
+        buf += internal::BOM_MARK_SIZE;
+        len -= internal::BOM_MARK_SIZE;
+#ifndef Py_UNICODE_WIDE
+      }
 #endif
 #else
 #ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::reinterpret_borrow<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
+      py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
 
-      const char *buf = PyString_AS_STRING(utf16.ptr()) + 2; // skip the BOM
-      Py_ssize_t len = PyString_GET_SIZE(utf16.ptr()) - 2;
+      if (!utf16) {
+        throw py::error_already_set();
+      }
+
+      buf = PyString_AS_STRING(utf16.ptr()) + internal::BOM_MARK_SIZE;
+       len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
 #else
-      const char *buf = PyUnicode_AS_DATA(arg.ptr());
-      Py_ssize_t len = PyUnicode_GET_DATA_SIZE(arg.ptr());
+      buf = PyUnicode_AS_DATA(arg.ptr());
+      len = PyUnicode_GET_DATA_SIZE(arg.ptr());
 #endif
 #endif
-
-      value = hasher((void *)buf, len, value);
     }
 #if PY_MAJOR_VERSION < 3
     else if (PyObject_CheckReadBuffer(arg.ptr()))
     {
-      const void *buf = NULL;
-      Py_ssize_t len = 0;
-
-      if (0 == PyObject_AsReadBuffer(arg.ptr(), &buf, &len))
-      {
-        value = hasher((void *)buf, len, value);
-      }
-      else
+      if (-1 == PyObject_AsReadBuffer(arg.ptr(), (const void **)&buf, &len))
       {
         throw py::error_already_set();
       }
@@ -299,7 +308,12 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
     {
       throw std::invalid_argument("wrong type of argument");
     }
+
+    if (buf && len)
+    {
+      value = hasher((void *)buf, len, value);
+    }
   });
 
-  return py::reinterpret_steal<py::object>(internal::convert(value));
+  return py::reinterpret_steal<py::object>(internal::wrap_value(value));
 }
