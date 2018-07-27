@@ -71,3 +71,24 @@ def test_t1ha0_32Be(hash_tester):
                 bytes_hash=17260815661605337945,
                 seed_hash=7926505876120298959,
                 unicode_hash=6364648105040243647)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_t1ha2_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.t1ha2, 17171225769172857249)
+
+
+@pytest.mark.benchmark(group='hash128', disable_gc=True)
+def test_t1ha2_128_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.t1ha2_128,
+                 263168739977411690410017013291704716368)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_t1ha1_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.t1ha1, 6501324028002495964)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_t1ha0_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.t1ha0, 6970451072221114646)

@@ -29,3 +29,23 @@ def test_fnv1a_64(hash_tester):
                 bytes_hash=11830222609977404196,
                 seed_hash=8858165303110309728,
                 unicode_hash=14494269412771327550)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_fnv1_32_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.fnv1_32, 4117514240)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_fnv1a_32_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.fnv1a_32, 1500862464)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_fnv1_64_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.fnv1_64, 487086381785722880)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_fnv1a_64_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.fnv1a_64, 13917847256464560128)

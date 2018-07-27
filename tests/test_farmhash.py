@@ -49,3 +49,19 @@ def test_farm_fingerprint_128(fingerprint_tester):
     fingerprint_tester(fingerprinter_type=pyhash.farm_fingerprint_128,
                        bytes_fingerprint=334882099032867325754781607143811124132,
                        unicode_fingerprint=251662992469041432568516527017706898625)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_farm_hash32_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.farm_32, 3977123615)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_farm_hash64_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.farm_64, 5291657088564336415)
+
+
+@pytest.mark.benchmark(group='hash128', disable_gc=True)
+def test_farm_hash128_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.farm_128,
+                 2614362402971166945389138950146702896)

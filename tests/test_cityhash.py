@@ -35,3 +35,25 @@ def test_city_crc256(fingerprint_tester):
     fingerprint_tester(fingerprinter_type=pyhash.city_fingerprint_256,
                        bytes_fingerprint=43374127706338803100025155483422426900760284308948611519881759972455588549698,
                        unicode_fingerprint=106103693879923228777324437129892107726572355760220840777228701216663718411687)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_city_hash32_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.city_32, 2824210825)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_city_hash64_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.city_64, 894299094737143437)
+
+
+@pytest.mark.benchmark(group='hash128', disable_gc=True)
+def test_city_hash128_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.city_128,
+                 254849646208103091500548480943427727100)
+
+
+@pytest.mark.benchmark(group='hash128', disable_gc=True)
+def test_city_hash_crc128_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.city_crc_128,
+                 254849646208103091500548480943427727100)

@@ -15,3 +15,13 @@ def test_xx_64(hash_tester):
                 bytes_hash=5754696928334414137,
                 seed_hash=12934826212537126916,
                 unicode_hash=16125048496228390453)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_xx_hash32_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.xx_32, 1497633363)
+
+
+@pytest.mark.benchmark(group='hash64', disable_gc=True)
+def test_xx_hash64_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.xx_64, 2282408585429094475)

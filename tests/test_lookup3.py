@@ -15,3 +15,8 @@ def test_lookup3_big(hash_tester):
                 bytes_hash=305759528,
                 seed_hash=1889773852,
                 unicode_hash=1487153094)
+
+
+@pytest.mark.benchmark(group='hash32', disable_gc=True)
+def test_lookup3_perf(benchmark, hash_bencher):
+    hash_bencher(benchmark, pyhash.lookup3, 3792570419)
