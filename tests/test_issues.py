@@ -20,7 +20,7 @@ def test_error_return_none():
                 h(None)
 
                 pytest.fail("fail to raise exception")
-            except ValueError:
+            except TypeError:
                 pass
 
         new_refcnt = sys.getrefcount(None)
