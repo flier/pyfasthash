@@ -6,6 +6,8 @@
 
 namespace py = pybind11;
 
+const size_t BOM_MARK_SIZE = 2;
+
 #ifdef _MSC_VER
 
 typedef int int32_t;
@@ -39,12 +41,14 @@ public:
 
   bool load(handle src, bool)
   {
-    PyObject *source = src.ptr();
-    PyObject *tmp = PyNumber_Long(source);
-    if (!tmp)
+    py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
+
+    if (!n)
+    {
       return false;
-    _PyLong_AsByteArray((PyLongObject *)tmp, (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
-    Py_DECREF(tmp);
+    }
+
+    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 
     return !PyErr_Occurred();
   }
@@ -63,12 +67,14 @@ public:
 
   bool load(handle src, bool)
   {
-    PyObject *source = src.ptr();
-    PyObject *tmp = PyNumber_Long(source);
-    if (!tmp)
+    py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
+
+    if (!n)
+    {
       return false;
-    _PyLong_AsByteArray((PyLongObject *)tmp, (unsigned char *)value.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
-    Py_DECREF(tmp);
+    }
+
+    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
 
     return !PyErr_Occurred();
   }
@@ -84,151 +90,6 @@ public:
 #endif // SUPPORT_INT128
 
 #endif // _MSC_VER
-
-namespace internal
-{
-const size_t BOM_MARK_SIZE = 2;
-
-template <typename T>
-PyObject *wrap_value(const T &value);
-
-template <>
-PyObject *wrap_value(const int &value)
-{
-  return PyLong_FromLong(value);
-}
-
-template <>
-PyObject *wrap_value(const unsigned int &value)
-{
-  return PyLong_FromSize_t(value);
-}
-
-template <>
-PyObject *wrap_value(const long &value)
-{
-  return PyLong_FromLong(value);
-}
-
-template <>
-PyObject *wrap_value(const unsigned long &value)
-{
-  return PyLong_FromUnsignedLong(value);
-}
-
-template <>
-PyObject *wrap_value(const long long &value)
-{
-  return PyLong_FromLongLong(value);
-}
-
-template <>
-PyObject *wrap_value(const unsigned long long &value)
-{
-  return PyLong_FromUnsignedLongLong(value);
-}
-
-#ifndef _MSC_VER
-template <>
-PyObject *wrap_value(const uint128_t &value)
-{
-  return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
-}
-
-template <>
-PyObject *wrap_value(const uint256_t &value)
-{
-  return ::_PyLong_FromByteArray((const unsigned char *)value.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
-}
-#endif
-
-template <typename T>
-T extract_value(PyObject *obj);
-
-template <>
-uint32_t extract_value(PyObject *obj)
-{
-  uint32_t value = 0;
-
-  if (PyLong_Check(obj))
-  {
-    value = PyLong_AsUnsignedLong(obj);
-  }
-#if PY_MAJOR_VERSION < 3
-  else if (PyInt_Check(obj))
-  {
-    value = PyInt_AsUnsignedLongMask(obj);
-  }
-#endif
-  else
-  {
-    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
-  }
-
-  return value;
-}
-
-template <>
-uint64_t extract_value<uint64_t>(PyObject *obj)
-{
-  uint64_t value = 0;
-
-  if (PyLong_Check(obj))
-  {
-    value = PyLong_AsUnsignedLongLong(obj);
-  }
-#if PY_MAJOR_VERSION < 3
-  else if (PyInt_Check(obj))
-  {
-    value = PyInt_AsUnsignedLongLongMask(obj);
-  }
-#endif
-  else
-  {
-    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
-  }
-
-  return value;
-}
-
-#ifdef SUPPORT_INT128
-
-template <>
-uint128_t extract_value<uint128_t>(PyObject *obj)
-{
-  uint128_t value = {0};
-
-  if (PyLong_Check(obj))
-  {
-    _PyLong_AsByteArray((PyLongObject *)obj, (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
-  }
-  else
-  {
-    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
-  }
-
-  return value;
-}
-
-template <>
-uint256_t extract_value<uint256_t>(PyObject *obj)
-{
-  uint256_t value = {};
-
-  if (PyLong_Check(obj))
-  {
-    _PyLong_AsByteArray((PyLongObject *)obj, (unsigned char *)&value, sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
-  }
-  else
-  {
-    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
-  }
-
-  return value;
-}
-#endif
-
-} // namespace internal
 
 template <typename T, typename S, typename H = S>
 class Hasher
@@ -291,7 +152,8 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   }
 
   const T &hasher = self.cast<T>();
-  typename T::hash_value_t value = kwargs.contains("seed") ? internal::extract_value<typename T::hash_value_t>(kwargs["seed"].ptr()) : hasher._seed;
+
+  typename T::hash_value_t value = kwargs.contains("seed") ? kwargs["seed"].cast<typename T::hash_value_t>() : hasher._seed;
 
   std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
     const char *buf = nullptr;
@@ -338,8 +200,8 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
           throw py::error_already_set();
         }
 
-        buf += internal::BOM_MARK_SIZE;
-        len -= internal::BOM_MARK_SIZE;
+        buf += BOM_MARK_SIZE;
+        len -= BOM_MARK_SIZE;
 
         if (buf && len)
         {
@@ -357,8 +219,8 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
         throw py::error_already_set();
       }
 
-      buf = PyString_AS_STRING(utf16.ptr()) + internal::BOM_MARK_SIZE;
-      len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
+      buf = PyString_AS_STRING(utf16.ptr()) + BOM_MARK_SIZE;
+      len = PyString_GET_SIZE(utf16.ptr()) - BOM_MARK_SIZE;
 #else
       buf = PyUnicode_AS_DATA(arg.ptr());
       len = PyUnicode_GET_DATA_SIZE(arg.ptr());
@@ -390,7 +252,7 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
     }
   });
 
-  return py::reinterpret_steal<py::object>(internal::wrap_value(value));
+  return py::cast(value);
 }
 
 template <typename T, typename H>
@@ -456,8 +318,8 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
           throw py::error_already_set();
         }
 
-        buf += internal::BOM_MARK_SIZE;
-        len -= internal::BOM_MARK_SIZE;
+        buf += BOM_MARK_SIZE;
+        len -= BOM_MARK_SIZE;
 
         return fingerprinter((void *)buf, len);
 #ifndef Py_UNICODE_WIDE
@@ -471,8 +333,8 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
         throw py::error_already_set();
       }
 
-      buf = PyString_AS_STRING(utf16.ptr()) + internal::BOM_MARK_SIZE;
-      len = PyString_GET_SIZE(utf16.ptr()) - internal::BOM_MARK_SIZE;
+      buf = PyString_AS_STRING(utf16.ptr()) + BOM_MARK_SIZE;
+      len = PyString_GET_SIZE(utf16.ptr()) - BOM_MARK_SIZE;
 #else
       buf = PyUnicode_AS_DATA(arg.ptr());
       len = PyUnicode_GET_DATA_SIZE(arg.ptr());
@@ -499,8 +361,8 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 
   if (results.size() == 1)
   {
-    return py::reinterpret_steal<py::object>(internal::wrap_value(results.front()));
+    return py::cast(results.front());
   }
 
-  return py::make_iterator(results.begin(), results.end());
+  return py::cast(results);
 }
