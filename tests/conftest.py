@@ -2,10 +2,22 @@ from __future__ import unicode_literals
 
 import pytest
 
+import pyhash
+
 
 @pytest.fixture(scope="module")
 def test_data():
     return b'test', u'test'
+
+
+@pytest.fixture(scope="module")
+def city_64():
+    return pyhash.city_64
+
+
+@pytest.fixture(scope="module")
+def city_128():
+    return pyhash.city_128
 
 
 @pytest.fixture(scope="module")

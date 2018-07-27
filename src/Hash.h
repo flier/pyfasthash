@@ -155,7 +155,9 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 
   if (!self)
   {
-    throw std::invalid_argument("wrong type of self argument");
+    PyErr_SetString(PyExc_TypeError, "wrong type of self argument");
+
+    throw py::error_already_set();
   }
 
   const T &hasher = self.cast<T>();
@@ -250,7 +252,9 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 #endif
     else
     {
-      throw std::invalid_argument("wrong type of argument");
+      PyErr_SetString(PyExc_TypeError, "unsupported argument type");
+
+      throw py::error_already_set();
     }
 
     if (buf && len)
@@ -274,7 +278,9 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 
   if (!self)
   {
-    throw std::invalid_argument("wrong type of self argument");
+    PyErr_SetString(PyExc_TypeError, "wrong type of self argument");
+
+    throw py::error_already_set();
   }
 
   const T &fingerprinter = self.cast<T>();
@@ -360,7 +366,9 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 #endif
     else
     {
-      throw std::invalid_argument("wrong type of argument");
+      PyErr_SetString(PyExc_TypeError, "unsupported argument type");
+
+      throw py::error_already_set();
     }
 
     return fingerprinter((void *)buf, len);
