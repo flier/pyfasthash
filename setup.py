@@ -5,14 +5,13 @@ import os
 import math
 
 from setuptools import setup, Extension
+from setuptools.glob import glob
 from distutils.sysconfig import customize_compiler
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
-
-source_files = ['src/Hash.cpp']
 
 macros = []
 include_dirs = [
@@ -117,7 +116,8 @@ if os.name != "nt":
 libraries += [libname for (libname, _) in c_libraries]
 
 pyhash = Extension(name="_pyhash",
-                   sources=source_files,
+                   sources=['src/Hash.cpp'],
+                   depends=glob('src/*.h'),
                    define_macros=macros,
                    include_dirs=include_dirs,
                    library_dirs=library_dirs,
