@@ -41,6 +41,14 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 It also can be used to generate fingerprints without seed.
 
 ```python
+>>> import pyhash
+>>> fp = pyhash.farm_fingerprint_64()
+
+>>> fp('hello')
+>>> 13009744463427800296L
+
+>>> fp('hello', 'world')
+>>> [13009744463427800296L, 16436542438370751598L]
 ```
 
 # Installation
