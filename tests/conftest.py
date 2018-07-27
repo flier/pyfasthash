@@ -16,10 +16,12 @@ def hash_tester():
             hasher = hasher_type()
 
             assert hasher
-            assert bytes_hash == hasher(data)
-            assert seed_hash == hasher(data, seed=bytes_hash)
+            assert bytes_hash == hasher(data), "bytes hash: %d" % hasher(data)
+            assert seed_hash == hasher(
+                data, seed=bytes_hash), "bytes hash with seed: %d" % hasher(data, seed=bytes_hash)
             assert seed_hash == hasher(data, data)
-            assert unicode_hash == hasher(udata)
+            assert unicode_hash == hasher(
+                udata), "unicode hash: %d" % hasher(udata)
         else:
             print("WARN: skip test cases for `%s` hasher", hasher_type)
 

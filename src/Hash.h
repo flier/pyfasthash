@@ -20,6 +20,7 @@ typedef unsigned __int64 uint64_t;
 #ifdef SUPPORT_INT128
 
 typedef unsigned __int128 uint128_t;
+typedef std::array<uint64_t, 4> uint256_t;
 
 #define U128_LO(v) (v >> 64)
 #define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
@@ -51,6 +52,30 @@ public:
   static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
   {
     return ::_PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+  }
+};
+
+template <>
+struct type_caster<uint256_t>
+{
+public:
+  PYBIND11_TYPE_CASTER(uint256_t, _("uint256_t"));
+
+  bool load(handle src, bool)
+  {
+    PyObject *source = src.ptr();
+    PyObject *tmp = PyNumber_Long(source);
+    if (!tmp)
+      return false;
+    _PyLong_AsByteArray((PyLongObject *)tmp, (unsigned char *)value.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
+    Py_DECREF(tmp);
+
+    return !PyErr_Occurred();
+  }
+
+  static handle cast(uint256_t src, return_value_policy /* policy */, handle /* parent */)
+  {
+    return ::_PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
   }
 };
 } // namespace detail
@@ -109,6 +134,12 @@ PyObject *wrap_value(const uint128_t &value)
 {
   return ::_PyLong_FromByteArray((const unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
 }
+
+template <>
+PyObject *wrap_value(const uint256_t &value)
+{
+  return ::_PyLong_FromByteArray((const unsigned char *)value.data(), sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
+}
 #endif
 
 template <typename T>
@@ -161,6 +192,7 @@ uint64_t extract_value<uint64_t>(PyObject *obj)
 }
 
 #ifdef SUPPORT_INT128
+
 template <>
 uint128_t extract_value<uint128_t>(PyObject *obj)
 {
@@ -169,6 +201,23 @@ uint128_t extract_value<uint128_t>(PyObject *obj)
   if (PyLong_Check(obj))
   {
     _PyLong_AsByteArray((PyLongObject *)obj, (unsigned char *)&value, sizeof(uint128_t), /*little_endian*/ 1, /*is_signed*/ 0);
+  }
+  else
+  {
+    throw std::invalid_argument("unknown `seed` type, expected `int` or `long`");
+  }
+
+  return value;
+}
+
+template <>
+uint256_t extract_value<uint256_t>(PyObject *obj)
+{
+  uint256_t value = {};
+
+  if (PyLong_Check(obj))
+  {
+    _PyLong_AsByteArray((PyLongObject *)obj, (unsigned char *)&value, sizeof(uint256_t), /*little_endian*/ 1, /*is_signed*/ 0);
   }
   else
   {

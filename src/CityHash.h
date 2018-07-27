@@ -31,8 +31,37 @@ struct city_hash_t : public Hasher<city_hash_t<T>, T>
 
 #if defined(__SSE4_2__) && defined(__x86_64__)
 
+bool support_sse4_2(void)
+{
+	unsigned cpuinfo[4] = {0};
+	unsigned infotype = 1;
+
+#ifdef _MSC_VER
+	__cpuid(cpuinfo, infotype);
+#else // _MSC_VER
+// cpuid and PIC mode don't play nice. Push ebx before use!
+// see http://www.technovelty.org/code/arch/pic-cas.html
+#ifdef __x86_64__
+	__asm__ __volatile__(
+		"cpuid;"
+		: "=a"(cpuinfo[0]), "=b"(cpuinfo[1]), "=c"(cpuinfo[2]), "=d"(cpuinfo[3])
+		: "a"(infotype));
+#else  // __x86_64__
+	__asm__ __volatile__(
+		"pushl %%ebx;"
+		"cpuid;"
+		"movl %%ebx,%1;"
+		"pop %%ebx;"
+		: "=a"(cpuinfo[0]), "=m"(cpuinfo[1]), "=c"(cpuinfo[2]), "=d"(cpuinfo[3])
+		: "a"(infotype));
+#endif // __x86_64__
+#endif // _MSC_VER
+
+	return cpuinfo[2] & (1 << 20);
+}
+
 template <typename T>
-bool city_hash_t<T>::has_sse4_2 = false;
+bool city_hash_t<T>::has_sse4_2 = support_sse4_2();
 
 #endif
 
@@ -98,8 +127,6 @@ const city_hash_128_t::hash_value_t city_hash_128_t::operator()(void *buf, size_
 	}
 }
 
-#endif
-
 #if defined(__SSE4_2__) && defined(__x86_64__)
 
 template <typename T>
@@ -110,13 +137,16 @@ struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>, T>
 	typedef typename __hasher_t::hash_value_t hash_value_t;
 	typedef typename __hasher_t::seed_value_t seed_value_t;
 
+	city_hash_crc_t(seed_value_t seed = 0) : __hasher_t(seed) {}
+
 	const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 };
 
 typedef city_hash_crc_t<uint128_t> city_hash_crc_128_t;
+typedef city_hash_crc_t<uint256_t> city_hash_crc_256_t;
 
 template <>
- const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *buf, size_t len, city_hash_crc_128_t::seed_value_t seed) const
+const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *buf, size_t len, city_hash_crc_128_t::seed_value_t seed) const
 {
 	if (seed)
 	{
@@ -132,56 +162,16 @@ template <>
 	}
 }
 
-bool support_sse4_2(void)
-{
-	unsigned cpuinfo[4] = {0};
-	unsigned infotype = 1;
-
-#ifdef _MSC_VER
-	__cpuid(cpuinfo, infotype);
-#else
-// cpuid and PIC mode don't play nice. Push ebx before use!
-// see http://www.technovelty.org/code/arch/pic-cas.html
-#ifdef __x86_64__
-	__asm__ __volatile__(
-		"cpuid;"
-		: "=a"(cpuinfo[0]), "=b"(cpuinfo[1]), "=c"(cpuinfo[2]), "=d"(cpuinfo[3])
-		: "a"(infotype));
-#else
-	__asm__ __volatile__(
-		"pushl %%ebx;"
-		"cpuid;"
-		"movl %%ebx,%1;"
-		"pop %%ebx;"
-		: "=a"(cpuinfo[0]), "=m"(cpuinfo[1]), "=c"(cpuinfo[2]), "=d"(cpuinfo[3])
-		: "a"(infotype));
-#endif
-#endif
-
-	return cpuinfo[2] & (1 << 20);
-}
-
-#ifdef SUPPORT_INT128
-
 template <>
- void city_hash_128_t::__hasher_t::Export(const py::module &m, const char *name)
+const city_hash_crc_256_t::hash_value_t city_hash_crc_256_t::operator()(void *buf, size_t len, city_hash_crc_256_t::seed_value_t seed) const
 {
-	city_hash_128_t::has_sse4_2 = support_sse4_2();
+	uint256_t result = {};
 
-	py::class_<city_hash_128_t>(m, name)
-		.def(py::init<>())
-		.def_property_readonly_static("has_sse4_2", [](py::object /* self */) { return city_hash_128_t::has_sse4_2; })
-		.def("__call__", &city_hash_128_t::CallWithArgs);
+	CityHashCrc256((const char *)buf, len, result.data());
+
+	return result;
 }
 
-template <>
- void city_hash_crc_128_t::__hasher_t::Export(const py::module &m, const char *name)
-{
-	py::class_<city_hash_crc_128_t>(m, name)
-		.def(py::init<>())
-		.def("__call__", &city_hash_crc_128_t::CallWithArgs);
-}
+#endif // defined(__SSE4_2__) && defined(__x86_64__)
 
-#endif
-
-#endif
+#endif // SUPPORT_INT128
