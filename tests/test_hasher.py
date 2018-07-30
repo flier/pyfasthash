@@ -24,6 +24,7 @@ def test_string(city_64):
 
     assert hasher('') == 0
     assert hasher(u'') == 0
+    assert hasher(b'') == 0
 
 
 def test_list(city_64):
