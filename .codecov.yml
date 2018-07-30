@@ -1,0 +1,5 @@
+ignore:
+  - "src/fnv"
+  - "src/lookup3"
+  - "src/smhasher"
+  - "SuperFastHash"
