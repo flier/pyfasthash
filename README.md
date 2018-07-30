@@ -18,9 +18,22 @@ It provides several common hash algorithms with C/C++ implementation for perform
 2805756500L
 ```
 
+It also can be used to generate fingerprints without seed.
+
+```python
+>>> import pyhash
+>>> fp = pyhash.farm_fingerprint_64()
+
+>>> fp('hello')
+>>> 13009744463427800296L
+
+>>> fp('hello', 'world')
+>>> [13009744463427800296L, 16436542438370751598L]
+```
+
 **Notes**
 
-`hasher('hello', ' ', 'world')` is a syntax sugar for `hasher('world', seed=hasher(' ', seed=hasher('hello')))`, and may not equals to `hasher('hello world')`, because some hash algorithm use different `hash` and `seed` size.
+`hasher('hello', ' ', 'world')` is a syntax sugar for `hasher('world', seed=hasher(' ', seed=hasher('hello')))`, and may not equals to `hasher('hello world')`, because some hash algorithms use different `hash` and `seed` size.
 
 For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 
@@ -38,25 +51,10 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 >>> 16402988188088019159L
 ```
 
-It also can be used to generate fingerprints without seed.
-
-```python
->>> import pyhash
->>> fp = pyhash.farm_fingerprint_64()
-
->>> fp('hello')
->>> 13009744463427800296L
-
->>> fp('hello', 'world')
->>> [13009744463427800296L, 16436542438370751598L]
-```
-
 # Installation
 
-Please use pyhash to install it with `pip`.
-
 ```bash
-$sudo pip install pyhash
+$ pip install pyhash
 ```
 
 **Notes** `pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
