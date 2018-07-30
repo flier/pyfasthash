@@ -22,9 +22,9 @@ def test_string(city_64):
 
     assert hasher(b'hello') == 2578220239953316063
 
-    assert hasher('') == 0
-    assert hasher(u'') == 0
-    assert hasher(b'') == 0
+    assert hasher('') == 11160318154034397263
+    assert hasher(u'') == 11160318154034397263
+    assert hasher(b'') == 11160318154034397263
 
 
 def test_list(city_64):

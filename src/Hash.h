@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <functional>
 
 #include <pybind11/pybind11.h>
 
@@ -143,6 +144,8 @@ public:
   }
 };
 
+void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t len)> callback);
+
 template <typename T, typename S, typename H>
 py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
@@ -161,130 +164,12 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   }
 
   const T &hasher = self.cast<T>();
-
   typename T::hash_value_t value = kwargs.contains("seed") ? kwargs["seed"].cast<typename T::hash_value_t>() : hasher._seed;
 
   std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
-    const char *buf = nullptr;
-    Py_ssize_t len = 0;
-
-#if PY_MAJOR_VERSION < 3
-    if (PyString_CheckExact(arg.ptr()))
-    {
-      if (-1 == PyString_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#else
-    if (PyBytes_CheckExact(arg.ptr()))
-    {
-      if (-1 == PyBytes_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#endif
-    else if (PyUnicode_CheckExact(arg.ptr()))
-    {
-#if PY_MAJOR_VERSION > 2
-#ifndef Py_UNICODE_WIDE
-      if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(arg.ptr()) && PyUnicode_IS_READY(arg.ptr()))
-      {
-        buf = PyUnicode_2BYTE_DATA(arg.ptr());
-        len = PyUnicode_GET_LENGTH(arg.ptr()) * Py_UNICODE_SIZE;
-      }
-      else
-      {
-#endif
-        py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
-
-        if (!utf16)
-        {
-          throw py::error_already_set();
-        }
-
-        if (-1 == PyBytes_AsStringAndSize(utf16.ptr(), (char **)&buf, &len))
-        {
-          throw py::error_already_set();
-        }
-
-        buf += BOM_MARK_SIZE;
-        len -= BOM_MARK_SIZE;
-
-        if (buf && len)
-        {
-          value = hasher((void *)buf, len, value);
-          return;
-        }
-#ifndef Py_UNICODE_WIDE
-      }
-#endif
-#else
-#ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
-
-      if (!utf16) {
-        throw py::error_already_set();
-      }
-
-      buf = PyString_AS_STRING(utf16.ptr()) + BOM_MARK_SIZE;
-      len = PyString_GET_SIZE(utf16.ptr()) - BOM_MARK_SIZE;
-#else
-      buf = PyUnicode_AS_DATA(arg.ptr());
-      len = PyUnicode_GET_DATA_SIZE(arg.ptr());
-#endif
-      if (buf && len)
-      {
-        value = hasher((void *)buf, len, value);
-        return;
-      }
-#endif
-    }
-#if PY_MAJOR_VERSION < 3
-    else if (PyObject_CheckReadBuffer(arg.ptr()))
-    {
-      if (-1 == PyObject_AsReadBuffer(arg.ptr(), (const void **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#endif
-    else if (PyObject_CheckBuffer(arg.ptr()))
-    {
-      Py_buffer view;
-
-      if (-1 == PyObject_GetBuffer(arg.ptr(), &view, PyBUF_SIMPLE) || !PyBuffer_IsContiguous(&view, 'C'))
-      {
-        throw std::invalid_argument("only support contiguous buffer");
-      }
-
-      value = hasher((void *)view.buf, view.len, value);
-      return;
-    }
-    else if (PyMemoryView_Check(arg.ptr()))
-    {
-      Py_buffer *view = PyMemoryView_GET_BUFFER(arg.ptr());
-
-      if (!view || !PyBuffer_IsContiguous(view, 'C'))
-      {
-        throw std::invalid_argument("only support contiguous memoryview");
-      }
-
-      buf = (const char *)view->buf;
-      len = view->len;
-    }
-    else
-    {
-      PyErr_SetString(PyExc_TypeError, "unsupported argument type");
-
-      throw py::error_already_set();
-    }
-
-    if (buf && len)
-    {
+    handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len) {
       value = hasher((void *)buf, len, value);
-    }
+    });
   });
 
   return py::cast(value);
@@ -310,115 +195,10 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   const T &fingerprinter = self.cast<T>();
   std::vector<typename T::fingerprint_t> results;
 
-  std::transform(std::next(args.begin()), args.end(), std::back_inserter(results), [&](const py::handle &arg) {
-    const char *buf = nullptr;
-    Py_ssize_t len = 0;
-
-#if PY_MAJOR_VERSION < 3
-    if (PyString_CheckExact(arg.ptr()))
-    {
-      if (-1 == PyString_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#else
-    if (PyBytes_CheckExact(arg.ptr()))
-    {
-      if (-1 == PyBytes_AsStringAndSize(arg.ptr(), (char **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#endif
-    else if (PyUnicode_CheckExact(arg.ptr()))
-    {
-#if PY_MAJOR_VERSION > 2
-#ifndef Py_UNICODE_WIDE
-      if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(arg.ptr()) && PyUnicode_IS_READY(arg.ptr()))
-      {
-        buf = PyUnicode_2BYTE_DATA(arg.ptr());
-        len = PyUnicode_GET_LENGTH(arg.ptr()) * Py_UNICODE_SIZE;
-      }
-      else
-      {
-#endif
-        py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
-
-        if (!utf16)
-        {
-          throw py::error_already_set();
-        }
-
-        if (-1 == PyBytes_AsStringAndSize(utf16.ptr(), (char **)&buf, &len))
-        {
-          throw py::error_already_set();
-        }
-
-        buf += BOM_MARK_SIZE;
-        len -= BOM_MARK_SIZE;
-
-        return fingerprinter((void *)buf, len);
-#ifndef Py_UNICODE_WIDE
-      }
-#endif
-#else
-#ifdef Py_UNICODE_WIDE
-      py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(arg.ptr()));
-
-      if (!utf16) {
-        throw py::error_already_set();
-      }
-
-      buf = PyString_AS_STRING(utf16.ptr()) + BOM_MARK_SIZE;
-      len = PyString_GET_SIZE(utf16.ptr()) - BOM_MARK_SIZE;
-#else
-      buf = PyUnicode_AS_DATA(arg.ptr());
-      len = PyUnicode_GET_DATA_SIZE(arg.ptr());
-#endif
-        return fingerprinter((void *)buf, len);
-#endif
-    }
-#if PY_MAJOR_VERSION < 3
-    else if (PyObject_CheckReadBuffer(arg.ptr()))
-    {
-      if (-1 == PyObject_AsReadBuffer(arg.ptr(), (const void **)&buf, &len))
-      {
-        throw py::error_already_set();
-      }
-    }
-#endif
-    else if (PyObject_CheckBuffer(arg.ptr()))
-    {
-      Py_buffer view;
-
-      if (-1 == PyObject_GetBuffer(arg.ptr(), &view, PyBUF_SIMPLE) || !PyBuffer_IsContiguous(&view, 'C'))
-      {
-        throw std::invalid_argument("only support contiguous buffer");
-      }
-
-      return fingerprinter((void *)view.buf, view.len);
-    }
-    else if (PyMemoryView_Check(arg.ptr()))
-    {
-      Py_buffer *view = PyMemoryView_GET_BUFFER(arg.ptr());
-
-      if (!view || !PyBuffer_IsContiguous(view, 'C'))
-      {
-        throw std::invalid_argument("only support contiguous memoryview");
-      }
-
-      buf = (const char *)view->buf;
-      len = view->len;
-    }
-    else
-    {
-      PyErr_SetString(PyExc_TypeError, "unsupported argument type");
-
-      throw py::error_already_set();
-    }
-
-    return fingerprinter((void *)buf, len);
+  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
+    handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len) {
+      results.push_back(fingerprinter((void *)buf, len));
+    });
   });
 
   if (results.size() == 1)
@@ -434,4 +214,121 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   }
 
   return fingerprintes;
+}
+
+void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t len)> callback)
+{
+  const char *buf = nullptr;
+  Py_ssize_t len = 0;
+
+#if PY_MAJOR_VERSION < 3
+  if (PyString_CheckExact(obj))
+  {
+    if (-1 == PyString_AsStringAndSize(obj, (char **)&buf, &len))
+    {
+      throw py::error_already_set();
+    }
+  }
+#else
+  if (PyBytes_CheckExact(obj))
+  {
+    if (-1 == PyBytes_AsStringAndSize(obj, (char **)&buf, &len))
+    {
+      throw py::error_already_set();
+    }
+  }
+#endif
+  else if (PyUnicode_CheckExact(obj))
+  {
+#if PY_MAJOR_VERSION > 2
+#ifndef Py_UNICODE_WIDE
+    if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(obj) && PyUnicode_IS_READY(obj))
+    {
+      buf = PyUnicode_2BYTE_DATA(obj);
+      len = PyUnicode_GET_LENGTH(obj) * Py_UNICODE_SIZE;
+    }
+    else
+    {
+#endif
+      py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(obj));
+
+      if (!utf16)
+      {
+        throw py::error_already_set();
+      }
+
+      if (-1 == PyBytes_AsStringAndSize(utf16.ptr(), (char **)&buf, &len))
+      {
+        throw py::error_already_set();
+      }
+
+      buf += BOM_MARK_SIZE;
+      len -= BOM_MARK_SIZE;
+
+      callback(buf, len);
+      return;
+#ifndef Py_UNICODE_WIDE
+    }
+#endif
+#else
+#ifdef Py_UNICODE_WIDE
+    py::object utf16 = py::reinterpret_steal<py::object>(PyUnicode_AsUTF16String(obj));
+
+    if (!utf16)
+    {
+      throw py::error_already_set();
+    }
+
+    buf = PyString_AS_STRING(utf16.ptr()) + BOM_MARK_SIZE;
+    len = PyString_GET_SIZE(utf16.ptr()) - BOM_MARK_SIZE;
+#else
+    buf = PyUnicode_AS_DATA(obj);
+    len = PyUnicode_GET_DATA_SIZE(obj);
+#endif
+
+    callback(buf, len);
+    return;
+#endif
+  }
+#if PY_MAJOR_VERSION < 3
+  else if (PyObject_CheckReadBuffer(obj))
+  {
+    if (-1 == PyObject_AsReadBuffer(obj, (const void **)&buf, &len))
+    {
+      throw py::error_already_set();
+    }
+  }
+#endif
+  else if (PyObject_CheckBuffer(obj))
+  {
+    Py_buffer view;
+
+    if (-1 == PyObject_GetBuffer(obj, &view, PyBUF_SIMPLE) || !PyBuffer_IsContiguous(&view, 'C'))
+    {
+      throw std::invalid_argument("only support contiguous buffer");
+    }
+
+    callback((const char *)view.buf, view.len);
+    return;
+  }
+  else if (PyMemoryView_Check(obj))
+  {
+    Py_buffer *view = PyMemoryView_GET_BUFFER(obj);
+
+    if (!view || !PyBuffer_IsContiguous(view, 'C'))
+    {
+      throw std::invalid_argument("only support contiguous memoryview");
+    }
+
+    buf = (const char *)view->buf;
+    len = view->len;
+  }
+  else
+  {
+    PyErr_SetString(PyExc_TypeError, "unsupported argument type");
+
+    throw py::error_already_set();
+  }
+
+  callback(buf, len);
 }
