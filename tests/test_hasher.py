@@ -26,6 +26,21 @@ def test_string(city_64):
     assert hasher(u'') == 0
 
 
+def test_list(city_64):
+    hasher = city_64()
+
+    with pytest.raises(TypeError, message="unsupported argument type"):
+        assert hasher(list(b'hello')) == 2578220239953316063
+
+
+def test_array(city_64):
+    from array import array
+
+    hasher = city_64()
+
+    assert hasher(array('B', b'hello')) == 2578220239953316063
+
+
 def test_buffer(city_64):
     if sys.version_info.major < 3:
         hasher = city_64()
@@ -36,8 +51,13 @@ def test_buffer(city_64):
 def test_bufferview(city_64):
     hasher = city_64()
 
-    with pytest.raises(TypeError):
-        assert hasher(memoryview(b'hello')) == 0
+    assert hasher(memoryview(b'hello')) == 2578220239953316063
+
+
+def test_bytearray(city_64):
+    hasher = city_64()
+
+    assert hasher(bytearray(b'hello')) == 2578220239953316063
 
 
 def test_error(city_64, city_128):

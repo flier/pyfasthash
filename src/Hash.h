@@ -250,6 +250,30 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
       }
     }
 #endif
+    else if (PyObject_CheckBuffer(arg.ptr()))
+    {
+      Py_buffer view;
+
+      if (-1 == PyObject_GetBuffer(arg.ptr(), &view, PyBUF_SIMPLE) || !PyBuffer_IsContiguous(&view, 'C'))
+      {
+        throw std::invalid_argument("only support contiguous buffer");
+      }
+
+      value = hasher((void *)view.buf, view.len, value);
+      return;
+    }
+    else if (PyMemoryView_Check(arg.ptr()))
+    {
+      Py_buffer *view = PyMemoryView_GET_BUFFER(arg.ptr());
+
+      if (!view || !PyBuffer_IsContiguous(view, 'C'))
+      {
+        throw std::invalid_argument("only support contiguous memoryview");
+      }
+
+      value = hasher((void *)view->buf, view->len, value);
+      return;
+    }
     else
     {
       PyErr_SetString(PyExc_TypeError, "unsupported argument type");
