@@ -1,4 +1,4 @@
-# Introduction [![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)](https://travis-ci.org/flier/pyfasthash) [![codecov](https://codecov.io/gh/flier/pyfasthash/branch/master/graph/badge.svg)](https://codecov.io/gh/flier/pyfasthash)
+# Introduction [![pypi](https://img.shields.io/pypi/v/pyhash.svg)](https://pypi.org/project/pyhash/) [![Travis CI Status](https://travis-ci.org/flier/pyfasthash.svg?branch=master)](https://travis-ci.org/flier/pyfasthash) [![codecov](https://codecov.io/gh/flier/pyfasthash/branch/master/graph/badge.svg)](https://codecov.io/gh/flier/pyfasthash)
 
 `pyhash` is a python non-cryptographic hash library.
 
