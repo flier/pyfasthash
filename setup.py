@@ -87,16 +87,17 @@ c_libraries = [(
 ), (
     't1ha', {
         "sources": [
-            'src/smhasher/t1ha/t1ha0.c',
-            'src/smhasher/t1ha/t1ha0_ia32aes_avx.c',
-            'src/smhasher/t1ha/t1ha0_ia32aes_avx2.c',
-            'src/smhasher/t1ha/t1ha0_ia32aes_noavx.c',
-            'src/smhasher/t1ha/t1ha1.c',
-            'src/smhasher/t1ha/t1ha2.c',
+            'src/t1ha/src/t1ha0.c',
+            'src/t1ha/src/t1ha0_ia32aes_avx.c',
+            'src/t1ha/src/t1ha0_ia32aes_avx2.c',
+            'src/t1ha/src/t1ha0_ia32aes_noavx.c',
+            'src/t1ha/src/t1ha1.c',
+            'src/t1ha/src/t1ha2.c',
         ],
         "macros": [
             ("T1HA0_AESNI_AVAILABLE", 1),
             ("T1HA0_RUNTIME_SELECT", 1),
+            ("T1HA_USE_INDIRECT_FUNCTIONS", 1),
         ],
         "cflags": extra_compile_args,
     }

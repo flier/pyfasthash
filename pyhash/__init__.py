@@ -67,12 +67,6 @@ t1ha1_le = t1ha1_64le = _pyhash.t1ha1_le
 t1ha1_be = t1ha1_64be = _pyhash.t1ha1_be
 t1ha1 = t1ha1_64 = t1ha1_le if __is_little_endian__ else t1ha1_be
 t1ha0 = t1ha0_64 = _pyhash.t1ha0
-t1ha0_ia32aes_noavx = _pyhash.t1ha0_ia32aes_noavx
-t1ha0_ia32aes_avx = _pyhash.t1ha0_ia32aes_avx
-t1ha0_ia32aes_avx2 = _pyhash.t1ha0_ia32aes_avx2
-t1ha0_32le = _pyhash.t1ha0_32le
-t1ha0_32be = _pyhash.t1ha0_32be
-t1ha0_32 = t1ha0_32le if __is_little_endian__ else t1ha0_32be
 
 xx_32 = _pyhash.xx_32
 xx_64 = _pyhash.xx_64

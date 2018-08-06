@@ -38,41 +38,6 @@ def test_t1ha0(hash_tester):
                 unicode_hash=10647421798084574537)
 
 
-def test_t1ha0_ia32aes_noavx(hash_tester):
-    hash_tester(hasher_type=pyhash.t1ha0_ia32aes_noavx,
-                bytes_hash=11576265462006865275,
-                seed_hash=9383269742356701786,
-                unicode_hash=10647421798084574537)
-
-
-def test_t1ha0_ia32aes_avx(hash_tester):
-    hash_tester(hasher_type=pyhash.t1ha0_ia32aes_avx,
-                bytes_hash=11576265462006865275,
-                seed_hash=9383269742356701786,
-                unicode_hash=10647421798084574537)
-
-
-def test_t1ha0_ia32aes_avx2(hash_tester):
-    hash_tester(hasher_type=pyhash.t1ha0_ia32aes_avx2,
-                bytes_hash=11576265462006865275,
-                seed_hash=9383269742356701786,
-                unicode_hash=10647421798084574537)
-
-
-def test_t1ha0_32le(hash_tester):
-    hash_tester(hasher_type=pyhash.t1ha0_32le,
-                bytes_hash=16542733703039638821,
-                seed_hash=5534863457605050332,
-                unicode_hash=15700811497736998998)
-
-
-def test_t1ha0_32Be(hash_tester):
-    hash_tester(hasher_type=pyhash.t1ha0_32be,
-                bytes_hash=17260815661605337945,
-                seed_hash=7926505876120298959,
-                unicode_hash=6364648105040243647)
-
-
 @pytest.mark.benchmark(group='hash64', disable_gc=True)
 def test_t1ha2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.t1ha2, 17171225769172857249)
