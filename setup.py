@@ -3,10 +3,9 @@
 import sys
 import os
 import math
+from glob import glob
 
 from setuptools import setup, Extension
-from setuptools.glob import glob
-from distutils.sysconfig import customize_compiler
 
 here = os.path.abspath(os.path.dirname(__file__))
 
