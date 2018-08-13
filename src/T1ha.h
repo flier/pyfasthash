@@ -63,8 +63,6 @@ const t1ha1_be_t::hash_value_t t1ha1_be_t::operator()(void *buf, size_t len, t1h
     return t1ha1_be(buf, len, seed);
 }
 
-extern uint64_t (*t1ha0_resolve(void))(const void *, size_t, uint64_t);
-
 template <>
 const t1ha0_t::hash_value_t t1ha0_t::operator()(void *buf, size_t len, t1ha0_t::seed_value_t seed) const
 {
