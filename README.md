@@ -57,6 +57,12 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 $ pip install pyhash
 ```
 
+**Notes** If `pip` install failed, please upgrade `pip` and `setuptools` to latest version and try again 
+
+```bash
+pip install --upgrade pip setuptools
+```
+
 **Notes** `pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
 
 # Algorithms
