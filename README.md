@@ -57,9 +57,13 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 $ pip install pyhash
 ```
 
-**Notes** `pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
+**Notes** 
 
-**Notes** If `pip` install failed with similar errors, #27
+`pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
+
+**Notes** 
+
+If `pip` install failed with similar errors, #27
 
 ```
 /usr/lib/gcc/x86_64-linux-gnu/6/include/smmintrin.h:846:1: error: inlining failed in call to always_inline ‘long long unsigned int _mm_crc32_u64(long long unsigned int, long long unsigned int)’: target specific option mismatch
@@ -76,7 +80,9 @@ Please upgrade `pip` and `setuptools` to latest version and try again
 $ pip install --upgrade pip setuptools
 ```
 
-**Notes** If `pip` install failed on MacOS with similar errors, #28
+**Notes** 
+
+If `pip` install failed on MacOS with similar errors, #28
 
 ```
    creating build/temp.macosx-10.6-intel-3.6
