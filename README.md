@@ -63,7 +63,7 @@ $ pip install pyhash
 
 **Notes** 
 
-If `pip` install failed with similar errors, #27
+If `pip` install failed with similar errors, [#27](https://github.com/flier/pyfasthash/issues/27)
 
 ```
 /usr/lib/gcc/x86_64-linux-gnu/6/include/smmintrin.h:846:1: error: inlining failed in call to always_inline ‘long long unsigned int _mm_crc32_u64(long long unsigned int, long long unsigned int)’: target specific option mismatch
@@ -82,7 +82,7 @@ $ pip install --upgrade pip setuptools
 
 **Notes** 
 
-If `pip` install failed on MacOS with similar errors, #28
+If `pip` install failed on MacOS with similar errors [#28](https://github.com/flier/pyfasthash/issues/28)
 
 ```
    creating build/temp.macosx-10.6-intel-3.6
