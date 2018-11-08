@@ -57,13 +57,47 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 $ pip install pyhash
 ```
 
-**Notes** If `pip` install failed, please upgrade `pip` and `setuptools` to latest version and try again 
+**Notes** 
 
-```bash
-pip install --upgrade pip setuptools
+`pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
+
+**Notes** 
+
+If `pip` install failed with similar errors, [#27](https://github.com/flier/pyfasthash/issues/27)
+
+```
+/usr/lib/gcc/x86_64-linux-gnu/6/include/smmintrin.h:846:1: error: inlining failed in call to always_inline ‘long long unsigned int _mm_crc32_u64(long long unsigned int, long long unsigned int)’: target specific option mismatch
+ _mm_crc32_u64 (unsigned long long __C, unsigned long long __V)
+ ^~~~~~~~~~~~~
+src/smhasher/metrohash64crc.cpp:52:34: note: called from here
+             v[0] ^= _mm_crc32_u64(v[0], read_u64(ptr)); ptr += 8;
+                     ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
 ```
 
-**Notes** `pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
+Please upgrade `pip` and `setuptools` to latest version and try again 
+
+```bash
+$ pip install --upgrade pip setuptools
+```
+
+**Notes** 
+
+If `pip` install failed on MacOS with similar errors [#28](https://github.com/flier/pyfasthash/issues/28)
+
+```
+   creating build/temp.macosx-10.6-intel-3.6
+   ...
+   /usr/bin/clang -fno-strict-aliasing -Wsign-compare -fno-common -dynamic -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -arch i386 -arch x86_64 -g -c src/smhasher/metrohash64crc.cpp -o build/temp.macosx-10.6-intel-3.6/src/smhasher/metrohash64crc.o -msse4.2 -maes -mavx -mavx2
+    src/smhasher/metrohash64crc.cpp:52:21: error: use of undeclared identifier '_mm_crc32_u64'
+                v[0] ^= _mm_crc32_u64(v[0], read_u64(ptr)); ptr += 8;
+                        ^
+```
+
+You may try to 
+
+```bash
+$ CFLAGS="-mmacosx-version-min=10.13" pip install pyhash
+```
 
 # Algorithms
 
