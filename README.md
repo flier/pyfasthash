@@ -57,11 +57,7 @@ For example, `metro` hash always use 32bit seed for 64/128 bit hash value.
 $ pip install pyhash
 ```
 
-**Notes** 
-
-`pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
-
-**Notes** 
+**Notes**
 
 If `pip` install failed with similar errors, [#27](https://github.com/flier/pyfasthash/issues/27)
 
@@ -74,13 +70,13 @@ src/smhasher/metrohash64crc.cpp:52:34: note: called from here
                      ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
 ```
 
-Please upgrade `pip` and `setuptools` to latest version and try again 
+Please upgrade `pip` and `setuptools` to latest version and try again
 
 ```bash
 $ pip install --upgrade pip setuptools
 ```
 
-**Notes** 
+**Notes**
 
 If `pip` install failed on MacOS with similar errors [#28](https://github.com/flier/pyfasthash/issues/28)
 
@@ -93,11 +89,15 @@ If `pip` install failed on MacOS with similar errors [#28](https://github.com/fl
                         ^
 ```
 
-You may try to 
+You may try to
 
 ```bash
 $ CFLAGS="-mmacosx-version-min=10.13" pip install pyhash
 ```
+
+**Notes**
+
+`pyhash` only support `pypy` v6.0 or newer, please [download and install](https://pypy.org/download.html) the latest `pypy`.
 
 # Algorithms
 
