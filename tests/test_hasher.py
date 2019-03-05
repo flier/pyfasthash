@@ -30,7 +30,7 @@ def test_string(city_64):
 def test_list(city_64):
     hasher = city_64()
 
-    with pytest.raises(TypeError, message="unsupported argument type"):
+    with pytest.raises(TypeError, match="unsupported argument type"):
         assert hasher(list(b'hello')) == 2578220239953316063
 
 

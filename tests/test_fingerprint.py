@@ -36,7 +36,7 @@ def test_string(city_fingerprint_256):
 def test_list(city_fingerprint_256):
     fp = city_fingerprint_256()
 
-    with pytest.raises(TypeError, message="unsupported argument type"):
+    with pytest.raises(TypeError, match="unsupported argument type"):
         assert fp(list(b'hello')) == 2578220239953316063
 
 

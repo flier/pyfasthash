@@ -23,13 +23,13 @@ for name in pyhash.__hasher__:
 
 
 @pytest.fixture(scope="module")
-def hash_tester():
+def hash_tester(test_data):
     def do_test(hasher_type, bytes_hash, seed_hash, unicode_hash):
         assert hasher_type
 
         assert hasattr(hasher_type, 'seed')
 
-        data, udata = test_data()
+        data, udata = test_data
         hasher = hasher_type()
 
         assert hasher
@@ -47,13 +47,13 @@ def hash_tester():
 
 
 @pytest.fixture(scope="module")
-def fingerprint_tester():
+def fingerprint_tester(test_data):
     def do_test(fingerprinter_type, bytes_fingerprint, unicode_fingerprint):
         assert fingerprinter_type
 
         assert not hasattr(fingerprinter_type, 'seed')
 
-        data, udata = test_data()
+        data, udata = test_data
         fingerprinter = fingerprinter_type()
 
         assert fingerprinter
