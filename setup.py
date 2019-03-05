@@ -96,7 +96,6 @@ c_libraries = [(
         "macros": [
             ("T1HA0_AESNI_AVAILABLE", 1),
             ("T1HA0_RUNTIME_SELECT", 1),
-            ("T1HA_USE_INDIRECT_FUNCTIONS", 1),
         ],
         "cflags": extra_compile_args,
     }
