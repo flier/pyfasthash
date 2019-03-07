@@ -3,6 +3,7 @@
 import sys
 import os
 import math
+import codecs
 from glob import glob
 
 from setuptools import setup, Extension
@@ -10,7 +11,7 @@ from setuptools import setup, Extension
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.md')) as f:
-    long_description = f.read().decode('utf8')
+    long_description = f.read()
 
 macros = []
 include_dirs = [
