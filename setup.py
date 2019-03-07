@@ -126,7 +126,7 @@ pyhash = Extension(name="_pyhash",
                    )
 
 setup(name='pyhash',
-      version='0.9.1',
+      version='0.9.2',
       description='Python Non-cryptographic Hash Library',
       long_description=long_description,
       long_description_content_type='text/markdown',
