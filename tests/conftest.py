@@ -81,6 +81,9 @@ def hash_bencher():
         def result():
             return h(data)
 
-        assert result == hash
+        if isinstance(hash, list):
+            assert result in hash
+        else:
+            assert result == hash
 
     return do_bench
