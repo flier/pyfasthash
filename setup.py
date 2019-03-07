@@ -10,7 +10,7 @@ from setuptools import setup, Extension
 here = os.path.abspath(os.path.dirname(__file__))
 
 with open(os.path.join(here, 'README.md')) as f:
-    long_description = f.read()
+    long_description = f.read().decode('utf8')
 
 macros = []
 include_dirs = [

@@ -62,7 +62,7 @@ $ pip install pyhash
 If `pip` install failed with similar errors, [#27](https://github.com/flier/pyfasthash/issues/27)
 
 ```
-/usr/lib/gcc/x86_64-linux-gnu/6/include/smmintrin.h:846:1: error: inlining failed in call to always_inline ‘long long unsigned int _mm_crc32_u64(long long unsigned int, long long unsigned int)’: target specific option mismatch
+/usr/lib/gcc/x86_64-linux-gnu/6/include/smmintrin.h:846:1: error: inlining failed in call to always_inline 'long long unsigned int _mm_crc32_u64(long long unsigned int, long long unsigned int)': target specific option mismatch
  _mm_crc32_u64 (unsigned long long __C, unsigned long long __V)
  ^~~~~~~~~~~~~
 src/smhasher/metrohash64crc.cpp:52:34: note: called from here
