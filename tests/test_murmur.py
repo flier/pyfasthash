@@ -66,6 +66,7 @@ def test_murmur3_32(hash_tester):
                 unicode_hash=1351191292)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_murmur3_x86_128(hash_tester):
     hash_tester(hasher_type=pyhash.murmur3_x86_128,
                 bytes_hash=113049230771270950235709929058346397488,
@@ -73,6 +74,7 @@ def test_murmur3_x86_128(hash_tester):
                 unicode_hash=34467989874860051826961972957664456325)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_murmur3_x64_128(hash_tester):
     hash_tester(hasher_type=pyhash.murmur3_x64_128,
                 bytes_hash=204797213367049729698754624420042367389,
@@ -125,12 +127,14 @@ def test_murmur_hash3_32_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.murmur3_32, 3825864278)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_murmur_hash3_x86_128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.murmur3_x86_128,
                  97431559281111809997269275467939498127)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_murmur_hash3_x64_128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.murmur3_x64_128,

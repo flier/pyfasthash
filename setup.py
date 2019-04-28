@@ -19,6 +19,7 @@ include_dirs = [
 ]
 library_dirs = []
 libraries = []
+extra_macros = []
 extra_compile_args = []
 extra_link_args = []
 
@@ -34,13 +35,18 @@ if os.name == "nt":
     macros += [
         ("WIN32", None),
     ]
-    include_dirs += [
-        os.path.join(os.environ.get('PYTHON_HOME'), 'include'),
-    ]
-    library_dirs += [
-        os.path.join(os.environ.get('PYTHON_HOME'), 'libs'),
-    ]
 
+    python_home = os.environ.get('PYTHON_HOME')
+
+    if python_home:
+        include_dirs += [
+            os.path.join(python_home, 'include'),
+        ]
+        library_dirs += [
+            os.path.join(python_home, 'libs'),
+        ]
+
+    extra_macros += [("WIN32", 1)]
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
                         "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
@@ -66,7 +72,8 @@ c_libraries = [(
             'src/fnv/hash_32a.c',
             'src/fnv/hash_64.c',
             'src/fnv/hash_64a.c'
-        ]
+        ],
+        "macros": extra_macros,
     }
 ), (
     'smhasher', {
@@ -101,17 +108,21 @@ c_libraries = [(
         "cflags": extra_compile_args,
     }
 ), (
+    'farm', {
+        "sources": ['src/smhasher/farmhash-c.c'],
+        "macros": extra_macros,
+    }
+), (
     'lookup3', {
-        "sources": ['src/lookup3/lookup3.c']
+        "sources": ['src/lookup3/lookup3.c'],
+        "macros": extra_macros,
     }
 ), (
     'SuperFastHash', {
-        "sources": ['src/SuperFastHash/SuperFastHash.c']
+        "sources": ['src/SuperFastHash/SuperFastHash.c'],
+        "macros": extra_macros,
     }
 )]
-
-if os.name != "nt":
-    c_libraries[1][1]['sources'].append('src/smhasher/farmhash-c.c')
 
 libraries += [libname for (libname, _) in c_libraries]
 

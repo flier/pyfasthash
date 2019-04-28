@@ -17,6 +17,7 @@ def test_city_64(hash_tester):
                 unicode_hash=7557950076747784205)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_city_128(hash_tester):
     hash_tester(hasher_type=pyhash.city_128,
                 bytes_hash=195179989828428219998331619914059544201,
@@ -24,6 +25,7 @@ def test_city_128(hash_tester):
                 unicode_hash=211596129097514838244042408160146499227)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_city_crc128(hash_tester):
     hash_tester(hasher_type=pyhash.city_crc_128,
                 bytes_hash=195179989828428219998331619914059544201,
@@ -47,12 +49,14 @@ def test_city_hash64_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.city_64, 894299094737143437)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_city_hash128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.city_128,
                  254849646208103091500548480943427727100)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_city_hash_crc128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.city_crc_128,

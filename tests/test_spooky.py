@@ -17,6 +17,7 @@ def test_spooky_64(hash_tester):
                 unicode_hash=4093159241144086376)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_spooky_128(hash_tester):
     hash_tester(hasher_type=pyhash.spooky_128,
                 bytes_hash=241061513486538422840128476001680072033,
@@ -34,6 +35,7 @@ def test_spooky_hash64_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.spooky_64, 8714752859576848160)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_spooky_hash128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.spooky_128,

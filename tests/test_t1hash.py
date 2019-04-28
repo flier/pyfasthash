@@ -10,6 +10,7 @@ def test_t1ha2_atonce(hash_tester):
                 unicode_hash=10647421798084574537)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_t1ha2_atonce128(hash_tester):
     hash_tester(hasher_type=pyhash.t1ha2_atonce128,
                 bytes_hash=111289500776795915835395169778666467727,
@@ -43,6 +44,7 @@ def test_t1ha2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.t1ha2, 17171225769172857249)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_t1ha2_128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.t1ha2_128,

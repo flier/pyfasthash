@@ -26,6 +26,7 @@ def test_farm_64(hash_tester):
                 unicode_hash=7274603073818924232)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_farm_128(hash_tester):
     hash_tester(hasher_type=pyhash.farm_128,
                 bytes_hash=334882099032867325754781607143811124132,
@@ -45,6 +46,7 @@ def test_farm_fingerprint_64(fingerprint_tester):
                        unicode_fingerprint=7274603073818924232)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_farm_fingerprint_128(fingerprint_tester):
     fingerprint_tester(fingerprinter_type=pyhash.farm_fingerprint_128,
                        bytes_fingerprint=334882099032867325754781607143811124132,
@@ -61,6 +63,7 @@ def test_farm_hash64_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.farm_64, 5291657088564336415)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_farm_hash128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.farm_128,

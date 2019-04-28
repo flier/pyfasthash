@@ -10,6 +10,7 @@ def test_metro_64_1(hash_tester):
                 unicode_hash=5634638029758084150)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_metro_128_1(hash_tester):
     hash_tester(hasher_type=pyhash.metro_128_1,
                 bytes_hash=310240039238111093048322555259813357218,
@@ -24,6 +25,7 @@ def test_metro_64_2(hash_tester):
                 unicode_hash=5992985172783395072)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_metro_128_2(hash_tester):
     hash_tester(hasher_type=pyhash.metro_128_2,
                 bytes_hash=308979041176504703647272401075625691044,
@@ -38,6 +40,7 @@ def test_metro_Crc64_1(hash_tester):
                 unicode_hash=5634638029758084150)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_metro_Crc128_1(hash_tester):
     hash_tester(hasher_type=pyhash.metro_crc_128_1,
                 bytes_hash=44856800307026421677415827141042094245,
@@ -52,6 +55,7 @@ def test_metro_Crc64_2(hash_tester):
                 unicode_hash=15697829093445668111)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_metro_Crc128_2(hash_tester):
     hash_tester(hasher_type=pyhash.metro_crc_128_2,
                 bytes_hash=29039398407115405218669555123781288008,
@@ -64,6 +68,7 @@ def test_metro_hash64_1_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_64_1, 6897098198286496634)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_metro_hash128_1_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_128_1,
@@ -75,6 +80,7 @@ def test_metro_hash64_2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_64_2, 9928248983045338067)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_metro_hash128_2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_128_2,
@@ -86,6 +92,7 @@ def test_metro_hash_crc64_1_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_crc_64_1, 15625740387403976237)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_metro_hash_crc128_1_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_crc_128_1,
@@ -97,6 +104,7 @@ def test_metro_hash_crc64_2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_crc_64_2, 9313388757605283934)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_metro_hash_crc128_2_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.metro_crc_128_2,

@@ -6,9 +6,7 @@
 #include "SuperFastHash.h"
 #include "CityHash.h"
 #include "SpookyHash.h"
-#ifndef _MSC_VER
 #include "FarmHash.h"
-#endif
 #include "MetroHash.h"
 #include "Mum.h"
 #include "T1ha.h"
@@ -22,6 +20,12 @@ PYBIND11_MODULE(_pyhash, m)
   m.attr("build_with_sse42") = true;
 #else
   m.attr("build_with_sse42") = false;
+#endif
+
+#ifdef SUPPORT_INT128
+  m.attr("build_with_int128") = true;
+#else
+  m.attr("build_with_int128") = false;
 #endif
 
   fnv1_32_t::Export(m, "fnv1_32");
@@ -62,20 +66,16 @@ PYBIND11_MODULE(_pyhash, m)
   spooky_hash_128_t::Export(m, "spooky_128");
 #endif
 
-#ifndef _MSC_VER
   farm_hash_32_t::Export(m, "farm_32");
   farm_hash_64_t::Export(m, "farm_64");
 #ifdef SUPPORT_INT128
   farm_hash_128_t::Export(m, "farm_128");
 #endif
-#endif
 
-#ifndef _MSC_VER
   farm_fingerprint_32_t::Export(m, "farm_fingerprint_32");
   farm_fingerprint_64_t::Export(m, "farm_fingerprint_64");
 #ifdef SUPPORT_INT128
   farm_fingerprint_128_t::Export(m, "farm_fingerprint_128");
-#endif
 #endif
 
   metro_hash_64_1_t::Export(m, "metro_64_1");
@@ -95,7 +95,9 @@ PYBIND11_MODULE(_pyhash, m)
   mum_hash_64_t::Export(m, "mum_64");
 
   t1ha2_atonce_t::Export(m, "t1ha2_atonce");
+#ifdef SUPPORT_INT128
   t1ha2_atonce128_t::Export(m, "t1ha2_atonce128");
+#endif
   t1ha1_le_t::Export(m, "t1ha1_le");
   t1ha1_be_t::Export(m, "t1ha1_be");
   t1ha0_t::Export(m, "t1ha0");

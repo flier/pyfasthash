@@ -244,7 +244,7 @@ void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t l
 #ifndef Py_UNICODE_WIDE
     if (PyUnicode_2BYTE_KIND == PyUnicode_KIND(obj) && PyUnicode_IS_READY(obj))
     {
-      buf = PyUnicode_2BYTE_DATA(obj);
+      buf = reinterpret_cast<const char *>(PyUnicode_2BYTE_DATA(obj));
       len = PyUnicode_GET_LENGTH(obj) * Py_UNICODE_SIZE;
     }
     else

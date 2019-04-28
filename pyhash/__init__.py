@@ -9,6 +9,9 @@ import _pyhash
 
 __is_little_endian__ = sys.byteorder == 'little'
 
+build_with_sse42 = _pyhash.build_with_sse42
+build_with_int128 = _pyhash.build_with_int128
+
 fnv1_32 = _pyhash.fnv1_32
 fnv1a_32 = _pyhash.fnv1a_32
 fnv1_64 = _pyhash.fnv1_64
