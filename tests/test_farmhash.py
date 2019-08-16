@@ -55,7 +55,7 @@ def test_farm_fingerprint_128(fingerprint_tester):
 
 @pytest.mark.benchmark(group='hash32', disable_gc=True)
 def test_farm_hash32_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.farm_32, 3977123615)
+    hash_bencher(benchmark, pyhash.farm_32, [3712697123, 3977123615])
 
 
 @pytest.mark.benchmark(group='hash64', disable_gc=True)

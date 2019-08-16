@@ -44,7 +44,8 @@ def test_xx_hash64_perf(benchmark, hash_bencher):
 
 @pytest.mark.benchmark(group='hash64', disable_gc=True)
 def test_xxh3_hash64_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.xxh3_64, 17963256408908765216)
+    hash_bencher(benchmark, pyhash.xxh3_64, [
+                 17963256408908765216, 4413354387267876313])
 
 
 @pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
