@@ -213,7 +213,7 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
     fingerprintes.append(py::cast(result));
   }
 
-  return fingerprintes;
+  return std::move(fingerprintes);
 }
 
 void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t len)> callback)
