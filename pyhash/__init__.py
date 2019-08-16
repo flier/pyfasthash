@@ -73,5 +73,7 @@ t1ha0 = t1ha0_64 = _pyhash.t1ha0
 
 xx_32 = _pyhash.xx_32
 xx_64 = _pyhash.xx_64
+xxh3_64 = _pyhash.xxh3_64
+xxh3_128 = _pyhash.__dict__.get('xxh3_128')
 
 __hasher__ = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))

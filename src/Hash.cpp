@@ -104,4 +104,9 @@ PYBIND11_MODULE(_pyhash, m)
 
   xx_hash_32_t::Export(m, "xx_32");
   xx_hash_64_t::Export(m, "xx_64");
+
+  xxh3_hash_64_t::Export(m, "xxh3_64");
+#ifdef SUPPORT_INT128
+  xxh3_hash_128_t::Export(m, "xxh3_128");
+#endif
 }
