@@ -64,8 +64,7 @@ elif os.name == "posix" and sys.platform == "darwin":
     ]
 
     if is_x64:
-        extra_compile_args += ["-msse4.2", "-maes",
-                               "-mavx", "-mavx2", "-Wdeprecated-register"]
+        extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2"]
 elif os.name == "posix":
     import platform
 
