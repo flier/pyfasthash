@@ -25,10 +25,10 @@ typedef unsigned __int64 uint64_t;
 typedef unsigned __int128 uint128_t;
 typedef std::array<uint64_t, 4> uint256_t;
 
-#define U128_LO(v) (v >> 64)
-#define U128_HI(v) (v & 0xFFFFFFFFFFFFFFFF)
+#define U128_LO(v) static_cast<uint64_t>(v >> 64)
+#define U128_HI(v) static_cast<uint64_t>(v)
 
-#define U128_NEW(LO, HI) ((((uint128_t)HI) << 64) + LO)
+#define U128_NEW(LO, HI) ((static_cast<uint128_t>(HI) << 64) + static_cast<uint128_t>(LO))
 
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 const int IS_LITTLE_ENDIAN = 1;
@@ -146,6 +146,82 @@ public:
 
 void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t len)> callback);
 
+template <typename T, typename S = T>
+T as_hash_value(S from)
+{
+  return static_cast<T>(from);
+}
+
+template <typename S, typename T = S>
+S as_seed_value(T hash)
+{
+  return hash;
+}
+
+#ifdef SUPPORT_INT128
+
+template <>
+uint128_t as_hash_value(uint64_t seed)
+{
+  return seed;
+}
+
+template <>
+uint64_t as_seed_value(uint128_t hash)
+{
+  return static_cast<uint64_t>(hash);
+}
+
+template <>
+uint256_t as_hash_value(uint64_t seed)
+{
+  return {seed};
+}
+
+template <>
+uint64_t as_seed_value(uint256_t hash)
+{
+  return hash[0];
+}
+
+template <>
+uint64_t as_hash_value(uint256_t seed)
+{
+  return seed[0];
+}
+
+template <>
+uint256_t as_seed_value(uint64_t hash)
+{
+  return {hash, hash, hash, hash};
+}
+
+template <>
+uint256_t as_hash_value(uint128_t seed)
+{
+  return {U128_LO(seed), U128_HI(seed), U128_LO(seed), U128_HI(seed)};
+}
+
+template <>
+uint128_t as_seed_value(uint256_t hash)
+{
+  return U128_NEW(hash[0], hash[1]);
+}
+
+template <>
+uint128_t as_hash_value(uint256_t seed)
+{
+  return U128_NEW(seed[0], seed[1]);
+}
+
+template <>
+uint256_t as_seed_value(uint128_t hash)
+{
+  return {U128_LO(hash), U128_HI(hash), U128_LO(hash), U128_HI(hash)};
+}
+
+#endif // SUPPORT_INT128
+
 template <typename T, typename S, typename H>
 py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
 {
@@ -164,11 +240,14 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   }
 
   const T &hasher = self.cast<T>();
-  typename T::hash_value_t value = kwargs.contains("seed") ? kwargs["seed"].cast<typename T::hash_value_t>() : hasher._seed;
+  typename T::hash_value_t value =
+      // for back compatibility, it should be: kwargs["seed"].cast<typename T::seed_value_t>()
+      kwargs.contains("seed") ? kwargs["seed"].cast<typename T::hash_value_t>()
+                              : as_hash_value<typename T::hash_value_t>(hasher._seed);
 
   std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
     handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len) {
-      value = hasher((void *)buf, len, value);
+      value = hasher((void *)buf, len, as_seed_value<typename T::seed_value_t>(value));
     });
   });
 

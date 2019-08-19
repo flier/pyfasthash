@@ -34,16 +34,25 @@ def hash_tester(test_data):
 
         assert hasher
         assert hasattr(hasher, 'seed')
-        assert bytes_hash == hasher(
-            data), "bytes hash should be %d" % hasher(data)
-        assert seed_hash == hasher(
-            data, seed=bytes_hash), "bytes hash with seed should be %d" % hasher(data, seed=bytes_hash)
-        assert seed_hash == hasher(data, data)
-        assert seed_hash == hasher(data, seed=hasher(data))
-        assert unicode_hash == hasher(
-            udata), "unicode hash should be %d" % hasher(udata)
+        assert hasher(data) in as_list(
+            bytes_hash), "bytes hash should be %d" % hasher(data)
+        assert hasher(data, seed=bytes_hash) in as_list(
+            seed_hash), "bytes hash with seed should be %d" % hasher(data, seed=bytes_hash)
+        assert hasher(data, data) in as_list(
+            seed_hash), "hash(data, data) should be %d" % hasher(data, data)
+        assert hasher(data, seed=hasher(data)) in as_list(
+            seed_hash), "hasher(data, seed=hasher(data)) should be %d" % hasher(data, seed=hasher(data))
+        assert hasher(udata) in as_list(
+            unicode_hash), "unicode hash should be %d" % hasher(udata)
 
     return do_test
+
+
+def as_list(v):
+    if isinstance(v, list):
+        return v
+
+    return [v]
 
 
 @pytest.fixture(scope="module")

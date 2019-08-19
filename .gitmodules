@@ -7,3 +7,6 @@
 [submodule "src/t1ha"]
 	path = src/t1ha
 	url = https://github.com/leo-yuriev/t1ha.git
+[submodule "src/highwayhash"]
+	path = src/highwayhash
+	url = https://github.com/google/highwayhash.git

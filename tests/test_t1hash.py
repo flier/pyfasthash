@@ -58,4 +58,4 @@ def test_t1ha1_perf(benchmark, hash_bencher):
 
 @pytest.mark.benchmark(group='hash64', disable_gc=True)
 def test_t1ha0_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.t1ha0, [6970451072221114646, 13811823941710697992])
+    hash_bencher(benchmark, pyhash.t1ha0, 6970451072221114646)

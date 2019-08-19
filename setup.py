@@ -4,6 +4,7 @@ import sys
 import os
 import math
 import codecs
+import platform
 from glob import glob
 
 from setuptools import setup, Extension
@@ -13,9 +14,14 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
 
+is_x64 = platform.machine() in ['x86_64']
+is_arm = platform.machine() in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
+is_ppc = platform.machine() in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+
 macros = []
 include_dirs = [
     "src/pybind11/include",
+    "src/highwayhash",
 ]
 library_dirs = []
 libraries = []
@@ -57,13 +63,42 @@ elif os.name == "posix" and sys.platform == "darwin":
         '/usr/local/include'
     ]
 
-    extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2", ]
+    if is_x64:
+        extra_compile_args += ["-msse4.2", "-maes",
+                               "-mavx", "-mavx2", "-Wdeprecated-register"]
 elif os.name == "posix":
     import platform
 
     libraries += ["rt", "gcc"]
 
-    extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2", ]
+    if is_x64:
+        extra_compile_args += ["-msse4.2", "-maes",
+                               "-mavx", "-mavx2", "-Wdeprecated-register"]
+
+highwayhash_sources = [
+    "src/highwayhash/highwayhash/arch_specific.cc",
+    "src/highwayhash/highwayhash/instruction_sets.cc",
+    "src/highwayhash/highwayhash/nanobenchmark.cc",
+    "src/highwayhash/highwayhash/os_specific.cc",
+    "src/highwayhash/highwayhash/hh_portable.cc",
+]
+
+if is_arm:
+    extra_compile_args += [
+        '-mfloat-abi=hard',
+        '-march=armv7-a',
+        '-mfpu=neon',
+    ]
+
+if is_x64:
+    highwayhash_sources += [
+        "src/highwayhash/highwayhash/hh_avx2.cc",
+        "src/highwayhash/highwayhash/hh_sse41.cc",
+    ]
+elif is_arm:
+    highwayhash_sources.append("src/highwayhash/highwayhash/hh_neon.cc")
+elif is_ppc:
+    highwayhash_sources.append("src/highwayhash/highwayhash/hh_vsx.cc")
 
 c_libraries = [(
     'fnv', {
@@ -121,6 +156,14 @@ c_libraries = [(
     'SuperFastHash', {
         "sources": ['src/SuperFastHash/SuperFastHash.c'],
         "macros": extra_macros,
+    }
+), (
+    "highwayhash", {
+        "sources": highwayhash_sources,
+        "cflags": extra_compile_args + [
+            "-Isrc/highwayhash",
+            "-std=c++11"
+        ],
     }
 )]
 

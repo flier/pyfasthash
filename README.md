@@ -164,6 +164,12 @@ pyhash supports the following hash algorithms
 - [XXHash](https://github.com/Cyan4973/xxHash)
   - xx_32
   - xx_64
+  - xxh3_64 **NEW**
+  - xxh3_128 **NEW**
+- [Highway Hash](https://github.com/google/highwayhash)
+  - highway_64 **NEW**
+  - highway_128 **NEW**
+  - highway_256 **NEW**
 
 ## String and Bytes literals
 
