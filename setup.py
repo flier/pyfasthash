@@ -64,15 +64,15 @@ elif os.name == "posix" and sys.platform == "darwin":
     ]
 
     if is_x64:
-        extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2"]
+        extra_compile_args += ["-msse4.2", "-maes",
+                               "-mavx", "-mavx2", "-Wdeprecated-register"]
 elif os.name == "posix":
     import platform
 
     libraries += ["rt", "gcc"]
 
     if is_x64:
-        extra_compile_args += ["-msse4.2", "-maes",
-                               "-mavx", "-mavx2", "-Wdeprecated-register"]
+        extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2"]
 
 highwayhash_sources = [
     "src/highwayhash/highwayhash/arch_specific.cc",
