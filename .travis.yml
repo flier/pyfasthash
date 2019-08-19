@@ -1,5 +1,8 @@
 dist: xenial
 sudo: false
+os:
+  - linux
+  - osx
 language: python
 cache: pip
 python:
@@ -16,6 +19,9 @@ matrix:
     - python: "3.8-dev"
 addons:
   apt:
+    packages:
+      - lcov
+  homebrew:
     packages:
       - lcov
 env:
