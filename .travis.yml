@@ -1,22 +1,36 @@
 dist: xenial
 sudo: false
-os:
-  - linux
-  - osx
 language: python
 cache: pip
-python:
-  - "3.8-dev"
-  - "3.7"
-  - "3.6"
-  - "3.5"
-  - "3.4"
-  - "2.7"
-  - "pypy2.7-6.0"
-  - "pypy3.5-6.0"
 matrix:
+  include:
+    - name: "Python 2.7 on Linux"
+      python: "2.7"
+    - name: "Python 3.6 on Linux"
+      python: "3.6"
+    - name: "Python 3.7 on Linux"
+      python: "3.7"
+    - name: "Python 3.8-dev on Linux"
+      python: "3.8-dev"
+    - name: "Python pypy2.7-6.0 on Linux"
+      python: "pypy2.7-6.0"
+    - name: "Python pypy2.7-6.0 on Linux"
+      python: "pypy2.7-6.0"
+    - name: "Python 3.7 on macOS"
+      os: osx
+      osx_image: xcode11
+      language: shell
+    - name: "Python 3.7 on Windows"
+      os: windows
+      language: shell
+      before_install:
+        - choco install python
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH
   allow_failures:
     - python: "3.8-dev"
+virtualenv:
+  system_site_packages: true
 addons:
   apt:
     packages:
