@@ -4,7 +4,7 @@
 
 #define XXH_STATIC_LINKING_ONLY
 
-#include "smhasher/xxhash.h"
+#include "xxHash/xxhash.h"
 
 template <typename T>
 class xx_hash_t : public Hasher<xx_hash_t<T>, T>

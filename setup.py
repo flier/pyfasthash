@@ -121,7 +121,6 @@ c_libraries = [(
             'src/smhasher/metrohash64crc.cpp',
             'src/smhasher/metrohash128.cpp',
             'src/smhasher/metrohash128crc.cpp',
-            'src/smhasher/xxhash.c',
         ],
         "cflags": extra_compile_args,
     }
@@ -163,6 +162,10 @@ c_libraries = [(
             "-Isrc/highwayhash",
             "-std=c++11"
         ],
+    }
+), (
+    "xxhash", {
+        "sources": ["src/xxHash/xxhash.c"],
     }
 )]
 

@@ -19,17 +19,17 @@ def test_xx_64(hash_tester):
 
 def test_xxh3_64(hash_tester):
     hash_tester(hasher_type=pyhash.xxh3_64,
-                bytes_hash=10414627905623201439,
-                seed_hash=16911555820549409221,
-                unicode_hash=6799411566997318536)
+                bytes_hash=9511462701433476418,
+                seed_hash=18431907721717861993,
+                unicode_hash=9339502706477692137)
 
 
 @pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_xxh3_128(hash_tester):
     hash_tester(hasher_type=pyhash.xxh3_128,
-                bytes_hash=36091986456711630655561101449441744543,
-                seed_hash=119421902396782338937329176477348497861,
-                unicode_hash=217308309488429273506450508431355718536)
+                bytes_hash=61773019920352653487352012421565896002,
+                seed_hash=75077604214798731190000330999719120489,
+                unicode_hash=253138563925068684169935446223964533993)
 
 
 @pytest.mark.benchmark(group='hash32', disable_gc=True)
@@ -44,12 +44,11 @@ def test_xx_hash64_perf(benchmark, hash_bencher):
 
 @pytest.mark.benchmark(group='hash64', disable_gc=True)
 def test_xxh3_hash64_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.xxh3_64, [
-                 17963256408908765216, 4413354387267876313])
+    hash_bencher(benchmark, pyhash.xxh3_64, 5383753519105369680)
 
 
 @pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 @pytest.mark.benchmark(group='hash128', disable_gc=True)
 def test_xxh3_hash128_perf(benchmark, hash_bencher):
     hash_bencher(benchmark, pyhash.xxh3_128,
-                 114325082382711370665287787442101032992)
+                 38410093203896075778304082117375728449)

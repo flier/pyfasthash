@@ -10,3 +10,6 @@
 [submodule "src/highwayhash"]
 	path = src/highwayhash
 	url = https://github.com/google/highwayhash.git
+[submodule "src/xxHash"]
+	path = src/xxHash
+	url = https://github.com/Cyan4973/xxHash.git
