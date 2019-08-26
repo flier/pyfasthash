@@ -14,9 +14,30 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
 
-is_x64 = platform.machine() in ['x86_64']
+is_x64 = platform.machine() in ['i386', 'i686', 'x86_64']
 is_arm = platform.machine() in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
 is_ppc = platform.machine() in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+is_posix = os.name == "posix"
+
+
+def cpu_features():
+    from collections import namedtuple
+    from cpuid import _is_set
+
+    CpuFeatures = namedtuple(
+        "CpuFeatures", ['sse41', 'sse42', 'aes', 'avx', 'avx2'])
+
+    return CpuFeatures(
+        sse41=is_x64 and _is_set(1, 2, 19),
+        sse42=is_x64 and _is_set(1, 2, 20),
+        aes=is_x64 and _is_set(1, 2, 25),
+        avx=is_x64 and _is_set(1, 2, 28),
+        avx2=is_x64 and _is_set(7, 1, 5),
+    )
+
+
+cpu = cpu_features()
+
 
 macros = []
 include_dirs = [
@@ -29,13 +50,7 @@ extra_macros = []
 extra_compile_args = []
 extra_link_args = []
 
-if os.name != "nt":
-    macros += [
-        ('SUPPORT_INT128', 1),
-    ]
-
 if os.name == "nt":
-    import platform
     is_64bit = platform.architecture()[0] == "64bit"
 
     macros += [
@@ -56,31 +71,31 @@ if os.name == "nt":
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
                         "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
-elif os.name == "posix" and sys.platform == "darwin":
-    is_64bit = math.trunc(math.ceil(math.log(sys.maxsize, 2)) + 1) == 64
-    include_dirs += [
-        '/opt/local/include',
-        '/usr/local/include'
+else:
+    macros += [
+        ('SUPPORT_INT128', 1),
     ]
 
-    if is_x64:
-        extra_compile_args += ["-msse4.2", "-maes",
-                               "-mavx", "-mavx2", "-Wdeprecated-register"]
-elif os.name == "posix":
-    import platform
+    is_64bit = math.trunc(math.ceil(math.log(sys.maxsize, 2)) + 1) == 64
 
-    libraries += ["rt", "gcc"]
+    if is_posix:
+        if sys.platform == "darwin":
+            include_dirs += [
+                '/opt/local/include',
+                '/usr/local/include'
+            ]
 
-    if is_x64:
-        extra_compile_args += ["-msse4.2", "-maes", "-mavx", "-mavx2"]
+            extra_compile_args += ["-Wdeprecated-register"]
+        else:
+            libraries += ["rt", "gcc"]
 
-highwayhash_sources = [
-    "src/highwayhash/highwayhash/arch_specific.cc",
-    "src/highwayhash/highwayhash/instruction_sets.cc",
-    "src/highwayhash/highwayhash/nanobenchmark.cc",
-    "src/highwayhash/highwayhash/os_specific.cc",
-    "src/highwayhash/highwayhash/hh_portable.cc",
-]
+if is_x64 and is_posix:
+    extra_compile_args += list(filter(None, [
+        "-msse4.2" if cpu.sse42 else None,
+        "-maes" if cpu.aes else None,
+        "-mavx" if cpu.avx else None,
+        "-mavx2" if cpu.avx2 else None,
+    ]))
 
 if is_arm:
     extra_compile_args += [
@@ -88,16 +103,6 @@ if is_arm:
         '-march=armv7-a',
         '-mfpu=neon',
     ]
-
-if is_x64:
-    highwayhash_sources += [
-        "src/highwayhash/highwayhash/hh_avx2.cc",
-        "src/highwayhash/highwayhash/hh_sse41.cc",
-    ]
-elif is_arm:
-    highwayhash_sources.append("src/highwayhash/highwayhash/hh_neon.cc")
-elif is_ppc:
-    highwayhash_sources.append("src/highwayhash/highwayhash/hh_vsx.cc")
 
 c_libraries = [(
     'fnv', {
@@ -126,16 +131,16 @@ c_libraries = [(
     }
 ), (
     't1ha', {
-        "sources": [
+        "sources": list(filter(None, [
             'src/t1ha/src/t1ha0.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx2.c',
+            'src/t1ha/src/t1ha0_ia32aes_avx.c' if cpu.avx else None,
+            'src/t1ha/src/t1ha0_ia32aes_avx2.c' if cpu.avx2 else None,
             'src/t1ha/src/t1ha0_ia32aes_noavx.c',
             'src/t1ha/src/t1ha1.c',
             'src/t1ha/src/t1ha2.c',
-        ],
+        ])),
         "macros": [
-            ("T1HA0_AESNI_AVAILABLE", 1),
+            ("T1HA0_AESNI_AVAILABLE", 1 if cpu.aes else 0),
             ("T1HA0_RUNTIME_SELECT", 1),
         ],
         "cflags": extra_compile_args,
@@ -157,7 +162,17 @@ c_libraries = [(
     }
 ), (
     "highwayhash", {
-        "sources": highwayhash_sources,
+        "sources": list(filter(None, [
+            "src/highwayhash/highwayhash/arch_specific.cc",
+            "src/highwayhash/highwayhash/instruction_sets.cc",
+            "src/highwayhash/highwayhash/nanobenchmark.cc",
+            "src/highwayhash/highwayhash/os_specific.cc",
+            "src/highwayhash/highwayhash/hh_portable.cc",
+            "src/highwayhash/highwayhash/hh_sse41.cc" if cpu.sse41 else None,
+            "src/highwayhash/highwayhash/hh_avx2.cc" if cpu.avx2 else None,
+            "src/highwayhash/highwayhash/hh_neon.cc" if is_arm else None,
+            "src/highwayhash/highwayhash/hh_vsx.cc" if is_ppc else None,
+        ])),
         "cflags": extra_compile_args + [
             "-Isrc/highwayhash",
             "-std=c++11"
@@ -215,6 +230,6 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      setup_requires=['pytest-runner', 'pytest-benchmark'],
+      setup_requires=['pytest-runner', 'pytest-benchmark', 'cpuid-py'],
       tests_require=['pytest'],
       use_2to3=True)
