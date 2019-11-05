@@ -165,7 +165,6 @@ c_libraries = [(
         "sources": list(filter(None, [
             "src/highwayhash/highwayhash/arch_specific.cc",
             "src/highwayhash/highwayhash/instruction_sets.cc",
-            "src/highwayhash/highwayhash/nanobenchmark.cc",
             "src/highwayhash/highwayhash/os_specific.cc",
             "src/highwayhash/highwayhash/hh_portable.cc",
             "src/highwayhash/highwayhash/hh_sse41.cc" if cpu.sse41 else None,
