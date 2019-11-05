@@ -14,26 +14,36 @@ here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
 
-is_x64 = platform.machine() in ['i386', 'i686', 'x86_64']
-is_arm = platform.machine() in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
-is_ppc = platform.machine() in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+machine = platform.machine()
+is_x86 = machine in ['i386', 'i686', 'x86_64']
+is_arm = machine in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
+is_ppc = machine in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
 is_posix = os.name == "posix"
+is_64bits = sys.maxsize > 2**32
 
 
 def cpu_features():
     from collections import namedtuple
-    from cpuid import _is_set
 
     CpuFeatures = namedtuple(
         "CpuFeatures", ['sse41', 'sse42', 'aes', 'avx', 'avx2'])
 
-    return CpuFeatures(
-        sse41=is_x64 and _is_set(1, 2, 19),
-        sse42=is_x64 and _is_set(1, 2, 20),
-        aes=is_x64 and _is_set(1, 2, 25),
-        avx=is_x64 and _is_set(1, 2, 28),
-        avx2=is_x64 and _is_set(7, 1, 5),
-    )
+    sse41 = sse42 = aes = avx = avx2 = False
+
+    if is_x86:
+        try:
+            from cpuid import _is_set
+
+            sse41 = is_x86 and _is_set(1, 2, 19),
+            sse42 = is_x86 and _is_set(1, 2, 20),
+            aes = is_x86 and _is_set(1, 2, 25),
+            avx = is_x86 and _is_set(1, 2, 28),
+            avx2 = is_x86 and _is_set(7, 1, 5),
+        except ImportError:
+            if is_64bits:
+                sse41 = sse42 = aes = avx = avx2 = True
+
+    return CpuFeatures(sse41, sse42, aes, avx, avx2)
 
 
 cpu = cpu_features()
@@ -51,8 +61,6 @@ extra_compile_args = []
 extra_link_args = []
 
 if os.name == "nt":
-    is_64bit = platform.architecture()[0] == "64bit"
-
     macros += [
         ("WIN32", None),
     ]
@@ -70,13 +78,11 @@ if os.name == "nt":
     extra_macros += [("WIN32", 1)]
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
-                        "/MACHINE:X64" if is_64bit else "/MACHINE:X86"]
+                        "/MACHINE:X64" if is_64bits else "/MACHINE:X86"]
 else:
     macros += [
         ('SUPPORT_INT128', 1),
     ]
-
-    is_64bit = math.trunc(math.ceil(math.log(sys.maxsize, 2)) + 1) == 64
 
     if is_posix:
         if sys.platform == "darwin":
@@ -89,7 +95,7 @@ else:
         else:
             libraries += ["rt", "gcc"]
 
-if is_x64 and is_posix:
+if is_x86 and is_posix:
     extra_compile_args += list(filter(None, [
         "-msse4.2" if cpu.sse42 else None,
         "-maes" if cpu.aes else None,
@@ -229,6 +235,6 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      setup_requires=['pytest-runner', 'pytest-benchmark', 'cpuid-py'],
+      setup_requires=['pytest-runner', 'pytest-benchmark'],
       tests_require=['pytest'],
       use_2to3=True)
