@@ -111,8 +111,8 @@ PYBIND11_MODULE(_pyhash, m)
   xxh3_hash_128_t::Export(m, "xxh3_128");
 #endif
 
-  highway_hash_64_t::Export(m, "highway_64");
 #ifdef SUPPORT_INT128
+  highway_hash_64_t::Export(m, "highway_64");
   highway_hash_128_t::Export(m, "highway_128");
   highway_hash_256_t::Export(m, "highway_256");
 #endif

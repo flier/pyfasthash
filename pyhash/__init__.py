@@ -76,7 +76,7 @@ xx_64 = _pyhash.xx_64
 xxh3_64 = _pyhash.xxh3_64
 xxh3_128 = _pyhash.__dict__.get('xxh3_128')
 
-highway_64 = _pyhash.highway_64
+highway_64 = _pyhash.__dict__.get('highway_64')
 highway_128 = _pyhash.__dict__.get('highway_128')
 highway_256 = _pyhash.__dict__.get('highway_256')
 

@@ -61,6 +61,7 @@ def test_bytearray(city_64):
     assert hasher(bytearray(b'hello')) == 2578220239953316063
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_error(city_64, city_128):
     if sys.version_info.major < 3:
         with pytest.raises(TypeError):
