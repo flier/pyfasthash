@@ -34,11 +34,11 @@ def cpu_features():
         try:
             from cpuid import _is_set
 
-            sse41 = is_x86 and _is_set(1, 2, 19),
-            sse42 = is_x86 and _is_set(1, 2, 20),
-            aes = is_x86 and _is_set(1, 2, 25),
-            avx = is_x86 and _is_set(1, 2, 28),
-            avx2 = is_x86 and _is_set(7, 1, 5),
+            sse41 = is_x86 and _is_set(1, 2, 19) == 'Yes'
+            sse42 = is_x86 and _is_set(1, 2, 20) == 'Yes'
+            aes = is_x86 and _is_set(1, 2, 25) == 'Yes'
+            avx = is_x86 and _is_set(1, 2, 28) == 'Yes'
+            avx2 = is_x86 and _is_set(7, 1, 5) == 'Yes'
         except ImportError:
             if is_64bits:
                 sse41 = sse42 = aes = avx = avx2 = True
