@@ -13,3 +13,4 @@ setuptools*
 *.pyd
 *.so
 *.pdb
+*.xml
