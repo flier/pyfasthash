@@ -5,6 +5,8 @@
 #include "highwayhash/highwayhash/highwayhash_target.h"
 #include "highwayhash/highwayhash/instruction_sets.h"
 
+#ifdef SUPPORT_INT128
+
 template <typename T>
 class hightway_hash_t : public Hasher<hightway_hash_t<T>, uint256_t, T>
 {
@@ -29,8 +31,6 @@ const highway_hash_64_t::hash_value_t highway_hash_64_t::operator()(void *buf, s
         reinterpret_cast<const char *>(buf), len, &result);
     return result;
 }
-
-#ifdef SUPPORT_INT128
 
 typedef hightway_hash_t<uint128_t> highway_hash_128_t;
 

@@ -8,6 +8,7 @@ import pytest
 import pyhash
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_string(city_fingerprint_256):
     fp = city_fingerprint_256()
 
@@ -33,6 +34,7 @@ def test_string(city_fingerprint_256):
         '') == 105392963878170340009271248359803826743454413279965606456743994508350154550720
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_list(city_fingerprint_256):
     fp = city_fingerprint_256()
 
@@ -40,6 +42,7 @@ def test_list(city_fingerprint_256):
         assert fp(list(b'hello')) == 2578220239953316063
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_array(city_fingerprint_256):
     from array import array
 
@@ -49,6 +52,7 @@ def test_array(city_fingerprint_256):
               ) == 32224966601437776796805147064203168097183942002141386838543322678917249904243
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_buffer(city_fingerprint_256):
     if sys.version_info.major < 3:
         fp = city_fingerprint_256()
@@ -57,6 +61,7 @@ def test_buffer(city_fingerprint_256):
             b'hello')) == 32224966601437776796805147064203168097183942002141386838543322678917249904243
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_bufferview(city_fingerprint_256):
     fp = city_fingerprint_256()
 
@@ -64,6 +69,7 @@ def test_bufferview(city_fingerprint_256):
         b'hello')) == 32224966601437776796805147064203168097183942002141386838543322678917249904243
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_bytearray(city_fingerprint_256):
     fp = city_fingerprint_256()
 

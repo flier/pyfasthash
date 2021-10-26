@@ -33,6 +33,7 @@ def test_city_crc128(hash_tester):
                 unicode_hash=211596129097514838244042408160146499227)
 
 
+@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_city_crc256(fingerprint_tester):
     fingerprint_tester(fingerprinter_type=pyhash.city_fingerprint_256,
                        bytes_fingerprint=43374127706338803100025155483422426900760284308948611519881759972455588549698,
