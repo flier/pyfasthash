@@ -236,5 +236,4 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'],
-      use_2to3=True)
+      tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'])
