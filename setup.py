@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
-import math
-import codecs
 import platform
 from glob import glob
 
@@ -15,11 +13,11 @@ with open(os.path.join(here, 'README.md')) as f:
     long_description = f.read()
 
 machine = platform.machine()
-is_x86 = machine in ['i386', 'i686', 'x86_64']
-is_arm = machine in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
-is_ppc = machine in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
-is_posix = os.name == "posix"
-is_64bits = sys.maxsize > 2**32
+IS_X86 = machine in ['i386', 'i686', 'x86_64']
+IS_ARM = machine in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
+IS_PPC = machine in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+IS_POSIX = os.name == "posix"
+IS_64BITS = sys.maxsize > 2**32
 
 
 def cpu_features():
@@ -30,17 +28,17 @@ def cpu_features():
 
     sse41 = sse42 = aes = avx = avx2 = False
 
-    if is_x86:
+    if IS_X86:
         try:
             from cpuid import _is_set
 
-            sse41 = is_x86 and _is_set(1, 2, 19),
-            sse42 = is_x86 and _is_set(1, 2, 20),
-            aes = is_x86 and _is_set(1, 2, 25),
-            avx = is_x86 and _is_set(1, 2, 28),
-            avx2 = is_x86 and _is_set(7, 1, 5),
+            sse41 = IS_X86 and _is_set(1, 2, 19),
+            sse42 = IS_X86 and _is_set(1, 2, 20),
+            aes = IS_X86 and _is_set(1, 2, 25),
+            avx = IS_X86 and _is_set(1, 2, 28),
+            avx2 = IS_X86 and _is_set(7, 1, 5),
         except ImportError:
-            if is_64bits:
+            if IS_64BITS:
                 sse41 = sse42 = aes = avx = avx2 = True
 
     return CpuFeatures(sse41, sse42, aes, avx, avx2)
@@ -78,24 +76,27 @@ if os.name == "nt":
     extra_macros += [("WIN32", 1)]
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
-                        "/MACHINE:X64" if is_64bits else "/MACHINE:X86"]
+                        "/MACHINE:X64" if IS_64BITS else "/MACHINE:X86"]
 else:
     macros += [
         ('SUPPORT_INT128', 1),
     ]
 
-    if is_posix:
+    if IS_POSIX:
         if sys.platform == "darwin":
             include_dirs += [
                 '/opt/local/include',
                 '/usr/local/include'
             ]
 
-            extra_compile_args += ["-Wdeprecated-register"]
+            extra_compile_args += [
+                "-Wdeprecated-register",
+                "-stdlib=libc++",
+            ]
         else:
             libraries += ["rt", "gcc"]
 
-if is_x86 and is_posix:
+if IS_X86 and IS_POSIX:
     extra_compile_args += list(filter(None, [
         "-msse4.2" if cpu.sse42 else None,
         "-maes" if cpu.aes else None,
@@ -103,7 +104,7 @@ if is_x86 and is_posix:
         "-mavx2" if cpu.avx2 else None,
     ]))
 
-if is_arm:
+if IS_ARM:
     extra_compile_args += [
         '-mfloat-abi=hard',
         '-march=armv7-a',
@@ -134,7 +135,9 @@ c_libraries = [(
             'src/smhasher/metrohash/metrohash128.cpp',
             'src/smhasher/metrohash/metrohash128crc.cpp',
         ],
-        "cflags": extra_compile_args,
+        "cflags": extra_compile_args + [
+            "-std=c++11",
+        ],
     }
 ), (
     't1ha', {
@@ -176,8 +179,8 @@ c_libraries = [(
             "src/highwayhash/highwayhash/hh_portable.cc",
             "src/highwayhash/highwayhash/hh_sse41.cc" if cpu.sse41 else None,
             "src/highwayhash/highwayhash/hh_avx2.cc" if cpu.avx2 else None,
-            "src/highwayhash/highwayhash/hh_neon.cc" if is_arm else None,
-            "src/highwayhash/highwayhash/hh_vsx.cc" if is_ppc else None,
+            "src/highwayhash/highwayhash/hh_neon.cc" if IS_ARM else None,
+            "src/highwayhash/highwayhash/hh_vsx.cc" if IS_PPC else None,
         ])),
         "cflags": extra_compile_args + [
             "-Isrc/highwayhash",
