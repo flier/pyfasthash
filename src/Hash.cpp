@@ -61,10 +61,16 @@ PYBIND11_MODULE(_pyhash, m)
   city_fingerprint_256_t::Export(m, "city_fingerprint_256");
 #endif
 
-  spooky_hash_32_t::Export(m, "spooky_32");
-  spooky_hash_64_t::Export(m, "spooky_64");
+  spooky_hash_v1_32_t::Export(m, "spooky_v1_32");
+  spooky_hash_v1_64_t::Export(m, "spooky_v1_64");
 #ifdef SUPPORT_INT128
-  spooky_hash_128_t::Export(m, "spooky_128");
+  spooky_hash_v1_128_t::Export(m, "spooky_v1_128");
+#endif
+
+  spooky_hash_v2_32_t::Export(m, "spooky_v2_32");
+  spooky_hash_v2_64_t::Export(m, "spooky_v2_64");
+#ifdef SUPPORT_INT128
+  spooky_hash_v2_128_t::Export(m, "spooky_v2_128");
 #endif
 
   farm_hash_32_t::Export(m, "farm_32");

@@ -41,9 +41,17 @@ city_128 = _pyhash.__dict__.get('city_128')
 city_crc_128 = _pyhash.__dict__.get('city_crc_128')
 city_fingerprint_256 = _pyhash.__dict__.get('city_fingerprint_256')
 
-spooky_32 = _pyhash.spooky_32
-spooky_64 = _pyhash.spooky_64
-spooky_128 = _pyhash.__dict__.get('spooky_128')
+spooky_v1_32 = _pyhash.spooky_v1_32
+spooky_v1_64 = _pyhash.spooky_v1_64
+spooky_v1_128 = _pyhash.__dict__.get('spooky_v1_128')
+
+spooky_v2_32 = _pyhash.spooky_v2_32
+spooky_v2_64 = _pyhash.spooky_v2_64
+spooky_v2_128 = _pyhash.__dict__.get('spooky_v2_128')
+
+spooky_32 = spooky_v2_32
+spooky_64 = spooky_v2_64
+spooky_128 = spooky_v2_128
 
 farm_32 = _pyhash.__dict__.get('farm_32')
 farm_64 = _pyhash.__dict__.get('farm_64')

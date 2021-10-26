@@ -128,6 +128,7 @@ c_libraries = [(
             'src/smhasher/MurmurHash3.cpp',
             'src/smhasher/City.cpp',
             'src/smhasher/Spooky.cpp',
+            'src/smhasher/SpookyV2.cpp',
             'src/smhasher/metrohash/metrohash64.cpp',
             'src/smhasher/metrohash/metrohash64crc.cpp',
             'src/smhasher/metrohash/metrohash128.cpp',
