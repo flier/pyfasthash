@@ -2,7 +2,7 @@
 
 #include "Hash.h"
 
-#include "smhasher/metrohash.h"
+#include "smhasher/metrohash/metrohash.h"
 
 /**
 
