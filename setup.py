@@ -94,7 +94,8 @@ elif IS_POSIX:
         ]
 
         extra_compile_args += [
-            "-Wdeprecated-register",
+            "-Wno-deprecated-register",
+            "-Wno-unused-lambda-capture",
             "-stdlib=libc++",
         ]
     else:
@@ -229,7 +230,7 @@ pyhash = Extension(name="_pyhash",
                    library_dirs=library_dirs,
                    libraries=libraries,
                    extra_compile_args=extra_compile_args +
-                   ["-std=c++11"],
+                   ["-std=c++17"],
                    extra_link_args=extra_link_args,
                    )
 
