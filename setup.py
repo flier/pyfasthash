@@ -267,6 +267,9 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      setup_requires=['cpuid', 'pybind11'],
+      setup_requires=list(filter(None, [
+          'cpuid' if IS_X86 else None,
+          'pybind11',
+      ])),
       tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'],
       )
