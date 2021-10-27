@@ -5,4 +5,5 @@ ignore:
   - "src/smhasher"
   - "src/SuperFastHash"
   - "src/t1ha"
+  - "src/wyhash"
   - "src/xxHash"

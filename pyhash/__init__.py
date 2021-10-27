@@ -93,4 +93,7 @@ highway_64 = _pyhash.__dict__.get('highway_64')
 highway_128 = _pyhash.__dict__.get('highway_128')
 highway_256 = _pyhash.__dict__.get('highway_256')
 
+wy_32 = _pyhash.wy_32
+wy_64 = _pyhash.wy_64
+
 __hasher__ = dict(inspect.getmembers(sys.modules[__name__], inspect.isclass))
