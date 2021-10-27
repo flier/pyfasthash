@@ -12,6 +12,7 @@
 #include "T1ha.h"
 #include "xxHash.h"
 #include "Highway.h"
+#include "wyHash.h"
 
 PYBIND11_MODULE(_pyhash, m)
 {
@@ -138,4 +139,7 @@ PYBIND11_MODULE(_pyhash, m)
   highway_hash_128_t::Export(m, "highway_128");
   highway_hash_256_t::Export(m, "highway_256");
 #endif
+
+  wy_hash_32_t::Export(m, "wy_32");
+  wy_hash_64_t::Export(m, "wy_64");
 }
