@@ -1,5 +1,6 @@
 ignore:
   - "src/fnv"
+  - "src/halftime"
   - "src/highwayhash"
   - "src/lookup3"
   - "src/smhasher"
