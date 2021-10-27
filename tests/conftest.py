@@ -11,7 +11,7 @@ import pyhash
 
 @pytest.fixture
 def is_x86():
-    return platform.machine() in ['i386', 'i686', 'x86_64']
+    return platform.machine().lower() in ['i386', 'i686', 'x86_64', 'amd64']
 
 
 @pytest.fixture
