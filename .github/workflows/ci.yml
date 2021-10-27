@@ -1,0 +1,129 @@
+name: Continuous integration
+
+on:
+  push:
+    branches:
+      - master
+      - "releases/**"
+    tags:
+      - "*"
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches:
+      - master
+  page_build:
+  release:
+    types:
+      - created
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python-version:
+          - "2.7"
+          - "3.7"
+          - "3.8"
+          - "3.9"
+          - "3.10"
+          - "pypy-2.7"
+          - "pypy-3.6"
+          - "pypy-3.7"
+        experimental: [false]
+        include:
+          - os: macos-10.15
+            python-version: 2.x
+            experimental: false
+          - os: macos-11
+            python-version: 3.x
+            experimental: false
+          - os: windows-latest
+            python-version: 3.x
+            experimental: true
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
+    name: Python ${{ matrix.python-version }} @ ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install requirements
+        run: |
+          pip install cpuid
+          pip install -r requirements.txt
+          pip install -r tests/requirements.txt
+
+      - name: Build extensions
+        run: |
+          python setup.py build_clib build_ext --inplace
+
+      - name: Run tests
+        run: |
+          pytest -v --benchmark-disable --log-cli-level=info -k 'not highway'
+
+  coverage:
+    name: Coverage report
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -yq lcov
+
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install requirements
+        run: |
+          pip install -r tests/requirements.txt
+
+      - name: Install pyhash package with coverage
+        env:
+          CFLAGS: -coverage
+        run: |
+          pip install -v .
+
+      - name: Run tests with coverage
+        run: |
+          pytest -k 'not highway' --benchmark-disable --cov=./ --cov-report=xml
+
+      - name: Generate coverage report
+        run: |
+          lcov --capture --directory . --output-file coverage.info
+          lcov --remove coverage.info '/usr/*' "${PWD}/src/fnv/*" "${PWD}/src/lookup3/*" "${PWD}/src/SuperFastHash/*" "${PWD}/src/smhasher/*" "${PWD}/src/pybind11/*" -o coverage_filtered.info
+          genhtml --legend --title "${{ github.sha }}" --prefix src coverage_filtered.info --output-directory .
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          directory: .
+          env_vars: OS,PYTHON
+          flags: unittests
+          fail_ci_if_error: true
+          verbose: true

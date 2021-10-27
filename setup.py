@@ -5,19 +5,23 @@ import os
 import platform
 from glob import glob
 
-from setuptools import setup, Extension
+from setuptools import setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, 'README.md')) as f:
-    long_description = f.read()
-
 machine = platform.machine()
 IS_X86 = machine in ['i386', 'i686', 'x86_64']
-IS_ARM = machine in ['aarch64', 'aarch64_be', 'armv8b', 'armv8l']
+IS_X86_64 = machine in ['x86_64']
+IS_ARM = machine in ['arm', 'aarch64', 'aarch64_be', 'armv8b', 'armv8l']
 IS_PPC = machine in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
+IS_MACOS = sys.platform == "darwin"
 IS_64BITS = sys.maxsize > 2**32
+SUPPORT_INT128 = not IS_WINNT
+
+ON = 1
+OFF = 0
 
 
 def cpu_features():
@@ -32,11 +36,11 @@ def cpu_features():
         try:
             from cpuid import _is_set
 
-            sse41 = IS_X86 and _is_set(1, 2, 19),
-            sse42 = IS_X86 and _is_set(1, 2, 20),
-            aes = IS_X86 and _is_set(1, 2, 25),
-            avx = IS_X86 and _is_set(1, 2, 28),
-            avx2 = IS_X86 and _is_set(7, 1, 5),
+            sse41 = _is_set(1, 2, 19) == 'Yes'
+            sse42 = _is_set(1, 2, 20) == 'Yes'
+            aes = _is_set(1, 2, 25) == 'Yes'
+            avx = _is_set(1, 2, 28) == 'Yes'
+            avx2 = _is_set(7, 1, 5) == 'Yes'
         except ImportError:
             if IS_64BITS:
                 sse41 = sse42 = aes = avx = avx2 = True
@@ -58,7 +62,7 @@ extra_macros = []
 extra_compile_args = []
 extra_link_args = []
 
-if os.name == "nt":
+if IS_WINNT:
     macros += [
         ("WIN32", None),
     ]
@@ -77,38 +81,25 @@ if os.name == "nt":
     extra_compile_args += ["/O2", "/GL", "/MT", "/EHsc", "/Gy", "/Zi"]
     extra_link_args += ["/DLL", "/OPT:REF", "/OPT:ICF",
                         "/MACHINE:X64" if IS_64BITS else "/MACHINE:X86"]
-else:
+elif IS_POSIX:
+    if IS_MACOS:
+        include_dirs += [
+            '/opt/local/include',
+            '/usr/local/include'
+        ]
+
+        extra_compile_args += [
+            "-Wdeprecated-register",
+            "-stdlib=libc++",
+        ]
+    else:
+        libraries += ["rt", "gcc"]
+
+    extra_compile_args += ["-march=native"]
+
+if SUPPORT_INT128:
     macros += [
-        ('SUPPORT_INT128', 1),
-    ]
-
-    if IS_POSIX:
-        if sys.platform == "darwin":
-            include_dirs += [
-                '/opt/local/include',
-                '/usr/local/include'
-            ]
-
-            extra_compile_args += [
-                "-Wdeprecated-register",
-                "-stdlib=libc++",
-            ]
-        else:
-            libraries += ["rt", "gcc"]
-
-if IS_X86 and IS_POSIX:
-    extra_compile_args += list(filter(None, [
-        "-msse4.2" if cpu.sse42 else None,
-        "-maes" if cpu.aes else None,
-        "-mavx" if cpu.avx else None,
-        "-mavx2" if cpu.avx2 else None,
-    ]))
-
-if IS_ARM:
-    extra_compile_args += [
-        '-mfloat-abi=hard',
-        '-march=armv7-a',
-        '-mfpu=neon',
+        ('SUPPORT_INT128', ON),
     ]
 
 c_libraries = [(
@@ -141,17 +132,17 @@ c_libraries = [(
     }
 ), (
     't1ha', {
-        "sources": list(filter(None, [
+        "sources": [
             'src/t1ha/src/t1ha0.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx.c' if cpu.avx else None,
-            'src/t1ha/src/t1ha0_ia32aes_avx2.c' if cpu.avx2 else None,
+            'src/t1ha/src/t1ha0_ia32aes_avx.c',
+            'src/t1ha/src/t1ha0_ia32aes_avx2.c',
             'src/t1ha/src/t1ha0_ia32aes_noavx.c',
             'src/t1ha/src/t1ha1.c',
             'src/t1ha/src/t1ha2.c',
-        ])),
+        ],
         "macros": [
-            ("T1HA0_AESNI_AVAILABLE", 1 if cpu.aes else 0),
-            ("T1HA0_RUNTIME_SELECT", 1),
+            ("T1HA0_AESNI_AVAILABLE", ON if cpu.aes else OFF),
+            ("T1HA0_RUNTIME_SELECT", ON),
         ],
         "cflags": extra_compile_args,
     }
@@ -171,29 +162,59 @@ c_libraries = [(
         "macros": extra_macros,
     }
 ), (
-    "highwayhash", {
-        "sources": list(filter(None, [
-            "src/highwayhash/highwayhash/arch_specific.cc",
-            "src/highwayhash/highwayhash/instruction_sets.cc",
-            "src/highwayhash/highwayhash/os_specific.cc",
-            "src/highwayhash/highwayhash/hh_portable.cc",
-            "src/highwayhash/highwayhash/hh_sse41.cc" if cpu.sse41 else None,
-            "src/highwayhash/highwayhash/hh_avx2.cc" if cpu.avx2 else None,
-            "src/highwayhash/highwayhash/hh_neon.cc" if IS_ARM else None,
-            "src/highwayhash/highwayhash/hh_vsx.cc" if IS_PPC else None,
-        ])),
-        "cflags": extra_compile_args + [
-            "-Isrc/highwayhash",
-            "-std=c++11"
-        ],
-    }
-), (
     "xxhash", {
         "sources": ["src/xxHash/xxhash.c"],
     }
 )]
 
+if not IS_WINNT:
+    srcs = [
+        "src/highwayhash/highwayhash/arch_specific.cc",
+        "src/highwayhash/highwayhash/instruction_sets.cc",
+        "src/highwayhash/highwayhash/os_specific.cc",
+        "src/highwayhash/highwayhash/hh_portable.cc",
+    ]
+    cflags = extra_compile_args + [
+        "-Isrc/highwayhash",
+        "-std=c++11",
+    ]
+
+    if IS_X86_64:
+        srcs += [
+            "src/highwayhash/highwayhash/hh_sse41.cc",
+            "src/highwayhash/highwayhash/hh_avx2.cc",
+        ]
+        cflags += ["-msse4.1", "-mavx2"]
+
+    elif IS_ARM:
+        srcs += ["src/highwayhash/highwayhash/hh_neon.cc"]
+        cflags += [
+            '-mfloat-abi=hard',
+            '-march=armv7-a',
+            '-mfpu=neon',
+        ]
+
+    elif IS_PPC:
+        srcs += ["src/highwayhash/highwayhash/hh_vsx.cc"]
+        cflags += ['-mvsx']
+
+    c_libraries += [(
+        "highwayhash", {
+            "sources": srcs,
+            "cflags": cflags,
+        }
+    )]
+
 libraries += [libname for (libname, _) in c_libraries]
+cmdclass = {}
+
+try:
+    from pybind11.setup_helpers import Pybind11Extension as Extension, build_ext
+
+    cmdclass["build_ext"] = build_ext
+
+except ImportError:
+    from setuptools import Extension
 
 pyhash = Extension(name="_pyhash",
                    sources=['src/Hash.cpp'],
@@ -202,14 +223,15 @@ pyhash = Extension(name="_pyhash",
                    include_dirs=include_dirs,
                    library_dirs=library_dirs,
                    libraries=libraries,
-                   extra_compile_args=extra_compile_args + ["-std=c++11"],
+                   extra_compile_args=extra_compile_args +
+                   ["-std=c++11"],
                    extra_link_args=extra_link_args,
                    )
 
 setup(name='pyhash',
       version='0.9.4',
       description='Python Non-cryptographic Hash Library',
-      long_description=long_description,
+      long_description=open(os.path.join(here, 'README.md')).read(),
       long_description_content_type='text/markdown',
       url='https://github.com/flier/pyfasthash',
       download_url='https://github.com/flier/pyfasthash/releases',
@@ -219,6 +241,7 @@ setup(name='pyhash',
       license="Apache Software License",
       packages=['pyhash'],
       libraries=c_libraries,
+      cmdclass=cmdclass,
       ext_modules=[pyhash],
       classifiers=[
           'Development Status :: 5 - Production/Stable',
@@ -239,4 +262,6 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'])
+      setup_requires=['cpuid', 'pybind11'],
+      tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'],
+      )
