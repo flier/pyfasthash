@@ -9,15 +9,20 @@ from setuptools import setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-machine = platform.machine()
-IS_X86 = machine in ['i386', 'i686', 'x86_64']
-IS_X86_64 = machine in ['x86_64']
-IS_ARM = machine in ['arm', 'aarch64', 'aarch64_be', 'armv8b', 'armv8l']
-IS_PPC = machine in ['ppc', 'ppc64', 'ppc64le', 'ppc64le']
+IS_64BITS = sys.maxsize > 2**32
+
+machine = platform.machine().lower()
+IS_X86 = machine in ['i386', 'i686', 'x86_64', 'amd64']
+IS_X86_64 = IS_X86 and IS_64BITS
+IS_ARM = machine.startswith('arm') or machine.startswith('aarch')
+IS_ARM64 = IS_ARM and IS_64BITS
+IS_PPC = machine.startswith('ppc')
+IS_PPC64 = IS_PPC and IS_64BITS
+
 IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
 IS_MACOS = sys.platform == "darwin"
-IS_64BITS = sys.maxsize > 2**32
+
 SUPPORT_INT128 = not IS_WINNT
 
 ON = 1
@@ -114,7 +119,7 @@ c_libraries = [(
     }
 ), (
     'smhasher', {
-        "sources": [
+        "sources": list(filter(None, [
             'src/smhasher/MurmurHash1.cpp',
             'src/smhasher/MurmurHash2.cpp',
             'src/smhasher/MurmurHash3.cpp',
@@ -122,24 +127,24 @@ c_libraries = [(
             'src/smhasher/Spooky.cpp',
             'src/smhasher/SpookyV2.cpp',
             'src/smhasher/metrohash/metrohash64.cpp',
-            'src/smhasher/metrohash/metrohash64crc.cpp',
+            'src/smhasher/metrohash/metrohash64crc.cpp' if IS_X86 or IS_ARM64 else None,
             'src/smhasher/metrohash/metrohash128.cpp',
-            'src/smhasher/metrohash/metrohash128crc.cpp',
-        ],
+            'src/smhasher/metrohash/metrohash128crc.cpp' if IS_X86 or IS_ARM64 else None,
+        ])),
         "cflags": extra_compile_args + [
             "-std=c++11",
         ],
     }
 ), (
     't1ha', {
-        "sources": [
+        "sources": list(filter(None, [
             'src/t1ha/src/t1ha0.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx2.c',
+            'src/t1ha/src/t1ha0_ia32aes_avx.c' if IS_X86 else None,
+            'src/t1ha/src/t1ha0_ia32aes_avx2.c' if IS_X86 else None,
             'src/t1ha/src/t1ha0_ia32aes_noavx.c',
             'src/t1ha/src/t1ha1.c',
             'src/t1ha/src/t1ha2.c',
-        ],
+        ])),
         "macros": [
             ("T1HA0_AESNI_AVAILABLE", ON if cpu.aes else OFF),
             ("T1HA0_RUNTIME_SELECT", ON),
@@ -186,7 +191,7 @@ if not IS_WINNT:
         ]
         cflags += ["-msse4.1", "-mavx2"]
 
-    elif IS_ARM:
+    elif IS_ARM64:
         srcs += ["src/highwayhash/highwayhash/hh_neon.cc"]
         cflags += [
             '-mfloat-abi=hard',
@@ -194,7 +199,7 @@ if not IS_WINNT:
             '-mfpu=neon',
         ]
 
-    elif IS_PPC:
+    elif IS_PPC64:
         srcs += ["src/highwayhash/highwayhash/hh_vsx.cc"]
         cflags += ['-mvsx']
 
@@ -262,6 +267,9 @@ setup(name='pyhash',
           'Topic :: Utilities'
       ],
       keywords='hash hashing fasthash',
-      setup_requires=['cpuid', 'pybind11'],
+      setup_requires=list(filter(None, [
+          'cpuid' if IS_X86 else None,
+          'pybind11',
+      ])),
       tests_require=['pytest', 'pytest-runner', 'pytest-benchmark'],
       )
