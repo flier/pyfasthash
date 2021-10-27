@@ -39,22 +39,18 @@ def cpu(is_x86, is_64bit):
                       sse41=False, sse42=False, aes=False, avx=False, avx2=False)
 
     if is_x86:
-        try:
-            from cpuid import _is_set, cpu_vendor, cpu_name, cpu_microarchitecture
+        from cpuid import _is_set, cpu_vendor, cpu_name, cpu_microarchitecture
 
-            cpu = CpuFeatures(
-                name=cpu_name().rstrip('\x00'),
-                vendor=cpu_vendor(),
-                arch=cpu_microarchitecture()[0],
-                sse41=_is_set(1, 2, 19) == 'Yes',
-                sse42=_is_set(1, 2, 20) == 'Yes',
-                aes=_is_set(1, 2, 25) == 'Yes',
-                avx=_is_set(1, 2, 28) == 'Yes',
-                avx2=_is_set(7, 1, 5) == 'Yes',
-            )
-        except ImportError:
-            if is_64bit:
-                cpu.sse41 = cpu.sse42 = cpu.aes = cpu.avx = cpu.avx2 = True
+        cpu = CpuFeatures(
+            name=cpu_name().rstrip('\x00'),
+            vendor=cpu_vendor(),
+            arch=cpu_microarchitecture()[0],
+            sse41=_is_set(1, 2, 19) == 'Yes',
+            sse42=_is_set(1, 2, 20) == 'Yes',
+            aes=_is_set(1, 2, 25) == 'Yes',
+            avx=_is_set(1, 2, 28) == 'Yes',
+            avx2=_is_set(7, 1, 5) == 'Yes',
+        )
 
     logging.getLogger().info("CPU %s", cpu)
 
