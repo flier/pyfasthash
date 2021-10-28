@@ -230,7 +230,7 @@ pyhash = Extension(name="_pyhash",
                    library_dirs=library_dirs,
                    libraries=libraries,
                    extra_compile_args=extra_compile_args +
-                   ["-std=c++11"],
+                   ["-std=c++14"],
                    extra_link_args=extra_link_args,
                    )
 
