@@ -16,3 +16,6 @@
 [submodule "src/wyhash"]
 	path = src/wyhash
 	url = https://github.com/wangyi-fudan/wyhash.git
+[submodule "src/halftime"]
+	path = src/halftime
+	url = https://github.com/jbapple/HalftimeHash.git

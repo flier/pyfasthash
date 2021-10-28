@@ -1,9 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <functional>
+#include <random>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -24,6 +27,7 @@ typedef unsigned __int64 uint64_t;
 
 typedef unsigned __int128 uint128_t;
 typedef std::array<uint64_t, 4> uint256_t;
+typedef std::array<uint64_t, 8> uint512_t;
 
 #define U128_LO(v) static_cast<uint64_t>(v >> 64)
 #define U128_HI(v) static_cast<uint64_t>(v)
@@ -39,60 +43,86 @@ const int PyLong_Unsigned = 0;
 
 namespace pybind11
 {
-namespace detail
-{
-template <>
-struct type_caster<uint128_t>
-{
-public:
-  PYBIND11_TYPE_CASTER(uint128_t, _("uint128_t"));
-
-  bool load(handle src, bool)
+  namespace detail
   {
-    py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
-
-    if (!n)
+    template <>
+    struct type_caster<uint128_t>
     {
-      return false;
-    }
+    public:
+      PYBIND11_TYPE_CASTER(uint128_t, _("uint128_t"));
 
-    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+      bool load(handle src, bool)
+      {
+        py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
 
-    return !PyErr_Occurred();
-  }
+        if (!n)
+        {
+          return false;
+        }
 
-  static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
-  {
-    return _PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
-  }
-};
+        _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
 
-template <>
-struct type_caster<uint256_t>
-{
-public:
-  PYBIND11_TYPE_CASTER(uint256_t, _("uint256_t"));
+        return !PyErr_Occurred();
+      }
 
-  bool load(handle src, bool)
-  {
-    py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
+      static handle cast(uint128_t src, return_value_policy /* policy */, handle /* parent */)
+      {
+        return _PyLong_FromByteArray((const unsigned char *)&src, sizeof(uint128_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+      }
+    };
 
-    if (!n)
+    template <>
+    struct type_caster<uint256_t>
     {
-      return false;
-    }
+    public:
+      PYBIND11_TYPE_CASTER(uint256_t, _("uint256_t"));
 
-    _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+      bool load(handle src, bool)
+      {
+        py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
 
-    return !PyErr_Occurred();
-  }
+        if (!n)
+        {
+          return false;
+        }
 
-  static handle cast(uint256_t src, return_value_policy /* policy */, handle /* parent */)
-  {
-    return _PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
-  }
-};
-} // namespace detail
+        _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+
+        return !PyErr_Occurred();
+      }
+
+      static handle cast(uint256_t src, return_value_policy /* policy */, handle /* parent */)
+      {
+        return _PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint256_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+      }
+    };
+
+    template <>
+    struct type_caster<uint512_t>
+    {
+    public:
+      PYBIND11_TYPE_CASTER(uint512_t, _("uint512_t"));
+
+      bool load(handle src, bool)
+      {
+        py::object n = py::reinterpret_steal<py::object>(PyNumber_Long(src.ptr()));
+
+        if (!n)
+        {
+          return false;
+        }
+
+        _PyLong_AsByteArray((PyLongObject *)n.ptr(), (unsigned char *)&value, sizeof(uint512_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+
+        return !PyErr_Occurred();
+      }
+
+      static handle cast(uint512_t src, return_value_policy /* policy */, handle /* parent */)
+      {
+        return _PyLong_FromByteArray((const unsigned char *)src.data(), sizeof(uint512_t), IS_LITTLE_ENDIAN, PyLong_Unsigned);
+      }
+    };
+  } // namespace detail
 } // namespace pybind11
 
 #endif // SUPPORT_INT128
@@ -106,10 +136,9 @@ public:
   typedef S seed_value_t;
   typedef H hash_value_t;
 
-private:
+protected:
   seed_value_t _seed;
 
-protected:
   Hasher(seed_value_t seed = {}) : _seed(seed) {}
 
 public:
@@ -117,9 +146,9 @@ public:
 
   static py::object CallWithArgs(py::args args, py::kwargs kwargs);
 
-  static void Export(const py::module &m, const char *name)
+  static py::class_<T> Export(const py::module &m, const char *name)
   {
-    py::class_<T>(m, name)
+    return py::class_<T>(m, name)
         .def(py::init<seed_value_t>(), py::arg("seed") = 0)
         .def_readwrite("seed", &T::_seed)
         .def("__call__", &T::CallWithArgs);
@@ -245,12 +274,9 @@ py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)
       kwargs.contains("seed") ? kwargs["seed"].cast<typename T::hash_value_t>()
                               : as_hash_value<typename T::hash_value_t>(hasher._seed);
 
-  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
-    handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len) {
-      value = hasher((void *)buf, len, as_seed_value<typename T::seed_value_t>(value));
-    });
-  });
-
+  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg)
+                { handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len)
+                              { value = hasher((void *)buf, len, as_seed_value<typename T::seed_value_t>(value)); }); });
   return py::cast(value);
 }
 
@@ -274,11 +300,9 @@ py::object Fingerprinter<T, H>::CallWithArgs(py::args args, py::kwargs kwargs)
   const T &fingerprinter = self.cast<T>();
   std::vector<typename T::fingerprint_t> results;
 
-  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg) {
-    handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len) {
-      results.push_back(fingerprinter((void *)buf, len));
-    });
-  });
+  std::for_each(std::next(args.begin()), args.end(), [&](const py::handle &arg)
+                { handle_data(arg.ptr(), [&](const char *buf, Py_ssize_t len)
+                              { results.push_back(fingerprinter((void *)buf, len)); }); });
 
   if (results.size() == 1)
   {
