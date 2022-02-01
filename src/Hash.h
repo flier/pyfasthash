@@ -407,13 +407,16 @@ void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t l
     py::buffer_info view = py::reinterpret_borrow<py::buffer>(obj).request(false);
     Py_ssize_t shape_accum = view.size;
 
-    for (int i = 0; i < view.ndim; ++i)
+    if (shape_accum != 0)
     {
-      shape_accum /= view.shape[i];
-
-      if (view.strides[i] != view.itemsize * shape_accum)
+      for (int i = 0; i < view.ndim; ++i)
       {
-        throw std::invalid_argument("only support contiguous buffer");
+        shape_accum /= view.shape[i];
+
+        if (view.strides[i] != view.itemsize * shape_accum)
+        {
+          throw std::invalid_argument("only support contiguous buffer");
+        }
       }
     }
 
