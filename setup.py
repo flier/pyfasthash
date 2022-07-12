@@ -139,12 +139,12 @@ c_libraries = [(
 ), (
     't1ha', {
         "sources": list(filter(None, [
-            'src/t1ha/src/t1ha0.c',
-            'src/t1ha/src/t1ha0_ia32aes_avx.c' if IS_X86 else None,
-            'src/t1ha/src/t1ha0_ia32aes_avx2.c' if IS_X86 else None,
-            'src/t1ha/src/t1ha0_ia32aes_noavx.c',
-            'src/t1ha/src/t1ha1.c',
-            'src/t1ha/src/t1ha2.c',
+            'src/smhasher/t1ha/t1ha0.c',
+            'src/smhasher/t1ha/t1ha0_ia32aes_avx.c' if IS_X86 else None,
+            'src/smhasher/t1ha/t1ha0_ia32aes_avx2.c' if IS_X86 else None,
+            'src/smhasher/t1ha/t1ha0_ia32aes_noavx.c',
+            'src/smhasher/t1ha/t1ha1.c',
+            'src/smhasher/t1ha/t1ha2.c',
         ])),
         "macros": [
             ("T1HA0_AESNI_AVAILABLE", ON if cpu.aes else OFF),

@@ -2,7 +2,7 @@
 
 #include "Hash.h"
 
-#include "t1ha/t1ha.h"
+#include "smhasher/t1ha.h"
 
 enum t1_hash_a
 {
