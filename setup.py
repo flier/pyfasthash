@@ -23,6 +23,8 @@ IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
 IS_MACOS = sys.platform == "darwin"
 
+IS_CLANG = "clang" in os.getenv('CC', "").lower()
+
 ON = 1
 OFF = 0
 
@@ -99,7 +101,8 @@ elif IS_POSIX:
     else:
         libraries += ["rt", "gcc"]
 
-    extra_compile_args += ["-march=native"]
+    if not IS_CLANG:
+        extra_compile_args += ["-march=native"]
 
 c_libraries = [
     (
@@ -275,7 +278,9 @@ setup(
     packages=["pyhash"],
     libraries=c_libraries,
     cmdclass=cmdclass,
+    zip_safe=False,
     ext_modules=[pyhash],
+    python_requires=">=3.9",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
@@ -295,5 +300,6 @@ setup(
         "Topic :: Utilities",
     ],
     keywords="hash hashing fasthash",
+    extras_require={"test": "pytest"},
     tests_require=["pytest", "pytest-runner", "pytest-benchmark"],
 )
