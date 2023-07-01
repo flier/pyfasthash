@@ -402,29 +402,17 @@ void handle_data(PyObject *obj, std::function<void(const char *buf, Py_ssize_t l
     }
   }
 #endif
-  else if (PyObject_CheckBuffer(obj))
+  else if (PyObject_CheckBuffer(obj) || PyMemoryView_Check(obj))
   {
-    Py_buffer view;
+    py::buffer_info view = py::reinterpret_borrow<py::buffer>(obj).request(false);
 
-    if (-1 == PyObject_GetBuffer(obj, &view, PyBUF_SIMPLE) || !PyBuffer_IsContiguous(&view, 'C'))
+    if (!PyBuffer_IsContiguous(view.view(), 'C'))
     {
       throw std::invalid_argument("only support contiguous buffer");
     }
 
-    callback((const char *)view.buf, view.len);
-    return;
-  }
-  else if (PyMemoryView_Check(obj))
-  {
-    Py_buffer *view = PyMemoryView_GET_BUFFER(obj);
-
-    if (!view || !PyBuffer_IsContiguous(view, 'C'))
-    {
-      throw std::invalid_argument("only support contiguous memoryview");
-    }
-
-    buf = (const char *)view->buf;
-    len = view->len;
+    buf = (const char *)view.ptr;
+    len = view.size;
   }
   else
   {
