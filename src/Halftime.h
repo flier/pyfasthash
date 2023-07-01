@@ -24,7 +24,6 @@ uint64_t as_hash_value(halftime_seed_t seed)
     return seed[0];
 }
 
-#ifdef SUPPORT_INT128
 template <>
 halftime_seed_t as_seed_value(uint128_t hash)
 {
@@ -76,8 +75,6 @@ uint512_t as_hash_value(halftime_seed_t seed)
     return {seed[0], seed[1], seed[2], seed[3], seed[4], seed[5], seed[6], seed[7]};
 }
 
-#endif
-
 template <typename T>
 class halftime_hash_t : public Hasher<halftime_hash_t<T>, halftime_seed_t, uint64_t>
 {
@@ -92,9 +89,9 @@ public:
 
     const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 
-    static py::class_<halftime_hash_t<T>> Export(const py::module &m, const char *name)
+    static py::class_<halftime_hash_t<T> > Export(const py::module &m, const char *name)
     {
-        return py::class_<halftime_hash_t<T>>(m, name)
+        return py::class_<halftime_hash_t<T> >(m, name)
             .def(py::init<uint64_t>(), py::arg("seed") = 0)
             .def_readwrite("seed", &halftime_hash_t::_seed)
             .def("__call__", &halftime_hash_t::CallWithArgs);
@@ -102,20 +99,15 @@ public:
 };
 
 typedef halftime_hash_t<uint64_t> halftime_hash_64_t;
-
-#ifdef SUPPORT_INT128
 typedef halftime_hash_t<uint128_t> halftime_hash_128_t;
 typedef halftime_hash_t<uint256_t> halftime_hash_256_t;
 typedef halftime_hash_t<uint512_t> halftime_hash_512_t;
-#endif
 
 template <>
 const halftime_hash_64_t::hash_value_t halftime_hash_64_t::operator()(void *buf, size_t len, halftime_hash_64_t::seed_value_t seed) const
 {
     return halftime_hash::HalftimeHashStyle64(seed.data(), (const char *)buf, len);
 }
-
-#ifdef SUPPORT_INT128
 
 template <>
 const halftime_hash_128_t::hash_value_t halftime_hash_128_t::operator()(void *buf, size_t len, halftime_hash_128_t::seed_value_t seed) const
@@ -134,5 +126,3 @@ const halftime_hash_512_t::hash_value_t halftime_hash_512_t::operator()(void *bu
 {
     return halftime_hash::HalftimeHashStyle512(seed.data(), (const char *)buf, len);
 }
-
-#endif

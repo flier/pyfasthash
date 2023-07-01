@@ -3,6 +3,7 @@
 #include "Hash.h"
 
 #include "wyhash/wyhash.h"
+#define wyhash_final_version_3
 #include "wyhash/wyhash32.h"
 
 template <typename T>

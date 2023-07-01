@@ -19,7 +19,7 @@ struct city_hash_t : public Hasher<city_hash_t<T>, T>
 	static bool has_sse4_2;
 #endif
 
-  public:
+public:
 	typedef Hasher<city_hash_t<T>, T> __hasher_t;
 	typedef typename __hasher_t::hash_value_t hash_value_t;
 	typedef typename __hasher_t::seed_value_t seed_value_t;
@@ -67,9 +67,7 @@ bool city_hash_t<T>::has_sse4_2 = support_sse4_2();
 
 typedef city_hash_t<uint32_t> city_hash_32_t;
 typedef city_hash_t<uint64_t> city_hash_64_t;
-#ifdef SUPPORT_INT128
 typedef city_hash_t<uint128_t> city_hash_128_t;
-#endif
 
 template <>
 const city_hash_32_t::hash_value_t city_hash_32_t::operator()(void *buf, size_t len, city_hash_32_t::seed_value_t seed) const
@@ -90,40 +88,38 @@ const city_hash_64_t::hash_value_t city_hash_64_t::operator()(void *buf, size_t 
 	}
 }
 
-#ifdef SUPPORT_INT128
-
 template <>
 const city_hash_128_t::hash_value_t city_hash_128_t::operator()(void *buf, size_t len, city_hash_128_t::seed_value_t seed) const
 {
 #if defined(__SSE4_2__) && defined(__x86_64__)
 	if (has_sse4_2)
 	{
-		if (seed)
+		if (is_nonzero(seed))
 		{
-			const uint128 &hash = CityHashCrc128WithSeed((const char *)buf, len, std::make_pair(U128_LO(seed), U128_HI(seed)));
+			const uint128 hash = CityHashCrc128WithSeed((const char *)buf, len, std::make_pair(seed[0], seed[1]));
 
-			return *(uint128_t *)&hash;
+			return {hash.first, hash.second};
 		}
 		else
 		{
-			const uint128 &hash = CityHashCrc128((const char *)buf, len);
+			const uint128 hash = CityHashCrc128((const char *)buf, len);
 
-			return *(uint128_t *)&hash;
+			return {hash.first, hash.second};
 		}
 	}
 #endif
 
-	if (seed)
+	if (is_nonzero(seed))
 	{
-		const uint128 &hash = CityHash128WithSeed((const char *)buf, len, std::make_pair(U128_LO(seed), U128_HI(seed)));
+		const uint128 hash = CityHash128WithSeed((const char *)buf, len, std::make_pair(seed[0], seed[1]));
 
-		return *(uint128_t *)&hash;
+		return {hash.first, hash.second};
 	}
 	else
 	{
-		const uint128 &hash = CityHash128((const char *)buf, len);
+		const uint128 hash = CityHash128((const char *)buf, len);
 
-		return *(uint128_t *)&hash;
+		return {hash.first, hash.second};
 	}
 }
 
@@ -132,7 +128,7 @@ const city_hash_128_t::hash_value_t city_hash_128_t::operator()(void *buf, size_
 template <typename T>
 struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>, T>
 {
-  public:
+public:
 	typedef Hasher<city_hash_crc_t<T>, T> __hasher_t;
 	typedef typename __hasher_t::hash_value_t hash_value_t;
 	typedef typename __hasher_t::seed_value_t seed_value_t;
@@ -145,7 +141,7 @@ struct city_hash_crc_t : public Hasher<city_hash_crc_t<T>, T>
 template <typename T>
 struct city_fingerprint_t : public Fingerprinter<city_fingerprint_t<T>, T>
 {
-  public:
+public:
 	typedef Fingerprinter<city_fingerprint_t<T>, T> __fingerprinter_t;
 	typedef typename __fingerprinter_t::fingerprint_t fingerprint_value_t;
 
@@ -160,17 +156,17 @@ typedef city_fingerprint_t<uint256_t> city_fingerprint_256_t;
 template <>
 const city_hash_crc_128_t::hash_value_t city_hash_crc_128_t::operator()(void *buf, size_t len, city_hash_crc_128_t::seed_value_t seed) const
 {
-	if (seed)
+	if (is_nonzero(seed))
 	{
-		const uint128 &hash = CityHashCrc128WithSeed((const char *)buf, len, std::make_pair(U128_LO(seed), U128_HI(seed)));
+		const uint128 hash = CityHashCrc128WithSeed((const char *)buf, len, std::make_pair(seed[0], seed[1]));
 
-		return *(uint128_t *)&hash;
+		return {hash.first, hash.second};
 	}
 	else
 	{
-		const uint128 &hash = CityHashCrc128((const char *)buf, len);
+		const uint128 hash = CityHashCrc128((const char *)buf, len);
 
-		return *(uint128_t *)&hash;
+		return {hash.first, hash.second};
 	}
 }
 
@@ -185,5 +181,3 @@ const city_fingerprint_256_t::fingerprint_value_t city_fingerprint_256_t::operat
 }
 
 #endif // defined(__SSE4_2__) && defined(__x86_64__)
-
-#endif // SUPPORT_INT128

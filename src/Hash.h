@@ -23,18 +23,42 @@ typedef unsigned __int64 uint64_t;
 
 #include <stdint.h>
 
-#ifdef SUPPORT_INT128
+#endif // _MSC_VER
 
-typedef unsigned __int128 uint128_t;
+#ifndef __LITTLE_ENDIAN__
+#define __LITTLE_ENDIAN__ (defined(_MSC_VER) || (defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__))
+#endif
+
+// For backwards compatibility
+
+#if __LITTLE_ENDIAN__
+#define U128_LO(a) (a[0])
+#define U128_HI(a) (a[1])
+#define U128_NEW(lo, hi) \
+  {                      \
+    lo, hi               \
+  }
+#else
+#define U128_LO(a) (a[1])
+#define U128_HI(a) (a[0])
+#define U128_NEW(lo, hi) \
+  {                      \
+    hi, lo               \
+  }
+#endif
+
+typedef std::array<uint64_t, 2> uint128_t;
 typedef std::array<uint64_t, 4> uint256_t;
 typedef std::array<uint64_t, 8> uint512_t;
 
-#define U128_LO(v) static_cast<uint64_t>(v >> 64)
-#define U128_HI(v) static_cast<uint64_t>(v)
+template <unsigned long N>
+static inline bool is_nonzero(const std::array<uint64_t, N> &a)
+{
+  return std::any_of(a.cbegin(), a.cend(), [](auto v)
+                     { return v != 0; });
+}
 
-#define U128_NEW(LO, HI) ((static_cast<uint128_t>(HI) << 64) + static_cast<uint128_t>(LO))
-
-#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+#if __LITTLE_ENDIAN__
 const int IS_LITTLE_ENDIAN = 1;
 #else
 const int IS_LITTLE_ENDIAN = 0;
@@ -125,10 +149,6 @@ namespace pybind11
   } // namespace detail
 } // namespace pybind11
 
-#endif // SUPPORT_INT128
-
-#endif // _MSC_VER
-
 template <typename T, typename S, typename H = S>
 class Hasher
 {
@@ -187,18 +207,28 @@ S as_seed_value(T hash)
   return hash;
 }
 
-#ifdef SUPPORT_INT128
+template <>
+uint128_t as_hash_value(uint32_t seed)
+{
+  return U128_NEW(seed, 0);
+}
+
+template <>
+uint32_t as_seed_value(uint128_t hash)
+{
+  return U128_LO(hash);
+}
 
 template <>
 uint128_t as_hash_value(uint64_t seed)
 {
-  return seed;
+  return U128_NEW(seed, 0);
 }
 
 template <>
 uint64_t as_seed_value(uint128_t hash)
 {
-  return static_cast<uint64_t>(hash);
+  return U128_LO(hash);
 }
 
 template <>
@@ -248,8 +278,6 @@ uint256_t as_seed_value(uint128_t hash)
 {
   return {U128_LO(hash), U128_HI(hash), U128_LO(hash), U128_HI(hash)};
 }
-
-#endif // SUPPORT_INT128
 
 template <typename T, typename S, typename H>
 py::object Hasher<T, S, H>::CallWithArgs(py::args args, py::kwargs kwargs)

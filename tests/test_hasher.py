@@ -12,26 +12,25 @@ def test_string(city_64):
     hasher = city_64()
 
     assert hasher
-    assert hasattr(hasher, 'seed')
+    assert hasattr(hasher, "seed")
 
-    assert hasher('hello') == 359204553733634674
-    assert hasher('hello world') == 489096247858400539
-    assert hasher('hello', ' ', 'world') == 416726000223957297
-    assert hasher('world', seed=hasher(
-        ' ', seed=hasher('hello'))) == 416726000223957297
+    assert hasher("hello") == 359204553733634674
+    assert hasher("hello world") == 489096247858400539
+    assert hasher("hello", " ", "world") == 416726000223957297
+    assert hasher("world", seed=hasher(" ", seed=hasher("hello"))) == 416726000223957297
 
-    assert hasher(b'hello') == 2578220239953316063
+    assert hasher(b"hello") == 2578220239953316063
 
-    assert hasher('') == 11160318154034397263
-    assert hasher(u'') == 11160318154034397263
-    assert hasher(b'') == 11160318154034397263
+    assert hasher("") == 11160318154034397263
+    assert hasher("") == 11160318154034397263
+    assert hasher(b"") == 11160318154034397263
 
 
 def test_list(city_64):
     hasher = city_64()
 
     with pytest.raises(TypeError, match="unsupported argument type"):
-        assert hasher(list(b'hello')) == 2578220239953316063
+        assert hasher(list(b"hello")) == 2578220239953316063
 
 
 def test_array(city_64):
@@ -39,29 +38,28 @@ def test_array(city_64):
 
     hasher = city_64()
 
-    assert hasher(array('B', b'hello')) == 2578220239953316063
+    assert hasher(array("B", b"hello")) == 2578220239953316063
 
 
 def test_buffer(city_64):
     if sys.version_info.major < 3:
         hasher = city_64()
 
-        assert hasher(buffer(b'hello')) == 2578220239953316063
+        assert hasher(buffer(b"hello")) == 2578220239953316063
 
 
 def test_bufferview(city_64):
     hasher = city_64()
 
-    assert hasher(memoryview(b'hello')) == 2578220239953316063
+    assert hasher(memoryview(b"hello")) == 2578220239953316063
 
 
 def test_bytearray(city_64):
     hasher = city_64()
 
-    assert hasher(bytearray(b'hello')) == 2578220239953316063
+    assert hasher(bytearray(b"hello")) == 2578220239953316063
 
 
-@pytest.mark.skipif(not pyhash.build_with_int128, reason="requires int128 support")
 def test_error(city_64, city_128):
     if sys.version_info.major < 3:
         with pytest.raises(TypeError):
