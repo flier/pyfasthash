@@ -10,8 +10,11 @@ on:
     paths-ignore:
       - "**.md"
   pull_request:
+    types:
+      - opened
+      - reopened
     branches:
-      - master
+      - 'releases/**'
   page_build:
   release:
     types:
