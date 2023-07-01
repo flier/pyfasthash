@@ -151,12 +151,12 @@ c_libraries = [
                 filter(
                     None,
                     [
-                        "src/t1ha/src/t1ha0.c",
-                        "src/t1ha/src/t1ha0_ia32aes_avx.c" if IS_X86 else None,
-                        "src/t1ha/src/t1ha0_ia32aes_avx2.c" if IS_X86 else None,
-                        "src/t1ha/src/t1ha0_ia32aes_noavx.c",
-                        "src/t1ha/src/t1ha1.c",
-                        "src/t1ha/src/t1ha2.c",
+                        "src/smhasher/t1ha/t1ha0.c",
+                        "src/smhasher/t1ha/t1ha0_ia32aes_avx.c" if IS_X86 else None,
+                        "src/smhasher/t1ha/t1ha0_ia32aes_avx2.c" if IS_X86 else None,
+                        "src/smhasher/t1ha/t1ha0_ia32aes_noavx.c",
+                        "src/smhasher/t1ha/t1ha1.c",
+                        "src/smhasher/t1ha/t1ha2.c",
                     ],
                 )
             ),
