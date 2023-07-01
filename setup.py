@@ -23,8 +23,6 @@ IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
 IS_MACOS = sys.platform == "darwin"
 
-IS_CLANG = "clang" in os.getenv('CC', "").lower()
-
 ON = 1
 OFF = 0
 
@@ -101,7 +99,6 @@ elif IS_POSIX:
     else:
         libraries += ["rt", "gcc"]
 
-    if not IS_CLANG:
         extra_compile_args += ["-march=native"]
 
 c_libraries = [
