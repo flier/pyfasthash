@@ -39,7 +39,6 @@ jobs:
           - "pypy3.9"
           - "pypy3.10"
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.experimental }}
     name: Python ${{ matrix.python-version }} @ ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
