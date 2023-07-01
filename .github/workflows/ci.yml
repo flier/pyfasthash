@@ -20,6 +20,23 @@ defaults:
     shell: bash
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint and type
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - run: |
+          python -c "import sys; print(sys.version)"
+          pip install nox        
+          nox --sessions lint type
+
   test:
     strategy:
       matrix:
@@ -40,29 +57,14 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
 
-      - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
-
-      - name: Install requirements
-        run: |
-          pip install -U pip setuptools wheel
-          pip install cpuid
-          pip install -r requirements.txt
-          pip install -r tests/requirements.txt
-
-      - name: Build extensions
-        run: |
-          python setup.py build_clib build_ext --inplace
-
-      - name: Run tests
-        run: |
-          pytest -v --benchmark-disable --log-cli-level=info -k 'not highway'
+      - run: |
+          python -c "import sys; print(sys.version)"
+          pip install nox        
+          nox --sessions tests-${{ matrix.python-version }}
 
   coverage:
     name: Coverage report
@@ -86,16 +88,16 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
 
-      - name: Install requirements
-        run: |
-          pip install -r tests/requirements.txt
-
       - name: Install pyhash package with coverage
         env:
           CFLAGS: -coverage
         run: |
           pip install -v .
 
+      - name: Install requirements
+        run: |
+          pip install -r tests/requirements.txt
+  
       - name: Run tests with coverage
         run: |
           pytest -k 'not highway' --benchmark-disable --cov=./ --cov-report=xml

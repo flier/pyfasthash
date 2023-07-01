@@ -1,5 +1,5 @@
-pytest >= 4.6
-pytest-benchmark >= 3.4
-pytest-cov >= 2.12
+pytest >= 7
+pytest-benchmark >= 4
+pytest-cov >= 4
 codecov >= 2.1
 cpuid ; platform_machine == "x86_64"

@@ -99,7 +99,7 @@ elif IS_POSIX:
     else:
         libraries += ["rt", "gcc"]
 
-        extra_compile_args += ["-march=native"]
+    extra_compile_args += ["-march=native"]
 
 c_libraries = [
     (
@@ -260,43 +260,9 @@ pyhash = Extension(
     extra_link_args=extra_link_args,
 )
 
-setup(
-    name="pyhash",
-    version="0.9.4",
-    description="Python Non-cryptographic Hash Library",
-    long_description=open(os.path.join(here, "README.md")).read(),
-    long_description_content_type="text/markdown",
-    url="https://github.com/flier/pyfasthash",
-    download_url="https://github.com/flier/pyfasthash/releases",
-    platforms=["x86", "x64"],
-    author="Flier Lu",
-    author_email="flier.lu@gmail.com",
-    license="Apache Software License",
-    packages=["pyhash"],
+setup(    
     libraries=c_libraries,
     cmdclass=cmdclass,
-    zip_safe=False,
     ext_modules=[pyhash],
-    python_requires=">=3.9",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "Intended Audience :: System Administrators",
-        "License :: OSI Approved :: Apache Software License",
-        "Natural Language :: English",
-        "Operating System :: Microsoft :: Windows",
-        "Operating System :: POSIX",
-        "Programming Language :: C++",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: Implementation :: PyPy",
-        "Topic :: Internet",
-        "Topic :: Software Development",
-        "Topic :: Software Development :: Libraries :: Python Modules",
-        "Topic :: Utilities",
-    ],
-    keywords="hash hashing fasthash",
-    extras_require={"test": "pytest"},
     tests_require=["pytest", "pytest-runner", "pytest-benchmark"],
 )
