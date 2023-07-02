@@ -83,9 +83,7 @@ public:
     typedef typename __hasher_t::hash_value_t hash_value_t;
     typedef typename __hasher_t::seed_value_t seed_value_t;
 
-    halftime_hash_t(uint64_t seed = {}) : __hasher_t(as_seed_value<halftime_seed_t>(seed))
-    {
-    }
+    halftime_hash_t(uint64_t seed = {}) : __hasher_t(as_seed_value<halftime_seed_t>(seed)) {}
 
     const hash_value_t operator()(void *buf, size_t len, seed_value_t seed) const;
 
@@ -93,6 +91,8 @@ public:
     {
         return py::class_<halftime_hash_t<T> >(m, name)
             .def(py::init<uint64_t>(), py::arg("seed") = 0)
+            .def_readonly_static("SEED_BITS", &halftime_hash_t::SEED_BITS)
+            .def_readonly_static("HASH_BITS", &halftime_hash_t::HASH_BITS)
             .def_readwrite("seed", &halftime_hash_t::_seed)
             .def("__call__", &halftime_hash_t::CallWithArgs);
     }

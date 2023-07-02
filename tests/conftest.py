@@ -95,23 +95,30 @@ def hash_tester(test_data):
 
         assert hasher
         assert hasattr(hasher, "seed")
-        assert hasher(data) in as_list(bytes_hash), "bytes hash should be %d" % hasher(
-            data
-        )
-        assert hasher(data, seed=bytes_hash) in as_list(
+
+        hash = hasher(data)
+        assert hash in as_list(bytes_hash), f"bytes hash {hash}, expected: {bytes_hash}"
+
+        hash = hasher(data, data)
+        assert hash in as_list(
             seed_hash
-        ), "bytes hash with seed should be %d" % hasher(data, seed=bytes_hash)
-        assert hasher(data, data) in as_list(
-            seed_hash
-        ), "hash(data, data) should be %d" % hasher(data, data)
-        assert hasher(data, seed=hasher(data)) in as_list(
-            seed_hash
-        ), "hasher(data, seed=hasher(data)) should be %d" % hasher(
-            data, seed=hasher(data)
-        )
-        assert hasher(udata) in as_list(
+        ), f"hash(data, data) {hash}, expected: {seed_hash}"
+
+        if hasher.SEED_BITS == hasher.HASH_BITS:
+            hash = hasher(data, seed=bytes_hash)
+            assert hash in as_list(
+                seed_hash
+            ), f"bytes hash with seed {hash}, expected: {seed_hash}"
+
+            hash = hasher(data, seed=hasher(data))
+            assert hash in as_list(
+                seed_hash
+            ), f"hasher(data, seed=hasher(data)) {hash}, expected: {seed_hash}"
+
+        hash = hasher(udata)
+        assert hash in as_list(
             unicode_hash
-        ), "unicode hash should be %d" % hasher(udata)
+        ), f"unicode hash {hash}, expected: {unicode_hash}"
 
     return do_test
 

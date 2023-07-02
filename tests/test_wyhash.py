@@ -15,9 +15,9 @@ def test_wy_32(hash_tester):
 def test_wy_64(hash_tester):
     hash_tester(
         hasher_type=pyhash.wy_64,
-        bytes_hash=13282522921993940974,
-        seed_hash=10112467932320148695,
-        unicode_hash=2990017137888294531,
+        bytes_hash=10062657028113479704,
+        seed_hash=7566643489967525642,
+        unicode_hash=9309557217718758546,
     )
 
 
@@ -28,4 +28,4 @@ def test_wy_hash32_perf(benchmark, hash_bencher):
 
 @pytest.mark.benchmark(group="hash64", disable_gc=True)
 def test_wy_hash64_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.wy_64, 16560810041235762008)
+    hash_bencher(benchmark, pyhash.wy_64, 5311500416313190714)

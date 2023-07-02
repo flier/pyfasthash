@@ -156,6 +156,9 @@ public:
   typedef S seed_value_t;
   typedef H hash_value_t;
 
+  static inline size_t SEED_BITS = sizeof(seed_value_t)*8;
+  static inline size_t HASH_BITS = sizeof(hash_value_t)*8;
+
 protected:
   seed_value_t _seed;
 
@@ -170,6 +173,8 @@ public:
   {
     return py::class_<T>(m, name)
         .def(py::init<seed_value_t>(), py::arg("seed") = 0)
+        .def_readonly_static("SEED_BITS", &Hasher::SEED_BITS)
+        .def_readonly_static("HASH_BITS", &Hasher::HASH_BITS)
         .def_readwrite("seed", &T::_seed)
         .def("__call__", &T::CallWithArgs);
   }

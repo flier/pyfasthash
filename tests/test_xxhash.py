@@ -24,18 +24,18 @@ def test_xx_64(hash_tester):
 def test_xxh3_64(hash_tester):
     hash_tester(
         hasher_type=pyhash.xxh3_64,
-        bytes_hash=9511462701433476418,
-        seed_hash=18431907721717861993,
-        unicode_hash=9339502706477692137,
+        bytes_hash=11441948532827618368,
+        seed_hash=2089348107868048054,
+        unicode_hash=16570491819903731716,
     )
 
 
 def test_xxh3_128(hash_tester):
     hash_tester(
         hasher_type=pyhash.xxh3_128,
-        bytes_hash=61773019920352653487352012421565896002,
-        seed_hash=75077604214798731190000330999719120489,
-        unicode_hash=253138563925068684169935446223964533993,
+        bytes_hash=144184260470930790206475339950959648696,
+        seed_hash=245340701302628892366188236529209798014,
+        unicode_hash=178697977782819640141202674788096098003,
     )
 
 
@@ -51,9 +51,9 @@ def test_xx_hash64_perf(benchmark, hash_bencher):
 
 @pytest.mark.benchmark(group="hash64", disable_gc=True)
 def test_xxh3_hash64_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.xxh3_64, 5383753519105369680)
+    hash_bencher(benchmark, pyhash.xxh3_64, 10666956326096416113)
 
 
 @pytest.mark.benchmark(group="hash128", disable_gc=True)
 def test_xxh3_hash128_perf(benchmark, hash_bencher):
-    hash_bencher(benchmark, pyhash.xxh3_128, 38410093203896075778304082117375728449)
+    hash_bencher(benchmark, pyhash.xxh3_128, 321635069348597727998765129269811424625)
