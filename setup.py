@@ -23,6 +23,8 @@ IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
 IS_MACOS = sys.platform == "darwin"
 
+COVERAGE = os.getenv('COVERAGE', '').lower() in ['true', 't', '1', 'on']
+
 ON = 1
 OFF = 0
 
@@ -31,8 +33,6 @@ def cpu_features():
     from collections import namedtuple
 
     CpuFeatures = namedtuple("CpuFeatures", ["sse41", "sse42", "aes", "avx", "avx2"])
-
-    sse41 = sse42 = aes = avx = avx2 = False
 
     if IS_X86:
         try:
@@ -44,8 +44,9 @@ def cpu_features():
             avx = _is_set(1, 2, 28) == "Yes"
             avx2 = _is_set(7, 1, 5) == "Yes"
         except ImportError:
-            if IS_64BITS:
-                sse41 = sse42 = aes = avx = avx2 = True
+            sse41 = sse42 = aes = avx = avx2 = IS_X86_64
+    else:
+        sse41 = sse42 = aes = avx = avx2 = False
 
     return CpuFeatures(sse41, sse42, aes, avx, avx2)
 
@@ -63,6 +64,9 @@ libraries = []
 extra_macros = []
 extra_compile_args = []
 extra_link_args = []
+
+if COVERAGE:
+    extra_compile_args += ["--coverage"]
 
 if IS_WINNT:
     macros += [

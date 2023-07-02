@@ -67,9 +67,9 @@ metro_64 = metro_64_1 = _pyhash.metro_64_1
 metro_64_2 = _pyhash.metro_64_2
 metro_128 = metro_128_1 = _pyhash.metro_128_1
 metro_128_2 = _pyhash.metro_128_2
-metro_crc_64 = metro_crc_64_1 = _pyhash.__dict__.get("_pyhash.metro_64_crc_1")
+metro_crc_64 = metro_crc_64_1 = _pyhash.__dict__.get("metro_64_crc_1")
 metro_crc_64_2 = _pyhash.__dict__.get("metro_64_crc_2")
-metro_crc_128 = metro_crc_128_1 = _pyhash.__dict__.get("_pyhash.metro_128_crc_1")
+metro_crc_128 = metro_crc_128_1 = _pyhash.__dict__.get("metro_128_crc_1")
 metro_crc_128_2 = _pyhash.__dict__.get("metro_128_crc_2")
 
 mum_64 = _pyhash.mum_64

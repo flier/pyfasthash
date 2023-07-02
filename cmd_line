@@ -1,0 +1,1 @@
+genhtml --legend --prefix src coverage_filtered.info --output-directory .

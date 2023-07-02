@@ -1,11 +1,15 @@
+__pycache__
+
 .idea
 .vscode
 build
 dist
 pyhash.egg-info
-.tox
+.benchmarks
+.nox
 .eggs
 .pytest_cache
+.mypy_cache
 .coverage
 
 setuptools*
