@@ -156,8 +156,8 @@ public:
   typedef S seed_value_t;
   typedef H hash_value_t;
 
-  static inline size_t SEED_BITS = sizeof(seed_value_t)*8;
-  static inline size_t HASH_BITS = sizeof(hash_value_t)*8;
+  static constexpr size_t SEED_BITS = sizeof(seed_value_t) * 8;
+  static constexpr size_t HASH_BITS = sizeof(hash_value_t) * 8;
 
 protected:
   seed_value_t _seed;

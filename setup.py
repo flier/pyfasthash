@@ -23,7 +23,7 @@ IS_WINNT = os.name == "nt"
 IS_POSIX = os.name == "posix"
 IS_MACOS = sys.platform == "darwin"
 
-COVERAGE = os.getenv('COVERAGE', '').lower() in ['true', 't', '1', 'on']
+COVERAGE = os.getenv("COVERAGE", "").lower() in ["true", "t", "1", "on"]
 
 ON = 1
 OFF = 0
@@ -200,46 +200,51 @@ c_libraries = [
     ),
 ]
 
-if not IS_WINNT:
-    srcs = [
-        "src/highwayhash/highwayhash/arch_specific.cc",
-        "src/highwayhash/highwayhash/instruction_sets.cc",
-        "src/highwayhash/highwayhash/os_specific.cc",
-        "src/highwayhash/highwayhash/hh_portable.cc",
-    ]
-    cflags = extra_compile_args + [
-        "-Isrc/highwayhash",
-        "-std=c++11",
+srcs = [
+    "src/highwayhash/highwayhash/arch_specific.cc",
+    "src/highwayhash/highwayhash/instruction_sets.cc",
+    "src/highwayhash/highwayhash/os_specific.cc",
+    "src/highwayhash/highwayhash/hh_portable.cc",
+]
+cflags = extra_compile_args + [
+    "-Isrc/highwayhash",
+    "-std=c++11",
+]
+
+if IS_X86_64:
+    srcs += [
+        "src/highwayhash/highwayhash/hh_sse41.cc",
+        "src/highwayhash/highwayhash/hh_avx2.cc",
     ]
 
-    if IS_X86_64:
-        srcs += [
-            "src/highwayhash/highwayhash/hh_sse41.cc",
-            "src/highwayhash/highwayhash/hh_avx2.cc",
-        ]
+    if not IS_WINNT:
         cflags += ["-msse4.1", "-mavx2"]
 
-    elif IS_ARM64:
-        srcs += ["src/highwayhash/highwayhash/hh_neon.cc"]
+elif IS_ARM64:
+    srcs += ["src/highwayhash/highwayhash/hh_neon.cc"]
+
+    if not IS_WINNT:
         cflags += [
             "-mfloat-abi=hard",
             "-march=armv7-a",
             "-mfpu=neon",
         ]
 
-    elif IS_PPC64:
-        srcs += ["src/highwayhash/highwayhash/hh_vsx.cc"]
+elif IS_PPC64:
+    srcs += ["src/highwayhash/highwayhash/hh_vsx.cc"]
+
+    if not IS_WINNT:
         cflags += ["-mvsx"]
 
-    c_libraries += [
-        (
-            "highwayhash",
-            {
-                "sources": srcs,
-                "cflags": cflags,
-            },
-        )
-    ]
+c_libraries += [
+    (
+        "highwayhash",
+        {
+            "sources": srcs,
+            "cflags": cflags,
+        },
+    )
+]
 
 libraries += [libname for (libname, _) in c_libraries]
 cmdclass = {}
@@ -264,7 +269,7 @@ pyhash = Extension(
     extra_link_args=extra_link_args,
 )
 
-setup(    
+setup(
     libraries=c_libraries,
     cmdclass=cmdclass,
     ext_modules=[pyhash],
