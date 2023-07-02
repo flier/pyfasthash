@@ -18,28 +18,28 @@ PYTHON_VERSIONS = [
 @nox.session
 def format(session: nox.Session) -> None:
     session.install("black >= 23")
-    session.run("black", "pyhash", "tests")
+    session.run("black", "pyhash", "tests", *session.posargs)
     session.notify("lint")
 
 
 @nox.session
 def lint(session: nox.Session) -> None:
     session.install("flake8")
-    session.run("flake8", "pyhash")
+    session.run("flake8", "pyhash", *session.posargs)
 
 
 @nox.session
 def type(session: nox.Session) -> None:
     session.install("-v", ".")
     session.install("mypy")
-    session.run("mypy", "pyhash")
+    session.run("mypy", "pyhash", *session.posargs)
 
 
 @nox.session(python=PYTHON_VERSIONS)
 def tests(session: nox.Session) -> None:
     session.install("-v", ".")
     session.install("-r", "tests/requirements.txt")
-    session.run("pytest", "-v", "--benchmark-disable")
+    session.run("pytest", "-v", "--benchmark-disable", *session.posargs)
 
 
 @nox.session
@@ -48,7 +48,12 @@ def coverage(session: nox.Session) -> None:
     session.install("-r", "tests/requirements.txt")
     try:
         session.run(
-            "pytest", "-v", "--benchmark-disable", "--cov=./", "--cov-report=xml"
+            "pytest",
+            "-v",
+            "--benchmark-disable",
+            "--cov=./",
+            "--cov-report=xml",
+            *session.posargs,
         )
     finally:
         session.run(
@@ -63,7 +68,7 @@ def coverage(session: nox.Session) -> None:
 
         with os.scandir("./src/") as it:
             args = [
-                f"src/{entry.name}/*"                 
+                f"src/{entry.name}/*"
                 for entry in it
                 if not entry.name.startswith(".") and entry.is_dir()
             ]
@@ -76,7 +81,7 @@ def coverage(session: nox.Session) -> None:
             "coverage.info",
             "/usr/*",
             *args,
-            external=True
+            external=True,
         )
         session.run(
             "genhtml",
@@ -94,4 +99,4 @@ def coverage(session: nox.Session) -> None:
 def bench(session: nox.Session) -> None:
     session.install("-v", ".")
     session.install("-r", "tests/requirements.txt")
-    session.run("pytest", "-v", "--benchmark-only")
+    session.run("pytest", "-v", "--benchmark-only", *session.posargs)
