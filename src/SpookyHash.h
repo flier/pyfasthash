@@ -40,8 +40,6 @@ const spooky_hash_v1_64_t::hash_value_t spooky_hash_v1_64_t::operator()(void *bu
 	return SpookyHashV1::Hash64(buf, len, seed);
 }
 
-#ifdef SUPPORT_INT128
-
 typedef spooky_hash_v1_t<uint128_t> spooky_hash_v1_128_t;
 
 template <>
@@ -53,8 +51,6 @@ const spooky_hash_v1_128_t::hash_value_t spooky_hash_v1_128_t::operator()(void *
 
 	return U128_NEW(lo, hi);
 }
-
-#endif
 
 template <typename T>
 class spooky_hash_v2_t : public Hasher<spooky_hash_v2_t<T>, T>
@@ -84,8 +80,6 @@ const spooky_hash_v2_64_t::hash_value_t spooky_hash_v2_64_t::operator()(void *bu
 	return SpookyHashV1::Hash64(buf, len, seed);
 }
 
-#ifdef SUPPORT_INT128
-
 typedef spooky_hash_v2_t<uint128_t> spooky_hash_v2_128_t;
 
 template <>
@@ -97,5 +91,3 @@ const spooky_hash_v2_128_t::hash_value_t spooky_hash_v2_128_t::operator()(void *
 
 	return U128_NEW(lo, hi);
 }
-
-#endif

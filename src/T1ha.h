@@ -16,7 +16,7 @@ enum t1_hash_a
 template <typename T, t1_hash_a A>
 class t1_hash_t : public Hasher<t1_hash_t<T, A>, uint64_t, T>
 {
-  public:
+public:
     typedef Hasher<t1_hash_t<T, A>, uint64_t, T> __hasher_t;
     typedef typename __hasher_t::hash_value_t hash_value_t;
     typedef typename __hasher_t::seed_value_t seed_value_t;
@@ -27,9 +27,7 @@ class t1_hash_t : public Hasher<t1_hash_t<T, A>, uint64_t, T>
 };
 
 typedef t1_hash_t<uint64_t, t1ha2_atonce_a> t1ha2_atonce_t;
-#if defined(SUPPORT_INT128)
 typedef t1_hash_t<uint128_t, t1ha2_atonce128_a> t1ha2_atonce128_t;
-#endif
 typedef t1_hash_t<uint64_t, t1ha1_le_a> t1ha1_le_t;
 typedef t1_hash_t<uint64_t, t1ha1_be_a> t1ha1_be_t;
 typedef t1_hash_t<uint64_t, t1ha0_a> t1ha0_t;
@@ -40,7 +38,6 @@ const t1ha2_atonce_t::hash_value_t t1ha2_atonce_t::operator()(void *buf, size_t 
     return t1ha2_atonce(buf, len, seed);
 }
 
-#if defined(SUPPORT_INT128)
 template <>
 const t1ha2_atonce128_t::hash_value_t t1ha2_atonce128_t::operator()(void *buf, size_t len, t1ha2_atonce128_t::seed_value_t seed) const
 {
@@ -49,7 +46,6 @@ const t1ha2_atonce128_t::hash_value_t t1ha2_atonce128_t::operator()(void *buf, s
 
     return U128_NEW(lo, hi);
 }
-#endif
 
 template <>
 const t1ha1_le_t::hash_value_t t1ha1_le_t::operator()(void *buf, size_t len, t1ha1_le_t::seed_value_t seed) const

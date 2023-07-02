@@ -3,6 +3,6 @@ source = pyhash
 omit =
     setup.py
     .eggs/*
-    .tox/*
+    .nox/*
     build/*
     tests/*

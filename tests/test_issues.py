@@ -10,7 +10,7 @@ import pyhash
 
 
 def test_error_return_none():
-    if hasattr(sys, 'getrefcount'):  # skip pypy
+    if hasattr(sys, "getrefcount"):  # skip pypy
         h = pyhash.fnv1_64()
 
         old_refcnt = sys.getrefcount(None)
@@ -27,11 +27,12 @@ def test_error_return_none():
 
         assert old_refcnt >= new_refcnt
 
+
 # https://github.com/flier/pyfasthash/issues/24
 
 
 def test_default_string_type():
     hasher = pyhash.murmur3_32()
 
-    assert hasher('foo') == hasher(u'foo')
-    assert hasher('foo') != hasher(b'foo')
+    assert hasher("foo") == hasher("foo")
+    assert hasher("foo") != hasher(b"foo")

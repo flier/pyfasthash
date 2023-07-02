@@ -47,11 +47,8 @@ typedef murmur_t<uint32_t, uint32_t, murmur_hash2_neutral> murmur2_neutral_32_t;
 typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x64_64a> murmur2_x64_64a_t;
 typedef murmur_t<uint64_t, uint64_t, murmur_hash2_x86_64b> murmur2_x86_64b_t;
 typedef murmur_t<uint32_t, uint32_t, murmur_hash3_32> murmur3_32_t;
-
-#ifdef SUPPORT_INT128
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x86_128> murmur3_x86_128_t;
 typedef murmur_t<uint128_t, uint32_t, murmur_hash3_x64_128> murmur3_x64_128_t;
-#endif
 
 template <>
 const murmur1_32_t::hash_value_t murmur1_32_t::operator()(void *buf, size_t len, murmur1_32_t::seed_value_t seed) const
@@ -111,14 +108,12 @@ const murmur3_32_t::hash_value_t murmur3_32_t::operator()(void *buf, size_t len,
   return hash;
 }
 
-#ifdef SUPPORT_INT128
-
 template <>
 const murmur3_x86_128_t::hash_value_t murmur3_x86_128_t::operator()(void *buf, size_t len, murmur3_x86_128_t::seed_value_t seed) const
 {
-  uint128_t hash = 0;
+  uint128_t hash = {};
 
-  MurmurHash3_x86_128(buf, (int)len, seed, &hash);
+  MurmurHash3_x86_128(buf, (int)len, seed, hash.data());
 
   return hash;
 }
@@ -126,11 +121,9 @@ const murmur3_x86_128_t::hash_value_t murmur3_x86_128_t::operator()(void *buf, s
 template <>
 const murmur3_x64_128_t::hash_value_t murmur3_x64_128_t::operator()(void *buf, size_t len, murmur3_x64_128_t::seed_value_t seed) const
 {
-  uint128_t hash = 0;
+  uint128_t hash = {};
 
-  MurmurHash3_x64_128(buf, (int)len, seed, &hash);
+  MurmurHash3_x64_128(buf, (int)len, seed, hash.data());
 
   return hash;
 }
-
-#endif
